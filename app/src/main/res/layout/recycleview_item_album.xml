@@ -9,7 +9,8 @@
         android:layout_height="40dp"
         android:layout_marginLeft="16dp"
         android:gravity="center_vertical"
-        android:text="Duo 2010 Live"/>
+        android:text="Duo 2010 Live"
+        android:textSize="18dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="130dp"
@@ -20,7 +21,7 @@
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@drawable/gangbi"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="120dp"
@@ -41,7 +42,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="今天等我来"
-                    android:textSize="16dp"
+                    android:textSize="18dp"
                     android:gravity="center_vertical"/>
                 <TextView
                     android:id="@+id/album_RV_item_song2_name"
@@ -50,7 +51,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="好歌先给你"
-                    android:textSize="16dp"
+                    android:textSize="18dp"
                     />
                 <TextView
                     android:id="@+id/album_RV_item_song3_name"
@@ -59,7 +60,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="落花流水"
-                    android:textSize="16dp"
+                    android:textSize="18dp"
                     />
             </LinearLayout>
             <LinearLayout

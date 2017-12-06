@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 public class AlbumPV_Data {
     String album_RV_item_title;
-    ImageView album_RV_item_imageView;
+    ImageView album_RV_item_imageView;//图片这里还不知道怎么写，所以随便写的
 
     String album_RV_item_song1_name;
     String album_RV_item_song2_name;

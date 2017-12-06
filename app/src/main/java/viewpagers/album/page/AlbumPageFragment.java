@@ -50,6 +50,14 @@ public class AlbumPageFragment extends Fragment {
      * @exception
      */
     private void initAlbumPV_Data(){
-
+        AlbumPV_Data albumPV_data = new AlbumPV_Data();
+        albumPV_data.setAlbum_RV_item_title("我是谁");
+        albumPV_data.setAlbum_RV_item_song1_name("fsdfsdfsd");
+        albumPV_data.setAlbum_RV_item_song2_name("我是谁类");
+        albumPV_data.setAlbum_RV_item_song3_name("管你是谁");
+        albumPV_data.setAlbum_RV_item_song1_time("03.25");
+        albumPV_data.setAlbum_RV_item_song2_time("03.25");
+        albumPV_data.setAlbum_RV_item_song3_time(".0321");
+        albumPV_dataList.add(albumPV_data);
     }
 }
