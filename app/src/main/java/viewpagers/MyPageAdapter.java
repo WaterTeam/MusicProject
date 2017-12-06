@@ -1,4 +1,4 @@
-package ViewPagers_;
+package viewpagers;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/12/5.
+ * Created by Administrator on 2017/12/6.
  */
 
 public class MyPageAdapter extends FragmentPagerAdapter {

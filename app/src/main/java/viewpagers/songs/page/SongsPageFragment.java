@@ -1,4 +1,4 @@
-package ViewPagers_.AlbumPage;
+package viewpagers.songs.page;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,14 +10,14 @@ import android.view.ViewGroup;
 import com.waterteam.musicproject.R;
 
 /**
- * Created by Administrator on 2017/12/6.
+ * Created by CNT on 2017/12/6.
  */
 
-public class AlbumPageFragment extends Fragment {
+public class SongsPageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_album_page,container,false);
+        View view = inflater.inflate(R.layout.fragment_songs_page,container,false);
         return  view;
     }
 }

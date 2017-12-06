@@ -8,25 +8,21 @@ import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
 
-import CustomControl.MyToolbar;
-import ViewPagers_.AlbumPage.AlbumPageFragment;
-import ViewPagers_.ArtistPage.ArtistPageFragment;
-import ViewPagers_.MyPageAdapter;
-import ViewPagers_.SongsPage.SongsPageFragment;
+import viewpagers.MyPageAdapter;
+import viewpagers.album.page.AlbumPageFragment;
+import viewpagers.artist.page.ArtistPageFragment;
+import viewpagers.songs.page.SongsPageFragment;
+
 
 public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     List<Fragment> fragmentList  = new ArrayList<Fragment>();
-    MyToolbar toolbar;
     MyPageAdapter fragmentPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        toolbar = (MyToolbar) findViewById(R.id.myToolbar);
-        setSupportActionBar(toolbar);
 
         initView();
 
