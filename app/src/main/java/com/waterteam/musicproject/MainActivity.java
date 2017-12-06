@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import CustomControl.MyToolbar;
-import ViewPagers_.AlbumPageFragment;
-import ViewPagers_.ArtistPageFragment;
+import ViewPagers_.AlbumPage.AlbumPageFragment;
+import ViewPagers_.ArtistPage.ArtistPageFragment;
 import ViewPagers_.MyPageAdapter;
-import ViewPagers_.SongsPageFragment;
+import ViewPagers_.SongsPage.SongsPageFragment;
 
 public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;

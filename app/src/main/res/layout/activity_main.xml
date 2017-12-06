@@ -9,6 +9,8 @@
     <CustomControl.MyToolbar
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:title="jfdk"
+        app:titleTextColor="#2c2a2a"
         android:id="@+id/myToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
