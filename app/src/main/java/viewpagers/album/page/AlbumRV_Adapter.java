@@ -1,5 +1,6 @@
 package viewpagers.album.page;
 
+import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHolder>{
 
+
     List<AlbumPV_Data> albumPV_dataList;
     public AlbumRV_Adapter(List<AlbumPV_Data> list){
         albumPV_dataList = list;
@@ -25,6 +27,7 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_item_album,parent,false);
         ViewHolder viewHolder = new ViewHolder(view);
+
 
         /**
          * 这个方法用于处理子项的点击事件，需要覆写
