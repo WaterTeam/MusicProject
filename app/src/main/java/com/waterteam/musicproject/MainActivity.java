@@ -12,7 +12,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.waterteam.musicproject.application.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,8 @@ import viewpagers.songs.page.SongsPageFragment;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+    private boolean debug=true;
     ViewPager viewPager;
     List<Fragment> fragmentList  = new ArrayList<Fragment>();
     MyPageAdapter fragmentPagerAdapter;
@@ -33,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (debug) {
+            MyApplication app = (MyApplication) getApplication();
+            Log.d(TAG, "艺术家=" + app.getArtists().size());
+            Log.d(TAG, "专辑=" + app.getAlbums().size());
+            Log.d(TAG, "歌曲=" + app.getSongs().size());
+        }
         initView();
     }
 

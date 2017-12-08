@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -12,45 +13,98 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.waterteam.musicproject.application.MyApplication;
+import com.waterteam.musicproject.bean.AlbumBean;
+import com.waterteam.musicproject.bean.ArtistBean;
+import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.util.GetAlbumUtil;
+import com.waterteam.musicproject.util.GetArtistUtil;
+import com.waterteam.musicproject.util.GetSongUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by BA on 2017/12/7 0007
+ *
  * @Function : App启动页，在这里申请权限，还有进行全局的数据初始化操作
  */
 public class SplashActivity extends AppCompatActivity {
+
     //权限请求码
-    private final int REQUEST_PERMISSION_CODE=843;
+    private final int REQUEST_PERMISSION_CODE = 843;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        EventBus.getDefault().register(this);
         //检查权限
-        boolean havePermission=checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        boolean havePermission = checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
         if (havePermission) {
-            //初始化数据，然后启动主界面
-            Toast.makeText(this, "初始化数据然后启动主界面", Toast.LENGTH_SHORT).show();
-
-//            //我要测试所以这里就不跳转
-//            Intent intent=new Intent(this,MainActivity.class);
-//            startActivity(intent);
+            //初始化数据
+            initData();
         }
     }
 
+    /**
+     * 加载数据成功，去主界面
+     *
+     * @param m 成功后发送的信息，用来做标识
+     * @return
+     * @throws
+     * @author BA on 2017/12/8 0008
+     */
+    @Subscribe
+    public void initDataSuccess(String m) {
+        if ("initDataSuccess".equals(m)) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
 
+    /**
+     * 异步加载数据
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2017/12/8 0008
+     */
+    private void initData() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //初始化数据
+                List<SongsBean> songs = new GetSongUtil().start(SplashActivity.this, null, null);
+                List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
+                List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
 
+                //将数据全局保存
+                MyApplication app = (MyApplication) SplashActivity.this.getApplication();
+                app.setArtists(artists);
+                app.setAlbums(albums);
+                app.setSongs(songs);
+
+                EventBus.getDefault().post("initDataSuccess");
+            }
+        }).run();
+    }
 
     /**
      * 检查是否有权限
-     * @author BA on 2017/12/7 0007.
-     * @param 需要申请的权限
+     *
+     * @param permissions 需要申请的权限
      * @return true：有权限，false：无权限
-     * @exception
+     * @throws
+     * @author BA on 2017/12/7 0007.
      */
-    private boolean checkPermission(String...permissions){
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M) {
+    private boolean checkPermission(String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             List<String> mPermissions = new ArrayList<>();
             for (String p : permissions) {
                 int result = ContextCompat.checkSelfPermission(this, p);
@@ -62,7 +116,7 @@ public class SplashActivity extends AppCompatActivity {
             if (mPermissions.size() != 0) {
                 ActivityCompat.requestPermissions(this
                         , mPermissions.toArray(new String[mPermissions.size()])
-                        ,REQUEST_PERMISSION_CODE);
+                        , REQUEST_PERMISSION_CODE);
                 return false;
             }
         }
@@ -71,7 +125,7 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode==REQUEST_PERMISSION_CODE&&grantResults.length!=0) {
+        if (requestCode == REQUEST_PERMISSION_CODE && grantResults.length != 0) {
             for (int g : grantResults) {
                 if (g != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "没有权限，程序无法正常运行", Toast.LENGTH_SHORT).show();
@@ -80,14 +134,16 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             //初始化数据，然后启动主界面
-            Toast.makeText(this, "初始化数据然后启动主界面", Toast.LENGTH_SHORT).show();
-
-//            //我要测试所以这里就不跳转
-//            Intent intent=new Intent(this,MainActivity.class);
-//            startActivity(intent);
-        }else{
+            initData();
+        } else {
             Toast.makeText(this, "没有权限，程序无法正常运行", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
