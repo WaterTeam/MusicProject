@@ -1,5 +1,6 @@
 package viewpagers.album.page;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -59,5 +60,7 @@ public class AlbumPageFragment extends Fragment {
         albumPV_data.setAlbum_RV_item_song2_time("03.25");
         albumPV_data.setAlbum_RV_item_song3_time(".0321");
         albumPV_dataList.add(albumPV_data);
+        albumPV_dataList.add(albumPV_data);
+        albumPV_dataList.add(albumPV_data);albumPV_dataList.add(albumPV_data);albumPV_dataList.add(albumPV_data);
     }
 }
