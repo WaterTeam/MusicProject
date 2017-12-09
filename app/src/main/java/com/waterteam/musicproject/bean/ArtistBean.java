@@ -1,5 +1,6 @@
 package com.waterteam.musicproject.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @Function : 用来记录艺术家的Bean
  */
 
-public class ArtistBean {
+public class ArtistBean implements Serializable,GetCoverUri {
     private String name;
     private long id;
     private List<SongsBean> songs;
@@ -29,5 +30,10 @@ public class ArtistBean {
 
     public List<SongsBean> getSongs() {
         return songs;
+    }
+
+    @Override
+    public long getAlbumId() {
+        return songs.get(0).getAlbumId();
     }
 }

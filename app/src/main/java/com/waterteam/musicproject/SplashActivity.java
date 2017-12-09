@@ -4,22 +4,21 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.waterteam.musicproject.application.MyApplication;
+import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.util.GetAlbumUtil;
-import com.waterteam.musicproject.util.GetArtistUtil;
-import com.waterteam.musicproject.util.GetSongUtil;
+import com.waterteam.musicproject.util.get_data_util.GetAlbumUtil;
+import com.waterteam.musicproject.util.get_data_util.GetArtistUtil;
+import com.waterteam.musicproject.util.get_data_util.GetSongUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,7 +32,7 @@ import java.util.List;
  * @Function : App启动页，在这里申请权限，还有进行全局的数据初始化操作
  */
 public class SplashActivity extends AppCompatActivity {
-
+    private static final String TAG = "SplashActivity";
     //权限请求码
     private final int REQUEST_PERMISSION_CODE = 843;
 
@@ -41,9 +40,11 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        Log.d(TAG, "onCreate: ");
         EventBus.getDefault().register(this);
         //检查权限
-        boolean havePermission = checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        boolean havePermission = checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE
+        ,Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
             //初始化数据
             initData();
@@ -85,14 +86,14 @@ public class SplashActivity extends AppCompatActivity {
                 List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
 
                 //将数据全局保存
-                MyApplication app = (MyApplication) SplashActivity.this.getApplication();
-                app.setArtists(artists);
-                app.setAlbums(albums);
-                app.setSongs(songs);
+                AllMediaBean mySongsData = AllMediaBean.getInstance();
+                mySongsData.setArtists(artists);
+                mySongsData.setAlbums(albums);
+                mySongsData.setSongs(songs);
 
                 EventBus.getDefault().post("initDataSuccess");
             }
-        }).run();
+        }).start();
     }
 
     /**

@@ -1,5 +1,8 @@
 package com.waterteam.musicproject.bean;
 
+import android.graphics.Bitmap;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +11,7 @@ import java.util.List;
  * @Function : 用来记录唱片的Bean
  */
 
-public class AlbumBean {
+public class AlbumBean implements Serializable,GetCoverUri{
     //该专辑下的歌曲
     private List<SongsBean> songs;
     //专辑名
@@ -18,7 +21,7 @@ public class AlbumBean {
     //歌手
     private String artist;
 
-    public AlbumBean(String name,String artist,long album_id,List<SongsBean> songs){
+    public AlbumBean(String name, String artist, long album_id, List<SongsBean> songs){
         this.name=name;
         this.artist=artist;
         this.album_id=album_id;
@@ -37,7 +40,7 @@ public class AlbumBean {
         return name;
     }
 
-    public long getAlbum_id() {
+    public long getAlbumId() {
         return album_id;
     }
 }

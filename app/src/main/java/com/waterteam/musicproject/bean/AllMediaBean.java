@@ -1,20 +1,15 @@
-package com.waterteam.musicproject.application;
+package com.waterteam.musicproject.bean;
 
-import android.app.Application;
-
-import com.waterteam.musicproject.bean.AlbumBean;
-import com.waterteam.musicproject.bean.ArtistBean;
-import com.waterteam.musicproject.bean.SongsBean;
-
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by BA on 2017/12/8 0008.
  *
- * @Function : 全局存储歌曲信息，其实有没有这个必要还不知道，暂时现这样写
+ * @Function : 全局存储歌曲信息，谷歌推荐这样写
  */
 
-public class MyApplication extends Application {
+public class AllMediaBean implements Serializable {
     private List<ArtistBean> artists;
     private List<AlbumBean> albums;
     private List<SongsBean> songs;
@@ -41,5 +36,16 @@ public class MyApplication extends Application {
 
     public void setSongs(List<SongsBean> songs) {
         this.songs = songs;
+    }
+
+    private AllMediaBean() {
+    }
+
+    public static AllMediaBean getInstance() {
+        return SingleInstance.MY_SONGS_DATA;
+    }
+
+    private static class SingleInstance {
+        private static final AllMediaBean MY_SONGS_DATA = new AllMediaBean();
     }
 }

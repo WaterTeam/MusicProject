@@ -1,18 +1,19 @@
 package viewpagers.album.page;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.waterteam.musicproject.R;
+import com.waterteam.musicproject.bean.AllMediaBean;
+import com.waterteam.musicproject.bean.AlbumBean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +21,8 @@ import java.util.List;
  */
 
 public class AlbumPageFragment extends Fragment {
-    List<AlbumPV_Data> albumPV_dataList = new ArrayList<>();
+    private static final String TAG = "AlbumPageFragment";
+    List<AlbumBean> albumPV_dataList ;
     RecyclerView recyclerView;
 
     @Nullable
@@ -32,15 +34,19 @@ public class AlbumPageFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Log.d(TAG, "onActivityCreated: ");
         initAlbumPV_Data();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        AlbumRV_Adapter albumRV_Adaper = new AlbumRV_Adapter(albumPV_dataList);
+        AlbumRV_Adapter albumRV_Adaper = new AlbumRV_Adapter(getActivity(),albumPV_dataList);
         recyclerView.setAdapter(albumRV_Adaper);
-
     }
 
     /**
@@ -51,16 +57,6 @@ public class AlbumPageFragment extends Fragment {
      * @exception
      */
     private void initAlbumPV_Data(){
-        AlbumPV_Data albumPV_data = new AlbumPV_Data();
-        albumPV_data.setAlbum_RV_item_title("我是谁");
-        albumPV_data.setAlbum_RV_item_song1_name("fsdfsdfsd");
-        albumPV_data.setAlbum_RV_item_song2_name("我是谁类");
-        albumPV_data.setAlbum_RV_item_song3_name("管你是谁");
-        albumPV_data.setAlbum_RV_item_song1_time("03.25");
-        albumPV_data.setAlbum_RV_item_song2_time("03.25");
-        albumPV_data.setAlbum_RV_item_song3_time(".0321");
-        albumPV_dataList.add(albumPV_data);
-        albumPV_dataList.add(albumPV_data);
-        albumPV_dataList.add(albumPV_data);albumPV_dataList.add(albumPV_data);albumPV_dataList.add(albumPV_data);
+        albumPV_dataList= AllMediaBean.getInstance().getAlbums();
     }
 }

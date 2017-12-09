@@ -17,11 +17,13 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
         <ImageView
+            android:scaleType="centerCrop"
+            android:background="@color/colorPrimary"
             android:id="@+id/album_RV_item_imageView"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_weight="1"
-            android:src="@drawable/gangbi"/>
+            android:src="@drawable/play_img_default"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="120dp"

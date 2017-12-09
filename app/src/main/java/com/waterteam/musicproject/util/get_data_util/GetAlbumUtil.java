@@ -1,4 +1,4 @@
-package com.waterteam.musicproject.util;
+package com.waterteam.musicproject.util.get_data_util;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -61,7 +61,9 @@ public class GetAlbumUtil {
                     Log.d(TAG, id+"");
                     Log.d(TAG, songs.size()+"首");
                 }
-                alubmList.add(new AlbumBean(name,artist,id,songs));
+               AlbumBean albumBean= new AlbumBean(name,artist,id,songs);
+
+                alubmList.add(albumBean);
             }while (cursor.moveToNext());
         }
         return alubmList;
