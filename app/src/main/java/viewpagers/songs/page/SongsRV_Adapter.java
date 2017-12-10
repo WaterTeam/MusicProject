@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.waterteam.musicproject.R;
+import com.waterteam.musicproject.bean.SongsBean;
 
 import java.util.List;
 
@@ -17,24 +18,31 @@ import static android.R.id.list;
  */
 
 public class SongsRV_Adapter extends RecyclerView.Adapter<SongsRV_Adapter.ViewHolder> {
-    List<SongsRV_Data> songsRV_dataList;
-    public SongsRV_Adapter(List<SongsRV_Data> list){
+    List<SongsBean> songsRV_dataList;
+    public SongsRV_Adapter(List<SongsBean> list){
         songsRV_dataList = list;
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        SongsRV_Data songsRV_data = songsRV_dataList.get(position);
-        holder.song_RV_item_songName.setText(songsRV_data.getSongName());
-        holder.song_RV_item_singer.setText(songsRV_data.getSinger());
-        holder.song_RV_item_songTime.setText(songsRV_data.getSongTime());
+
+        SongsBean songsRV_data = songsRV_dataList.get(position);
+        holder.song_RV_item_songName.setText(songsRV_data.getName());
+        holder.song_RV_item_singer.setText(songsRV_data.getAuthor());
+        holder.song_RV_item_songTime.setText(songsRV_data.getFormatLenght());
 
         //如果当前位置等于该分类首字母的Char的位置 ，则认为是第一次出现，则让这个子项的catalog的textView显示，若不是则不View.GONE
         if(position == getPositionForSection(songsRV_data.getFirstLetter())){
             holder.song_RV_item_catalog.setVisibility(View.VISIBLE);
             holder.song_RV_item_catalog.setText(songsRV_data.getFirstLetter());
+            holder.line.setVisibility(View.VISIBLE);
+            if("A".equals(songsRV_data.getFirstLetter())){//A开头的分隔线不显示
+                holder.line.setVisibility(View.GONE);
+            }
         }else{
             holder.song_RV_item_catalog.setVisibility(View.GONE);
+            holder.line.setVisibility(View.GONE);
         }
+
     }
 
     @Override
@@ -51,7 +59,7 @@ public class SongsRV_Adapter extends RecyclerView.Adapter<SongsRV_Adapter.ViewHo
     /**
      * copy而来：获取首字母在数据列表中第一次出现位置
      * @author CNT on 2017/12/7.
-     * @param  子项的歌曲名字的首字母
+     * @param
      * @return 是就返回子项的position，不是就返回-1
      * @exception
      */
@@ -70,12 +78,14 @@ public class SongsRV_Adapter extends RecyclerView.Adapter<SongsRV_Adapter.ViewHo
         TextView song_RV_item_singer;
         TextView song_RV_item_songTime;
         TextView song_RV_item_catalog;
+        View line;
         public ViewHolder(View itemView) {
             super(itemView);
             song_RV_item_singer = (TextView) itemView.findViewById(R.id.songs_RV_item_singer);
             song_RV_item_songName = (TextView) itemView.findViewById(R.id.song_RV_item_songName);
             song_RV_item_songTime = (TextView) itemView.findViewById(R.id.songs_RV_item_songTime);
             song_RV_item_catalog = (TextView) itemView.findViewById(R.id.song_RV_item_catalog);
+            line = (View) itemView.findViewById(R.id.song_RV_item_line);
         }
     }
 

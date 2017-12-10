@@ -21,7 +21,9 @@ import java.util.List;
  */
 
 public class AlbumPageFragment extends Fragment {
+
     private static final String TAG = "AlbumPageFragment";
+
     List<AlbumBean> albumPV_dataList ;
     RecyclerView recyclerView;
 
@@ -57,6 +59,7 @@ public class AlbumPageFragment extends Fragment {
      * @exception
      */
     private void initAlbumPV_Data(){
+
         albumPV_dataList= AllMediaBean.getInstance().getAlbums();
     }
 }

@@ -1,7 +1,11 @@
 package viewpagers.album.page;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.net.Uri;
+import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,8 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AlbumBean;
+import com.waterteam.musicproject.bean.GetCoverUri;
+import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.util.GetSongsCoverUtil;
 
 import java.util.List;
@@ -58,6 +65,21 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
         AlbumBean albumData = albumPV_dataList.get(position);
         holder.album_RV_item_title.setText(albumData.getName());
         GetSongsCoverUtil.setCover(context,albumData,holder.album_RV_item_imageView);
+
+        holder.album_RV_item_title.setText(albumData.getName());
+
+        List<SongsBean> songsBeanList = albumData.getSongs();
+
+          holder.album_RV_item_song1_name.setText(songsBeanList.get(0).getName());
+          holder.album_RV_item_song1_time.setText(songsBeanList.get(0).getFormatLenght());
+        if(songsBeanList.size()>=2 ) {
+            holder.album_RV_item_song2_name.setText(songsBeanList.get(1).getName());
+            holder.album_RV_item_song2_time.setText(songsBeanList.get(1).getFormatLenght());
+        }
+        if(songsBeanList.size()>=3 ){
+            holder.album_RV_item_song3_name.setText(songsBeanList.get(2).getName());
+            holder.album_RV_item_song3_time.setText(songsBeanList.get(2).getFormatLenght());
+        }
     }
 
     @Override

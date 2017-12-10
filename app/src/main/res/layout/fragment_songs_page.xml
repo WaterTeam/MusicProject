@@ -4,13 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/songs_title"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="16dp"
         android:text="歌曲"
         android:textSize="30dp"
-        android:gravity="center_vertical"/>
+        android:textColor="#292929"
+        android:gravity="center_vertical|bottom"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/songs_page_recycle"
         android:layout_width="match_parent"
