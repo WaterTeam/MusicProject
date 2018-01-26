@@ -19,9 +19,9 @@ import viewpagers.songs.page.SongsPageFragment;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private boolean debug=true;
+    private boolean debug = false;
     ViewPager viewPager;
-    List<Fragment> fragmentList  = new ArrayList<Fragment>();
+    List<Fragment> fragmentList = new ArrayList<Fragment>();
     MyPageAdapter fragmentPagerAdapter;
 
 
@@ -33,17 +33,14 @@ public class MainActivity extends AppCompatActivity {
         AllMediaBean mySongsData;
 
         //为了解决程序被杀死，再回来后空指针异常的问题我希望你这样再处理下数据源，反正这里必须要这样写
-        if (savedInstanceState!=null){
-            mySongsData=(AllMediaBean) savedInstanceState.getSerializable("datas");
+        if (savedInstanceState != null) {
+            mySongsData = (AllMediaBean) savedInstanceState.getSerializable("datas");
             AllMediaBean.getInstance().setArtists(mySongsData.getArtists());
             AllMediaBean.getInstance().setAlbums(mySongsData.getAlbums());
             AllMediaBean.getInstance().setSongs(mySongsData.getSongs());
             Log.d(TAG, "从保存的获取");
-        }else { //下面的代码你写不写都行，我只是测试而已
-            mySongsData= AllMediaBean.getInstance();
-        }
-        
-        if (debug) {
+        } else if (debug) { //下面的代码你写不写都行，我只是测试而已
+            mySongsData = AllMediaBean.getInstance();
             Log.d(TAG, "艺术家=" + mySongsData.getArtists().size());
             Log.d(TAG, "专辑=" + mySongsData.getAlbums().size());
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
@@ -60,12 +57,13 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * initView()方法用于初始化主活动界面
-     * @author CNT on 2017/12/5.
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author CNT on 2017/12/5.
      */
-    private void initView(){
+    private void initView() {
         viewPager = (ViewPager) this.findViewById(R.id.viewPager_MainActivity);
 
         //往viewPager的数据列表中添加3个碎片；
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentList.add(new AlbumPageFragment());
         fragmentList.add(new SongsPageFragment());
 
-        fragmentPagerAdapter = new MyPageAdapter(getSupportFragmentManager(),fragmentList);
+        fragmentPagerAdapter = new MyPageAdapter(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentPagerAdapter);
     }
 

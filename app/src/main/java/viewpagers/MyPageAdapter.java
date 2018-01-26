@@ -3,6 +3,7 @@ package viewpagers;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -32,5 +33,16 @@ public class MyPageAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return fragmentList.size();
+    }
+
+    /**
+     * 复写这个方法去掉super，禁止销毁碎片，这样滑动不会卡顿
+     * @author BA on 2018/1/26 0026
+     * @param
+     * @return
+     * @exception
+     */
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
     }
 }

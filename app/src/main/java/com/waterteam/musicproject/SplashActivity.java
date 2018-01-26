@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,9 +17,9 @@ import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.util.get_data_util.GetAlbumUtil;
-import com.waterteam.musicproject.util.get_data_util.GetArtistUtil;
-import com.waterteam.musicproject.util.get_data_util.GetSongUtil;
+import com.waterteam.musicproject.util.getdatautil.GetAlbumUtil;
+import com.waterteam.musicproject.util.getdatautil.GetArtistUtil;
+import com.waterteam.musicproject.util.getdatautil.GetSongUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -81,7 +82,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //初始化数据
-                List<SongsBean> songs = new GetSongUtil().start(SplashActivity.this, null, null);
+                List<SongsBean> songs = new GetSongUtil().start(SplashActivity.this, MediaStore.Audio.Media.DURATION+">=?", new String[]{"90000"});
                 List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
                 List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
 

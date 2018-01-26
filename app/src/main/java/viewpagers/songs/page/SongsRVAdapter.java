@@ -10,15 +10,13 @@ import com.waterteam.musicproject.R;
 
 import java.util.List;
 
-import static android.R.id.list;
-
 /**
  * Created by Administrator on 2017/12/7.
  */
 
-public class SongsRV_Adapter extends RecyclerView.Adapter<SongsRV_Adapter.ViewHolder> {
+public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHolder> {
     List<SongsRV_Data> songsRV_dataList;
-    public SongsRV_Adapter(List<SongsRV_Data> list){
+    public SongsRVAdapter(List<SongsRV_Data> list){
         songsRV_dataList = list;
     }
     @Override

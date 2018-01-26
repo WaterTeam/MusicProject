@@ -1,4 +1,4 @@
-package com.waterteam.musicproject.util.get_data_util;
+package com.waterteam.musicproject.util.getdatautil;
 
 import android.content.Context;
 import android.database.Cursor;

@@ -12,12 +12,8 @@ import android.view.ViewGroup;
 import com.waterteam.musicproject.R;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import viewpagers.album.page.AlbumPV_Data;
 
 /**
  * Created by CNT on 2017/12/6.
@@ -42,7 +38,7 @@ public class SongsPageFragment extends Fragment {
         init();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        SongsRV_Adapter songsRV_adapter = new SongsRV_Adapter(songsRV_dataList);
+        SongsRVAdapter songsRV_adapter = new SongsRVAdapter(songsRV_dataList);
         recyclerView.setAdapter(songsRV_adapter);
     }
 

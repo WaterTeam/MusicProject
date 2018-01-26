@@ -7,7 +7,7 @@ import android.widget.TextView;
  * Created by Administrator on 2017/12/6.
  */
 
-public class AlbumPV_Data {
+public class AlbumPVData {
     String album_RV_item_title;
     ImageView album_RV_item_imageView;//图片这里还不知道怎么写，所以随便写的
 

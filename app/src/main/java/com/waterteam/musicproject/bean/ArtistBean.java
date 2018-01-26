@@ -9,15 +9,15 @@ import java.util.List;
  * @Function : 用来记录艺术家的Bean
  */
 
-public class ArtistBean implements Serializable,GetCoverUri {
+public class ArtistBean implements Serializable, GetCoverUri {
     private String name;
     private long id;
     private List<SongsBean> songs;
 
-    public ArtistBean(String name,long id,List<SongsBean> songs){
-        this.name=name;
-        this.id=id;
-        this.songs=songs;
+    public ArtistBean(String name, long id, List<SongsBean> songs) {
+        this.name = name;
+        this.id = id;
+        this.songs = songs;
     }
 
     public String getName() {
@@ -30,6 +30,10 @@ public class ArtistBean implements Serializable,GetCoverUri {
 
     public List<SongsBean> getSongs() {
         return songs;
+    }
+
+    public int getSongsCount() {
+        return songs.size();
     }
 
     @Override
