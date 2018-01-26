@@ -10,9 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waterteam.musicproject.R;
+import com.waterteam.musicproject.bean.AllMediaBean;
+import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.util.GetSongsCoverUtil;
+import com.waterteam.musicproject.util.get_data_util.GetSongUtil;
 
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.Collections;
+=======
+>>>>>>> 0109b9b9ae8aead027b5c97fc785c183f5463f58
 import java.util.List;
 
 /**
@@ -20,7 +27,7 @@ import java.util.List;
  */
 
 public class SongsPageFragment extends Fragment {
-    List<SongsRV_Data> songsRV_dataList = new ArrayList<>();
+    List<SongsBean> songsRV_dataList = new ArrayList<>();
     RecyclerView recyclerView;
 
     @Nullable
@@ -44,31 +51,7 @@ public class SongsPageFragment extends Fragment {
 
     private void init() {
         //测试
-        SongsRV_Data songsRV_data = new SongsRV_Data();
-        songsRV_data.setSinger("陈易迅");
-        songsRV_data.setSongName("爱如潮水");
-        songsRV_data.setSongTime("03.25");
-        songsRV_dataList.add(songsRV_data);
 
-        SongsRV_Data songsRV_data2 = new SongsRV_Data();
-        songsRV_data2.setSinger("陈易迅");
-        songsRV_data2.setSongName("你把我灌醉");
-        songsRV_data2.setSongTime("03.25");
-        songsRV_dataList.add(songsRV_data2);
-
-        SongsRV_Data songsRV_data1 = new SongsRV_Data();
-        songsRV_data1.setSinger("陈易迅");
-        songsRV_data1.setSongName("哈哈");
-        songsRV_data1.setSongTime("03.25");
-        songsRV_dataList.add(songsRV_data1);
-
-        SongsRV_Data songsRV_data3 = new SongsRV_Data();
-        songsRV_data3.setSinger("陈易迅");
-        songsRV_data3.setSongName("你在干什么");
-        songsRV_data3.setSongTime("03.25");
-        songsRV_dataList.add(songsRV_data3);
-
-        Collections.sort(songsRV_dataList);
-
+        songsRV_dataList =  AllMediaBean.getInstance().getSongs();
     }
 }

@@ -10,12 +10,19 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="16dp"
         android:text="专辑"
+<<<<<<< HEAD
         android:textColor="@color/titleColor"
         android:textSize="30sp"
         android:gravity="center_vertical"
         android:focusableInTouchMode="true"
         android:focusable="true"/>
+=======
+        android:textSize="30dp"
+        android:textColor="#292929"
+        android:gravity="center_vertical|bottom"/>
+>>>>>>> 0109b9b9ae8aead027b5c97fc785c183f5463f58
     <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="15dp"
         android:id="@+id/album_page_recycle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -85,6 +86,9 @@ public class SplashActivity extends AppCompatActivity {
                 List<SongsBean> songs = new GetSongUtil().start(SplashActivity.this, MediaStore.Audio.Media.DURATION+">=?", new String[]{"90000"});
                 List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
                 List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
+
+                Collections.sort(songs);//先把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
+
 
                 //将数据全局保存
                 AllMediaBean mySongsData = AllMediaBean.getInstance();

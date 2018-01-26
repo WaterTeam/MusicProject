@@ -1,28 +1,17 @@
 package com.waterteam.musicproject.util;
 
-import android.content.ContentResolver;
+
 import android.content.ContentUris;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.os.ParcelFileDescriptor;
+
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.GetCoverUri;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by BA on 2017/12/7 0007.
