@@ -13,13 +13,10 @@ import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.util.GetSongsCoverUtil;
-import com.waterteam.musicproject.util.get_data_util.GetSongUtil;
+import com.waterteam.musicproject.util.getdatautil.GetSongUtil;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Collections;
-=======
->>>>>>> 0109b9b9ae8aead027b5c97fc785c183f5463f58
 import java.util.List;
 
 /**

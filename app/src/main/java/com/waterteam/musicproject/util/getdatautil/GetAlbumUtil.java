@@ -46,7 +46,7 @@ public class GetAlbumUtil {
      */
     public List<AlbumBean> start(Context context, String selection, String[] selectionArgs) {
         List<AlbumBean> alubmList = new ArrayList<>();
-        Cursor cursor = context.getContentResolver().query(externalUri, null, selection, selectionArgs, null);
+        Cursor cursor = context.getContentResolver().query(externalUri, null, selection, selectionArgs,MediaStore.Audio.Albums.ALBUM+" COLLATE LOCALIZED desc");
         if (cursor.moveToFirst()) {
             do {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
