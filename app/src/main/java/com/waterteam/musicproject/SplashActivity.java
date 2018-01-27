@@ -66,10 +66,10 @@ public class SplashActivity extends AppCompatActivity {
      */
     @Subscribe
     public void initDataSuccess(String m) {
-        if ("initDataSuccess".equals(m) && songsOK && albumOK && artistOK) {
+        if ("initDataSuccess".equals(m)) {
             Intent intent = new Intent(this, MainActivity.class);
-            //startActivity(intent);
-            //finish();
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -108,7 +108,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 AllMediaBean.getInstance().setSongs(songs);
                 songsOK = true;
-                EventBus.getDefault().post("initDataSuccess");
+                startActivity();
             }
         }).start();
     }
@@ -128,7 +128,7 @@ public class SplashActivity extends AppCompatActivity {
                 List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
                 AllMediaBean.getInstance().setAlbums(albums);
                 albumOK = true;
-                EventBus.getDefault().post("initDataSuccess");
+                startActivity();
             }
         }).start();
     }
@@ -147,11 +147,21 @@ public class SplashActivity extends AppCompatActivity {
                 List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
                 AllMediaBean.getInstance().setArtists(artists);
                 artistOK = true;
-                EventBus.getDefault().post("initDataSuccess");
+                startActivity();
             }
         }).start();
     }
 
+    private void startActivity(){
+        Log.d(TAG, "startActivity: "+System.currentTimeMillis());
+        synchronized (new Object()) {
+            if (songsOK && albumOK && artistOK) {
+                songsOK = false;
+                EventBus.getDefault().post("initDataSuccess");
+                Log.d(TAG, "startActivity: 222");
+            }
+        }
+    }
 
     /**
      * 检查是否有权限
