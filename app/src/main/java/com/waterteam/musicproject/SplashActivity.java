@@ -37,6 +37,9 @@ public class SplashActivity extends AppCompatActivity {
     private static final String TAG = "SplashActivity";
     //权限请求码
     private final int REQUEST_PERMISSION_CODE = 843;
+    private boolean songsOK = false;
+    private boolean albumOK = false;
+    private boolean artistOK = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
         EventBus.getDefault().register(this);
         //检查权限
         boolean havePermission = checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE
-        ,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                , Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
             //初始化数据
             initData();
@@ -63,7 +66,7 @@ public class SplashActivity extends AppCompatActivity {
      */
     @Subscribe
     public void initDataSuccess(String m) {
-        if ("initDataSuccess".equals(m)) {
+        if ("initDataSuccess".equals(m) && songsOK && albumOK && artistOK) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -79,27 +82,76 @@ public class SplashActivity extends AppCompatActivity {
      * @author BA on 2017/12/8 0008
      */
     private void initData() {
+        //初始化数据
+        getSongs();
+        getAlubms();
+        getArtists();
+        Log.d(TAG, "initData: "+1);
+    }
+
+    /**
+     * 一个线程去获取歌曲
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/1/27 0027
+     */
+    private void getSongs() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //初始化数据
-                List<SongsBean> songs = new GetSongUtil().start(SplashActivity.this, MediaStore.Audio.Media.DURATION+">=?", new String[]{"90000"});
-                List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
-                List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
+                List<SongsBean> songs = new GetSongUtil().start(SplashActivity.
+                        this, MediaStore.Audio.Media.DURATION + ">=?", new String[]{"90000"});
 
                 Collections.sort(songs);//先把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
 
-
-                //将数据全局保存
-                AllMediaBean mySongsData = AllMediaBean.getInstance();
-                mySongsData.setArtists(artists);
-                mySongsData.setAlbums(albums);
-                mySongsData.setSongs(songs);
-
+                AllMediaBean.getInstance().setSongs(songs);
+                songsOK = true;
                 EventBus.getDefault().post("initDataSuccess");
             }
         }).start();
     }
+
+    /**
+     * 一个线程去获取专辑
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/1/27 0027
+     */
+    private void getAlubms() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
+                AllMediaBean.getInstance().setAlbums(albums);
+                albumOK = true;
+                EventBus.getDefault().post("initDataSuccess");
+            }
+        }).start();
+    }
+
+    /**
+     * 一个线程去获取艺术家
+     * @author BA on 2018/1/27 0027
+     * @param
+     * @return
+     * @exception
+     */
+    private void getArtists() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
+                AllMediaBean.getInstance().setArtists(artists);
+                artistOK = true;
+                EventBus.getDefault().post("initDataSuccess");
+            }
+        }).start();
+    }
+
 
     /**
      * 检查是否有权限
