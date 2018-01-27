@@ -68,8 +68,8 @@ public class SplashActivity extends AppCompatActivity {
     public void initDataSuccess(String m) {
         if ("initDataSuccess".equals(m) && songsOK && albumOK && artistOK) {
             Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            //startActivity(intent);
+            //finish();
         }
     }
 

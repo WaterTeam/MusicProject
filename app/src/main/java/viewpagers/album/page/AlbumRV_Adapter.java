@@ -64,21 +64,27 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         AlbumBean albumData = albumPV_dataList.get(position);
         holder.album_RV_item_title.setText(albumData.getName());
-        GetSongsCoverUtil.setCover(context,albumData,holder.album_RV_item_imageView);
+        GetSongsCoverUtil.setCover(context, albumData, holder.album_RV_item_imageView);
 
         holder.album_RV_item_title.setText(albumData.getName());
 
         List<SongsBean> songsBeanList = albumData.getSongs();
 
-          holder.album_RV_item_song1_name.setText(songsBeanList.get(0).getName());
-          holder.album_RV_item_song1_time.setText(songsBeanList.get(0).getFormatLenght());
-        if(songsBeanList.size()>=2 ) {
+        holder.album_RV_item_song1_name.setText(songsBeanList.get(0).getName());
+        holder.album_RV_item_song1_time.setText(songsBeanList.get(0).getFormatLenght());
+        if (songsBeanList.size() >= 2) {
             holder.album_RV_item_song2_name.setText(songsBeanList.get(1).getName());
             holder.album_RV_item_song2_time.setText(songsBeanList.get(1).getFormatLenght());
+        } else {//为了防止recycyleview产生的控件复用引起的控件内数据混乱，需要每次都判断
+            holder.album_RV_item_song2_name.setText("");
+            holder.album_RV_item_song2_time.setText("");
         }
-        if(songsBeanList.size()>=3 ){
+        if (songsBeanList.size() >= 3) {
             holder.album_RV_item_song3_name.setText(songsBeanList.get(2).getName());
             holder.album_RV_item_song3_time.setText(songsBeanList.get(2).getFormatLenght());
+        } else {
+            holder.album_RV_item_song3_name.setText("");
+            holder.album_RV_item_song3_time.setText("");
         }
     }
 

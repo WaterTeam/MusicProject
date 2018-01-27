@@ -7,8 +7,9 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 
 /**
  * 转化汉字类：copy而来
- * @author CNT on 2017/12/8.
+ *
  * @param
+ * @author CNT on 2017/12/8.
  * @return
  * @exception
  */
@@ -67,7 +68,7 @@ public class Cn2Spell {
         for (int i = 0; i < nameChar.length; i++) {
             if (nameChar[i] > 128) {
                 try {
-                    sb.append(PinyinHelper.toHanyuPinyinStringArray(nameChar[i], defaultFormat)[0]);
+                        sb.append(PinyinHelper.toHanyuPinyinStringArray(nameChar[i], defaultFormat)[0]);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -3,7 +3,9 @@ package com.waterteam.musicproject.bean;
 import java.io.Serializable;
 
 import viewpagers.songs.page.Cn2Spell;
+
 import java.io.Serializable;
+
 import android.support.annotation.NonNull;
 
 import viewpagers.songs.page.Cn2Spell;
@@ -13,12 +15,12 @@ import viewpagers.songs.page.Cn2Spell;
  *
  * @Function : 用来记录歌曲信息的Bean
  */
-public class SongsBean implements Serializable, GetCoverUri,Comparable<SongsBean> {
-/**
- * @author CNT on 2017/12/9.
- *         <p>
- *         实现了Comparable接口，好让歌曲排序,添加了firstLetter用于排序,将耗时的firstLetter赋值写在构造函数里，这样在SplashActivity时就处理了,不然在碎片中处理会卡；
- */
+public class SongsBean implements Serializable, GetCoverUri, Comparable<SongsBean> {
+    /**
+     * @author CNT on 2017/12/9.
+     * <p>
+     * 实现了Comparable接口，好让歌曲排序,添加了firstLetter用于排序,将耗时的firstLetter赋值写在构造函数里，这样在SplashActivity时就处理了,不然在碎片中处理会卡；
+     */
 
     private String location;    //储存位置
     private String name;        //名字
@@ -48,21 +50,26 @@ public class SongsBean implements Serializable, GetCoverUri,Comparable<SongsBean
         return albumId;
     }
 
-    public SongsBean(String name, String author, int length,String formatLenght, long songId, long albumId, String location) {
+    public SongsBean(String name, String author, int length, String formatLenght, long songId, long albumId, String location) {
         this.name = name;
         this.author = author;
         this.length = length;
         this.location = location;
         this.songId = songId;
         this.albumId = albumId;
-        this.formatLenght=formatLenght;
-        this.firstLetter = Cn2Spell.getPinYin(name).substring(0,1).toUpperCase();
-        if (!firstLetter.matches("[A-Z]")) { // 如果不在A-Z中则默认为“#”
+        this.formatLenght = formatLenght;
+
+        if (this.name != null && Cn2Spell.getPinYin(name) != null && Cn2Spell.getPinYin(name).length() >= 1) {
+            this.firstLetter = Cn2Spell.getPinYin(name).substring(0, 1).toUpperCase();
+            if (firstLetter!=null&&!firstLetter.matches("[A-Z]")) { // 如果不在A-Z中则默认为“#”
+                firstLetter = "#";
+            }
+        } else {
             firstLetter = "#";
         }
     }
 
-    public String getTime(){
+    public String getTime() {
         return formatLenght;
     }
 
@@ -93,7 +100,10 @@ public class SongsBean implements Serializable, GetCoverUri,Comparable<SongsBean
             return 1;
         } else if (!getFirstLetter().equals("#") && o.getFirstLetter().equals("#")) {
             return -1;
-        } else {
+        }
+        else if(getFirstLetter().equals("#") && o.getFirstLetter().equals("#")){
+            return 1;
+        }else {
             return Cn2Spell.getPinYin(getName()).compareToIgnoreCase(Cn2Spell.getPinYin(o.getName()));
         }
     }

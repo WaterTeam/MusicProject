@@ -56,9 +56,12 @@ public class GetSongUtil {
                 fLength=(float)Math.round(fLength*100);
                 fLength=fLength/100;
                 String sLength=fLength+"";
+
                 String[] time=(sLength).split("\\.");
-                String min=time[0];
-                String second=time[1];
+                String min = "";
+                String second = "";
+                if(time.length>=1)min=time[0];
+                if(time.length>=2)second=time[1];
 
                 //我测试用的
                 if (debug) {

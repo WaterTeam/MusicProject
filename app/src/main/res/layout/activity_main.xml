@@ -13,9 +13,30 @@
         android:layout_weight="1">
     </android.support.v4.view.ViewPager>
 
-    <View
+    <LinearLayout
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#7f9eb2"/>
+        android:background="#7f9eb2"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/MainActivity_songName"
+            android:layout_width="200dp"
+            android:layout_height="28dp"
+            android:layout_marginLeft="16dp"
+            android:text="歌曲名字"
+            android:textSize="18dp"
+            android:gravity="center_vertical"
+            android:textColor="#fff"
+            />
+        <TextView
+            android:id="@+id/MainActivity_singer"
+            android:layout_width="200dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="16dp"
+            android:text="歌手"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:textColor="#fff"/>
+    </LinearLayout>
 </LinearLayout>
