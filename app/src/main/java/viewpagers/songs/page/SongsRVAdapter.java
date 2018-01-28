@@ -1,11 +1,13 @@
 package viewpagers.songs.page;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
 
@@ -36,9 +38,12 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
             if (position == getPositionForSection(songsRV_data.getFirstLetter())) {
                 holder.song_RV_item_catalog.setVisibility(View.VISIBLE);
                 holder.song_RV_item_catalog.setText(songsRV_data.getFirstLetter());
-                holder.line.setVisibility(View.VISIBLE);
-                if ("A".equals(songsRV_data.getFirstLetter())) {//A开头的分隔线不显示
+
+                if(position == 0){//开头的分隔线不显示
                     holder.line.setVisibility(View.GONE);
+                }
+                else{
+                    holder.line.setVisibility(View.VISIBLE);
                 }
             } else {
                 holder.song_RV_item_catalog.setVisibility(View.GONE);
