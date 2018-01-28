@@ -37,7 +37,9 @@ public class SongsBean implements Serializable, GetCoverUri, Comparable<SongsBea
 
     private String firstLetter; //歌曲名字的首字母
 
-
+    public void setFirstLetter(String firstLetter){
+        this.firstLetter = firstLetter;
+    }
     public String getFirstLetter() {
 
         return firstLetter;
@@ -59,16 +61,6 @@ public class SongsBean implements Serializable, GetCoverUri, Comparable<SongsBea
         this.songId = songId;
         this.albumId = albumId;
         this.formatLenght = formatLenght;
-
-        if (this.name != null && Cn2Spell.getPinYin(name) != null && Cn2Spell.getPinYin(name).length() >= 1) {
-            Log.d(TAG, "SongsBean: "+name);
-            this.firstLetter = Cn2Spell.getPinYin(name).substring(0, 1).toUpperCase();
-            if (firstLetter!=null&&!firstLetter.matches("[A-Z]")) { // 如果不在A-Z中则默认为“#”
-                firstLetter = "#";
-            }
-        } else {
-            firstLetter = "#";
-        }
     }
 
     public String getTime() {

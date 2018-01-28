@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import viewpagers.songs.page.Cn2Spell;
+
 /**
  * Created by BA on 2017/12/7 0007
  *
@@ -107,8 +109,22 @@ public class SplashActivity extends AppCompatActivity {
                 List<SongsBean> songs = new GetSongUtil().start(SplashActivity.
                         this, MediaStore.Audio.Media.DURATION + ">=? and " + MediaStore.Audio.Media.DURATION + "<=?", new String[]{"90000", "1200000"});
 
-                Collections.sort(songs);//先把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
+
                 //在这里获取firstLetter
+                for(SongsBean song:songs){
+                    String name = song.getName();
+                    if (name != null && Cn2Spell.getPinYin(name) != null && Cn2Spell.getPinYin(name).length() >= 1) {
+                        Log.d(TAG, "SongsBean: "+name);
+                        song.setFirstLetter( Cn2Spell.getPinYin(name).substring(0, 1).toUpperCase());
+                        if (song.getFirstLetter()!=null&&!song.getFirstLetter().matches("[A-Z]")) { // 如果不在A-Z中则默认为“#”
+                            song.setFirstLetter("#");
+                        }
+                    } else {
+                        song.setFirstLetter("#");
+                    }
+                }
+                //先把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
+                Collections.sort(songs);
                 AllMediaBean.getInstance().setSongs(songs);
                 songsOK=true;
                 startActivity();
