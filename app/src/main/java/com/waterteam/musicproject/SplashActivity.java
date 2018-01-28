@@ -48,7 +48,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+
         Log.d(TAG, "onCreate: ");
         EventBus.getDefault().register(this);
         //检查权限
@@ -118,8 +118,9 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity();
             }
         }).start();
-
     }
+
+
 
     /**
      * 获取专辑
