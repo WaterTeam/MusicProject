@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.adapter.SongsCarViewRVAdapter;
+import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.util.GetSongsCoverUtil;
 
@@ -24,13 +25,12 @@ import java.util.List;
  */
 
 public class ArtistRVAdapter extends RecyclerView.Adapter<ArtistRVAdapter.ViewHolder> {
-    private List<ArtistBean> artists;
+    private List<ArtistBean> artists= AllMediaBean.getInstance().getArtists();
     private Context context;
     private static final String TAG = "ArtistRVAdapter";
 
-     ArtistRVAdapter(Context context,List<ArtistBean> artists){
+     ArtistRVAdapter(Context context){
         this.context=context;
-        this.artists=artists;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

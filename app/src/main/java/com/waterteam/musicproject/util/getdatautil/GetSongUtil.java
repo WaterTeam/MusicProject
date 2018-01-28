@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class GetSongUtil {
     //是否进行测试
-    private boolean debug = true;
+    private boolean debug = false;
     //用来查表的Uri
     private final Uri externalUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
     private static final String TAG = "GetSongUtil";

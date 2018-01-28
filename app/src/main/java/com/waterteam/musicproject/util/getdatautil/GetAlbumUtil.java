@@ -22,7 +22,7 @@ import java.util.List;
 
 public class GetAlbumUtil {
     private static final String TAG = "GetAlbumUtil";
-    private boolean debug=true;
+    private boolean debug=false;
     //查询专辑信息的Uri
     private final Uri externalUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 

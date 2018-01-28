@@ -59,7 +59,7 @@ public class SongsBean implements Serializable, GetCoverUri, Comparable<SongsBea
         this.songId = songId;
         this.albumId = albumId;
         this.formatLenght = formatLenght;
-        
+
         if (this.name != null && Cn2Spell.getPinYin(name) != null && Cn2Spell.getPinYin(name).length() >= 1) {
             Log.d(TAG, "SongsBean: "+name);
             this.firstLetter = Cn2Spell.getPinYin(name).substring(0, 1).toUpperCase();

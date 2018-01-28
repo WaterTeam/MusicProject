@@ -24,8 +24,7 @@ public class ArtistPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_artist_page,container,false);
         recyclerView=(RecyclerView)view.findViewById(R.id.aritist_page_recycle);
-        ArtistRVAdapter artistRVAdapter=new ArtistRVAdapter(getContext()
-                , AllMediaBean.getInstance().getArtists());
+        ArtistRVAdapter artistRVAdapter=new ArtistRVAdapter(getContext());
         recyclerView.setAdapter(artistRVAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return  view;

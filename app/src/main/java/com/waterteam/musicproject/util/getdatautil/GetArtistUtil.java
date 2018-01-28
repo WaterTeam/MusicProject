@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GetArtistUtil {
     private static final String TAG = "GetArtistUtil";
-    private boolean debug=true;
+    private boolean debug=false;
     //查询歌手信息
     private static final Uri externalUri= MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 

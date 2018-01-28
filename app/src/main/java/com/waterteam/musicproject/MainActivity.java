@@ -29,11 +29,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         AllMediaBean mySongsData;
 
         //为了解决程序被杀死，再回来后空指针异常的问题我希望你这样再处理下数据源，反正这里必须要这样写
-        if (savedInstanceState != null&&AllMediaBean.getInstance().getSongs().size()<=0) {
+        if (savedInstanceState != null) {
             mySongsData = (AllMediaBean) savedInstanceState.getSerializable("datas");
             AllMediaBean.getInstance().setArtists(mySongsData.getArtists());
             AllMediaBean.getInstance().setAlbums(mySongsData.getAlbums());
