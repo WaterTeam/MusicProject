@@ -7,6 +7,7 @@ import viewpagers.songs.page.Cn2Spell;
 import java.io.Serializable;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import viewpagers.songs.page.Cn2Spell;
 
@@ -21,7 +22,7 @@ public class SongsBean implements Serializable, GetCoverUri, Comparable<SongsBea
      * <p>
      * 实现了Comparable接口，好让歌曲排序,添加了firstLetter用于排序,将耗时的firstLetter赋值写在构造函数里，这样在SplashActivity时就处理了,不然在碎片中处理会卡；
      */
-
+    private static final String TAG = "SongsBean";
     private String location;    //储存位置
     private String name;        //名字
     private String author;      //作者
@@ -58,8 +59,9 @@ public class SongsBean implements Serializable, GetCoverUri, Comparable<SongsBea
         this.songId = songId;
         this.albumId = albumId;
         this.formatLenght = formatLenght;
-
+        
         if (this.name != null && Cn2Spell.getPinYin(name) != null && Cn2Spell.getPinYin(name).length() >= 1) {
+            Log.d(TAG, "SongsBean: "+name);
             this.firstLetter = Cn2Spell.getPinYin(name).substring(0, 1).toUpperCase();
             if (firstLetter!=null&&!firstLetter.matches("[A-Z]")) { // 如果不在A-Z中则默认为“#”
                 firstLetter = "#";

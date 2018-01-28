@@ -82,12 +82,19 @@ public class SplashActivity extends AppCompatActivity {
      * @author BA on 2017/12/8 0008
      */
     private void initData() {
-        //初始化数据
-        getSongs();
-        getAlubms();
-        getArtists();
-        Log.d(TAG, "initData: "+1);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //初始化数据
+                getSongs();
+                getAlubms();
+                getArtists();
+                Log.d(TAG, "initData: "+1);
+                EventBus.getDefault().post("initDataSuccess");
+            }
+        }).start();
     }
+
 
     /**
      * 一个线程去获取歌曲
@@ -98,21 +105,13 @@ public class SplashActivity extends AppCompatActivity {
      * @author BA on 2018/1/27 0027
      */
     private void getSongs() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<SongsBean> songs = new GetSongUtil().start(SplashActivity.
-                        this, MediaStore.Audio.Media.DURATION + ">=?", new String[]{"90000"});
+        List<SongsBean> songs = new GetSongUtil().start(SplashActivity.
+                this, MediaStore.Audio.Media.DURATION + ">=? and " + MediaStore.Audio.Media.DURATION + "<=?", new String[]{"90000", "1200000"});
 
-                Collections.sort(songs);//先把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
+        Collections.sort(songs);//先把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
 
-                AllMediaBean.getInstance().setSongs(songs);
-                songsOK = true;
-                startActivity();
-            }
-        }).start();
+        AllMediaBean.getInstance().setSongs(songs);
     }
-
     /**
      * 一个线程去获取专辑
      *
@@ -122,15 +121,8 @@ public class SplashActivity extends AppCompatActivity {
      * @author BA on 2018/1/27 0027
      */
     private void getAlubms() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
                 List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
                 AllMediaBean.getInstance().setAlbums(albums);
-                albumOK = true;
-                startActivity();
-            }
-        }).start();
     }
 
     /**
@@ -141,26 +133,8 @@ public class SplashActivity extends AppCompatActivity {
      * @exception
      */
     private void getArtists() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
                 List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
                 AllMediaBean.getInstance().setArtists(artists);
-                artistOK = true;
-                startActivity();
-            }
-        }).start();
-    }
-
-    private void startActivity(){
-        Log.d(TAG, "startActivity: "+System.currentTimeMillis());
-        synchronized (new Object()) {
-            if (songsOK && albumOK && artistOK) {
-                songsOK = false;
-                EventBus.getDefault().post("initDataSuccess");
-                Log.d(TAG, "startActivity: 222");
-            }
-        }
     }
 
     /**
