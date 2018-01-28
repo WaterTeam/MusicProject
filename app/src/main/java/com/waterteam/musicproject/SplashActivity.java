@@ -108,7 +108,7 @@ public class SplashActivity extends AppCompatActivity {
                         this, MediaStore.Audio.Media.DURATION + ">=? and " + MediaStore.Audio.Media.DURATION + "<=?", new String[]{"90000", "1200000"});
 
                 Collections.sort(songs);//先把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
-
+                //在这里获取firstLetter
                 AllMediaBean.getInstance().setSongs(songs);
                 songsOK=true;
                 startActivity();
