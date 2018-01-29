@@ -62,6 +62,9 @@ public class GetSongUtil {
                 String second = "";
                 if(time.length>=1)min=time[0];
                 if(time.length>=2)second=time[1];
+                if (second.length()<2){
+                    second+="0";
+                }
 
                 //我测试用的
                 if (debug) {
