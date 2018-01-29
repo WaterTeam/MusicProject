@@ -1,5 +1,6 @@
 package com.waterteam.musicproject;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
@@ -12,6 +13,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 
 
 import com.waterteam.musicproject.bean.AllMediaBean;
@@ -39,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //startAnimator();
         AllMediaBean mySongsData;
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -183,5 +190,14 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    private void startAnimator(){
+        View view=findViewById(R.id.parentLayout_MainActivity);
+        view.setTranslationX(2000f);
+        ObjectAnimator animator=ObjectAnimator.ofFloat(view,"translationX",view.getTranslationX(),0f);
+        animator.setDuration(500);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setStartDelay(400);
+        animator.start();
+    }
 
 }

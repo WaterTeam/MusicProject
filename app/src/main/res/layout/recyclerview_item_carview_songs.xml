@@ -10,7 +10,7 @@
         android:layout_width="100dp"
         android:layout_height="125dp"
         android:layout_gravity="center"
-        app:cardElevation="6dp">
+        app:cardElevation="20px">
 
         <LinearLayout
             android:orientation="vertical"
