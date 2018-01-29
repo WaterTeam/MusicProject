@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,10 +22,7 @@ import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.util.getdatautil.GetAlbumUtil;
 import com.waterteam.musicproject.util.getdatautil.GetArtistUtil;
 import com.waterteam.musicproject.util.getdatautil.GetSongUtil;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,35 +42,35 @@ public class SplashActivity extends AppCompatActivity {
     private boolean albumOK = false;
     private boolean artistOK = false;
 
+    private MyHandler myHandler; //用来打开MainActivity
+    static class MyHandler extends Handler{
+        private WeakReference<AppCompatActivity> weakReference;
+        public MyHandler(AppCompatActivity activity){
+            weakReference=new WeakReference<AppCompatActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            AppCompatActivity activity=weakReference.get();
+            Intent intent = new Intent(activity, MainActivity.class);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
+            activity.finish();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(TAG, "onCreate: ");
-        EventBus.getDefault().register(this);
         //检查权限
         boolean havePermission = checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
             //初始化数据
+            myHandler=new MyHandler(this);
             initData();
-        }
-    }
-
-    /**
-     * 加载数据成功，去主界面
-     *
-     * @param m 成功后发送的信息，用来做标识
-     * @return
-     * @throws
-     * @author BA on 2017/12/8 0008
-     */
-    @Subscribe
-    public void initDataSuccess(String m) {
-        if ("initDataSuccess".equals(m)) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
         }
     }
 
@@ -88,7 +87,6 @@ public class SplashActivity extends AppCompatActivity {
         getSongs();
         getAlubms();
         getArtists();
-        Log.d(TAG, "initData: " + 1);
     }
 
 
@@ -164,15 +162,17 @@ public class SplashActivity extends AppCompatActivity {
         synchronized (new Object()) {
             if (songsOK && albumOK && artistOK) {
                 songsOK=false;
-                EventBus.getDefault().post("initDataSuccess");
+                myHandler.sendMessage(new Message());
             }
         }
     }
+
+
+
     /**
-     *所有歌曲都获取它自己首字母
-     *
-     * @author CNT on 2018/1/28.
-     * @param   List<SongsBean>
+     * 获取歌曲名的首字母
+     * @author BA on 2018/1/29 0029
+     * @param
      * @return
      * @exception
      */
@@ -235,11 +235,5 @@ public class SplashActivity extends AppCompatActivity {
             Toast.makeText(this, "没有权限，程序无法正常运行", Toast.LENGTH_SHORT).show();
             finish();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 }

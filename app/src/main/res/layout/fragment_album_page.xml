@@ -4,16 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <TextView
+        android:layout_height="?attr/actionBarSize"
+        android:gravity="center_vertical"
         android:id="@+id/album_title"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="16dp"
         android:text="专辑"
-
         android:textColor="@color/titleColor"
         android:textSize="30sp"
-        android:gravity="center_vertical"
         android:focusableInTouchMode="true"
         android:focusable="true"/>
 

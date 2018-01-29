@@ -51,7 +51,11 @@ public class GetAlbumUtil {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
                 String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST));
                 long id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
-                List<SongsBean> songs = new GetSongUtil().start(context, MediaStore.Audio.Albums.ALBUM + "=?", new String[]{name});
+
+                List<SongsBean> songs = new GetSongUtil().start(context, MediaStore.Audio.Albums.ALBUM + "=? and "
+                                + MediaStore.Audio.Media.DURATION + ">=? and "
+                                + MediaStore.Audio.Media.DURATION + "<=?"
+                        , new String[]{name, "90000", "1200000"});
 
                 if (debug) {
                     Log.d(TAG, "start: ");
@@ -60,7 +64,8 @@ public class GetAlbumUtil {
                     Log.d(TAG, id + "");
                     Log.d(TAG, songs.size() + "首");
                 }
-                if (songs.size() >= 1) {
+
+                if (songs.size() > 0) {
                     AlbumBean albumBean = new AlbumBean(name, artist, id, songs);
                     alubmList.add(albumBean);
                 }

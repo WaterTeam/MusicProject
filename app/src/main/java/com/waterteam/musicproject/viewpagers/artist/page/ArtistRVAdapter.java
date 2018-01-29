@@ -1,3 +1,4 @@
+
 package com.waterteam.musicproject.viewpagers.artist.page;
 
 import android.content.Context;
