@@ -1,4 +1,4 @@
-package viewpagers.songs.page;
+package com.waterteam.musicproject.viewpagers.songs.page;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;

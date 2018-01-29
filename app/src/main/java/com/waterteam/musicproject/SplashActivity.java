@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -30,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import viewpagers.songs.page.Cn2Spell;
+import com.waterteam.musicproject.viewpagers.songs.page.Cn2Spell;
 
 /**
  * Created by BA on 2017/12/7 0007
@@ -170,7 +168,14 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     }
-
+    /**
+     *所有歌曲都获取它自己首字母
+     *
+     * @author CNT on 2018/1/28.
+     * @param   List<SongsBean>
+     * @return
+     * @exception
+     */
     private void songsGetFirstLetter(List<SongsBean> songList){
         for(SongsBean song:songList){
             String name = song.getName();

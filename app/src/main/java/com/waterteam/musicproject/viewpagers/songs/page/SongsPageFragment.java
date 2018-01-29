@@ -1,4 +1,4 @@
-package viewpagers.songs.page;
+package com.waterteam.musicproject.viewpagers.songs.page;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,11 +12,8 @@ import android.view.ViewGroup;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.util.GetSongsCoverUtil;
-import com.waterteam.musicproject.util.getdatautil.GetSongUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

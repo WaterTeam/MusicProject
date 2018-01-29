@@ -1,4 +1,4 @@
-package viewpagers.album.page;
+package com.waterteam.musicproject.viewpagers.album.page;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

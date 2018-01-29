@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by BA on 2018/1/25 0025.
  *
- * @Function : 歌曲水平方向显示的适配器，目前在 {@link viewpagers.artist.page.ArtistRVAdapter}使用
+ * @Function : 歌曲水平方向显示的适配器，目前在 {@link com.waterteam.musicproject.viewpagers.artist.page.ArtistRVAdapter}使用
  */
 
 public class SongsCarViewRVAdapter extends RecyclerView.Adapter<SongsCarViewRVAdapter.ViewHolder> {

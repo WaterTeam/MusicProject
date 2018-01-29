@@ -55,8 +55,8 @@ public class GetArtistUtil {
                     Log.d(TAG,("歌手ID = " + artistId));
                     Log.d(TAG, "作品数="+songs.size());
                 }
-
-                artistList.add(new ArtistBean(name,artistId,songs));
+                if(songs.size()>=1){
+                artistList.add(new ArtistBean(name,artistId,songs));}
             } while (cursor.moveToNext());
 
         }

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
  * Created by BA on 2017/12/8 0008.
  *
@@ -22,7 +21,7 @@ import java.util.List;
 
 public class GetAlbumUtil {
     private static final String TAG = "GetAlbumUtil";
-    private boolean debug=false;
+    private boolean debug = false;
     //查询专辑信息的Uri
     private final Uri externalUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
@@ -46,25 +45,26 @@ public class GetAlbumUtil {
      */
     public List<AlbumBean> start(Context context, String selection, String[] selectionArgs) {
         List<AlbumBean> alubmList = new ArrayList<>();
-        Cursor cursor = context.getContentResolver().query(externalUri, null, selection, selectionArgs,MediaStore.Audio.Albums.ALBUM+" COLLATE LOCALIZED desc");
+        Cursor cursor = context.getContentResolver().query(externalUri, null, selection, selectionArgs, MediaStore.Audio.Albums.ALBUM + " COLLATE LOCALIZED desc");
         if (cursor.moveToFirst()) {
             do {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM));
-                String artist=cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST));
-                long id=cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
-                List<SongsBean> songs=new GetSongUtil().start(context,MediaStore.Audio.Albums.ALBUM+"=?",new String[]{name});
+                String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ARTIST));
+                long id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID));
+                List<SongsBean> songs = new GetSongUtil().start(context, MediaStore.Audio.Albums.ALBUM + "=?", new String[]{name});
 
-                if (debug){
+                if (debug) {
                     Log.d(TAG, "start: ");
                     Log.d(TAG, name);
                     Log.d(TAG, artist);
-                    Log.d(TAG, id+"");
-                    Log.d(TAG, songs.size()+"首");
+                    Log.d(TAG, id + "");
+                    Log.d(TAG, songs.size() + "首");
                 }
-               AlbumBean albumBean= new AlbumBean(name,artist,id,songs);
-
-                alubmList.add(albumBean);
-            }while (cursor.moveToNext());
+                if (songs.size() >= 1) {
+                    AlbumBean albumBean = new AlbumBean(name, artist, id, songs);
+                    alubmList.add(albumBean);
+                }
+            } while (cursor.moveToNext());
         }
         return alubmList;
     }

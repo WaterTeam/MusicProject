@@ -1,24 +1,15 @@
-package viewpagers.album.page;
+package com.waterteam.musicproject.viewpagers.album.page;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.content.Context;
-import android.net.Uri;
-import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AlbumBean;
-import com.waterteam.musicproject.bean.GetCoverUri;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.util.GetSongsCoverUtil;
 

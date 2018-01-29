@@ -2,14 +2,9 @@ package com.waterteam.musicproject.bean;
 
 import java.io.Serializable;
 
-import viewpagers.songs.page.Cn2Spell;
-
-import java.io.Serializable;
+import com.waterteam.musicproject.viewpagers.songs.page.Cn2Spell;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
-
-import viewpagers.songs.page.Cn2Spell;
 
 /**
  * Created by BA on 2017/12/7 0007.

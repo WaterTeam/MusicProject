@@ -1,4 +1,4 @@
-package viewpagers.artist.page;
+package com.waterteam.musicproject.viewpagers.artist.page;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.waterteam.musicproject.R;
-import com.waterteam.musicproject.bean.AllMediaBean;
-import com.waterteam.musicproject.bean.ArtistBean;
 
 /**
  * Created by CNT on 2017/12/6.
