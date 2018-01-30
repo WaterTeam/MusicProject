@@ -41,6 +41,7 @@ public class SplashActivity extends AppCompatActivity {
     private boolean songsOK = false;
     private boolean albumOK = false;
     private boolean artistOK = false;
+    public boolean waitingASecond=false;
 
     private MyHandler myHandler; //用来打开MainActivity
     static class MyHandler extends Handler{
@@ -52,11 +53,16 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            AppCompatActivity activity=weakReference.get();
-            Intent intent = new Intent(activity, MainActivity.class);
-            activity.startActivity(intent);
-            activity.overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
-            activity.finish();
+            AppCompatActivity activity = weakReference.get();
+            if (msg.what==2) {
+                Intent intent = new Intent(activity, MainActivity.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(0, R.anim.anim_out);
+                activity.finish();
+            }else {
+                ((SplashActivity)activity).waitingASecond=true;
+                ((SplashActivity)activity).startActivity();
+            }
         }
     }
 
@@ -69,7 +75,6 @@ public class SplashActivity extends AppCompatActivity {
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
             //初始化数据
-            myHandler=new MyHandler(this);
             initData();
         }
     }
@@ -83,6 +88,12 @@ public class SplashActivity extends AppCompatActivity {
      * @author BA on 2017/12/8 0008
      */
     private void initData() {
+        myHandler=new MyHandler(this);
+        //默认让启动页停一秒
+        Message message=new Message();
+        message.what=1;
+        myHandler.sendMessageDelayed(message,1000);
+
         //初始化数据
         getSongs();
         getAlubms();
@@ -160,9 +171,11 @@ public class SplashActivity extends AppCompatActivity {
 
     private void startActivity(){
         synchronized (new Object()) {
-            if (songsOK && albumOK && artistOK) {
-                songsOK=false;
-                myHandler.sendMessage(new Message());
+            if (songsOK && albumOK && artistOK&&waitingASecond) {
+                waitingASecond=false;
+                Message message=new Message();
+                message.what=2;
+                myHandler.sendMessage(message);
             }
         }
     }

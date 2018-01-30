@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //startAnimator();
         AllMediaBean mySongsData;
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -189,15 +188,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
-
-    private void startAnimator(){
-        View view=findViewById(R.id.parentLayout_MainActivity);
-        view.setTranslationX(2000f);
-        ObjectAnimator animator=ObjectAnimator.ofFloat(view,"translationX",view.getTranslationX(),0f);
-        animator.setDuration(500);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setStartDelay(400);
-        animator.start();
-    }
-
 }
