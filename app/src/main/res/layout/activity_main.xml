@@ -25,6 +25,7 @@
 
 
     <com.waterteam.musicproject.customview.BottomBar
+        android:id="@+id/MainActivity_bottomBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

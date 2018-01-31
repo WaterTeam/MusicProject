@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.waterteam.musicproject.customview.BottomBar;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.album.page.AlbumPageFragment;
 import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     List<Fragment> fragmentList = new ArrayList<Fragment>();
     MyPageAdapter fragmentPagerAdapter;
+    BottomBar bottomBar;
 
 
     @Override
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         AllMediaBean mySongsData;
 
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         setStatusBarLightMode(this);
@@ -75,6 +77,16 @@ public class MainActivity extends AppCompatActivity {
         outState.putSerializable("datas", AllMediaBean.getInstance());
     }
 
+    @Override
+    public void onBackPressed() {
+        if (bottomBar.getIsPullUp()) {
+            bottomBar.pullDown();
+        } else {
+            super.onBackPressed();
+        }
+
+    }
+
     /**
      * initView()方法用于初始化主活动界面
      *
@@ -85,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initView() {
         viewPager = (ViewPager) this.findViewById(R.id.viewPager_MainActivity);
+        bottomBar = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
 
         //往viewPager的数据列表中添加3个碎片；
         fragmentList.add(new ArtistPageFragment());
@@ -127,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 判断是否为MIUI，如果是，则修改其状态栏字体颜色为黑色；否则return false
      *
-     * @param  activity, boolean darkmode
+     * @param activity, boolean darkmode
      * @return boolean
      * @throws
      * @author CNT on 2018/1/28.

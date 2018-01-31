@@ -104,22 +104,20 @@ public class BottomBar extends FrameLayout {
                             closeNavigation();
                             isPullUp = false;
                         }
-                    }
-                    else{
-                        if(scrollOffset > bottomContent.getMeasuredHeight() / 8*7){
+                    } else {
+                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8 * 7) {
                             showNavigation();
                             isPullUp = true;
-                        }
-                        else{
+                        } else {
                             closeNavigation();
                             isPullUp = false;
                         }
                     }
                 }
-        break;
-    }
+                break;
+        }
         return true;
-}
+    }
 
     private void showNavigation() {
         int dy = bottomContent.getMeasuredHeight() - scrollOffset;
@@ -131,6 +129,34 @@ public class BottomBar extends FrameLayout {
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
+    }
+
+    /**
+     * 对外提供此时bottombar的状态
+     *
+     * @param
+     * @return boolean isPullUp
+     * @throws
+     * @author CNT on 2018/1/31.
+     */
+    public boolean getIsPullUp() {
+        return isPullUp;
+    }
+
+    /**
+     * 对外提供下拉播放页的功能，调用则播放页下拉恢复
+     *
+     * @param
+     * @return
+     * @throws
+     * @author CNT on 2018/1/31.
+     */
+    public void pullDown() {
+        if (isPullUp) {
+            mScroller.startScroll(0, bottomContent.getMeasuredHeight(), 0, -bottomContent.getMeasuredHeight(), 500);
+            invalidate();
+            isPullUp = false;
+        }
     }
 
     @Override

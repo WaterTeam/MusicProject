@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowFullscreen">true</item>
+        <!--<item name="android:windowFullscreen">false</item>-->
     </style>
 
     <!--为了达到软件秒开而不是白屏的效果，需要改掉主题-->
