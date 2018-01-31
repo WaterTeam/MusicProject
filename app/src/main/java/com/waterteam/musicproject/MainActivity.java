@@ -128,11 +128,12 @@ public class MainActivity extends AppCompatActivity {
                     Window window = activity.getWindow();
                     window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                 }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                //如果是6.0以上将状态栏文字改为黑色，并设置状态栏颜色
-                activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            } else if (Build.VERSION.SDK_INT >= 21) {
                 activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    //如果是6.0以上将状态栏文字改为黑色，并设置状态栏颜色
+                    activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                }
             }
         }
     }

@@ -58,8 +58,8 @@ public class BottomBar extends FrameLayout {
         bottomContent = getChildAt(1);
         barRect = new Rect();
         mScroller = new Scroller(getContext());
-        bottomBar.getGlobalVisibleRect(barRect);
-        bottomContent.getGlobalVisibleRect(barRect);
+        //bottomBar.getGlobalVisibleRect(barRect);
+        //bottomContent.getGlobalVisibleRect(barRect);
     }
 
     @Override
