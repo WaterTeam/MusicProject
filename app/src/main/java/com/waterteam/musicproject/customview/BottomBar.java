@@ -6,17 +6,18 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
 /**
  * Created by CNT on 2018/1/29.
- *
+ * <p>
  * 自定义ViewGroup:BottomBar,实现底部控件上拉后，处于底部控件下的（未显示的）控件得以显现；
  * 下拉则恢复；点击底部控件则底部控件下的（未显示的）控件填充整个屏幕
  */
 
-public class BottomBar extends LinearLayout {
+public class BottomBar extends FrameLayout {
     private View bottomBar;
 
     private View bottomContent;
@@ -58,6 +59,7 @@ public class BottomBar extends LinearLayout {
         barRect = new Rect();
         mScroller = new Scroller(getContext());
         bottomBar.getGlobalVisibleRect(barRect);
+        bottomContent.getGlobalVisibleRect(barRect);
     }
 
     @Override
@@ -94,18 +96,30 @@ public class BottomBar extends LinearLayout {
                     invalidate();
                 } else {
                     scrollOffset = getScrollY();
-                    if (scrollOffset > bottomContent.getMeasuredHeight() / 2) {
-                        showNavigation();
-                        isPullUp = true;
-                    } else {
-                        closeNavigation();
-                        isPullUp = false;
+                    if (!isPullUp) {
+                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8) {
+                            showNavigation();
+                            isPullUp = true;
+                        } else {
+                            closeNavigation();
+                            isPullUp = false;
+                        }
+                    }
+                    else{
+                        if(scrollOffset > bottomContent.getMeasuredHeight() / 8*7){
+                            showNavigation();
+                            isPullUp = true;
+                        }
+                        else{
+                            closeNavigation();
+                            isPullUp = false;
+                        }
                     }
                 }
-                break;
-        }
-        return true;
+        break;
     }
+        return true;
+}
 
     private void showNavigation() {
         int dy = bottomContent.getMeasuredHeight() - scrollOffset;

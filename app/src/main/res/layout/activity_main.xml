@@ -56,10 +56,15 @@
                 android:textColor="#fff"
                 android:textSize="16dp" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:text="测试"
             android:background="#2667c2" />
+        </LinearLayout>
     </com.waterteam.musicproject.customview.BottomBar>
 
 
