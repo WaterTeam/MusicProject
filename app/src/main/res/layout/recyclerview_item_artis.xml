@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="13dp"
+    android:layout_marginTop="15dp"
     android:orientation="vertical">
 
     <!--头部-->
@@ -52,12 +52,11 @@
 
         </LinearLayout>
     </LinearLayout>
-
     <!--底部是歌曲的RecyclerView，水平方向-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/songs_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"></android.support.v7.widget.RecyclerView>
-
+        android:layout_marginLeft="8dp"
+        android:overScrollMode="never"></android.support.v7.widget.RecyclerView>
 </LinearLayout>

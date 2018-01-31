@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <TextView
         android:id="@+id/artist_title"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:gravity="center_vertical"
         android:layout_marginLeft="16dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center_vertical"
         android:text="艺术家"
         android:textColor="@color/titleColor"
-        android:textSize="30sp"
-        android:focusableInTouchMode="true"
-        android:focusable="true"/>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/aritist_page_recycle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:textSize="30sp" />
 
+    <!--添加滑动回弹效果-->
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:tr_pureScrollMode_on="true">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/aritist_page_recycle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"></android.support.v7.widget.RecyclerView>
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
 </LinearLayout>

@@ -42,7 +42,7 @@ public class GetArtistUtil {
      */
     public List<ArtistBean> start(Context context, String selection, String[] selectionArgs) {
         List<ArtistBean> artistList = new ArrayList<>();
-        Cursor cursor = context.getContentResolver().query(externalUri, null, selection, selectionArgs, MediaStore.Audio.Artists.ARTIST + " COLLATE LOCALIZED desc");
+        Cursor cursor = context.getContentResolver().query(externalUri, null, selection, selectionArgs, MediaStore.Audio.Artists.NUMBER_OF_TRACKS + " COLLATE LOCALIZED desc");
         if (cursor.moveToFirst()) {
             do {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));

@@ -66,9 +66,14 @@ public class ArtistRVAdapter extends RecyclerView.Adapter<ArtistRVAdapter.ViewHo
         holder.songsCount.setText(artist.getSongsCount()+"首歌曲");
 
         holder.recyclerView.setAdapter(new SongsCarViewRVAdapter(context,artist.getSongs()));
-        LinearLayoutManager linearLayoutManager= new LinearLayoutManager(context);
+        ScrollLinearLayoutManager linearLayoutManager= new ScrollLinearLayoutManager(context);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         holder.recyclerView.setLayoutManager(linearLayoutManager);
+
+        //让前两个横向的RecyclerView自动滚动一段距离
+        if (position==0||position==1){
+            holder.recyclerView.smoothScrollToPosition(artist.getSongs().size()/2);
+        }
     }
 
     @Override
