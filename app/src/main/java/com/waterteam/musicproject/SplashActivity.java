@@ -66,6 +66,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +76,7 @@ public class SplashActivity extends AppCompatActivity {
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
             //初始化数据
+            myHandler=new MyHandler(this);
             initData();
         }
     }
@@ -179,8 +181,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     /**
      * 获取歌曲名的首字母

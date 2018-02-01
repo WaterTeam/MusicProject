@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import com.waterteam.musicproject.AlbumDetailsActivity;
+
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.SongsBean;

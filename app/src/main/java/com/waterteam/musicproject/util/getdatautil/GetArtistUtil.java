@@ -42,6 +42,7 @@ public class GetArtistUtil {
      */
     public List<ArtistBean> start(Context context, String selection, String[] selectionArgs) {
         List<ArtistBean> artistList = new ArrayList<>();
+
         Cursor cursor = context.getContentResolver().query(externalUri, null, selection, selectionArgs, MediaStore.Audio.Artists.NUMBER_OF_TRACKS + " COLLATE LOCALIZED desc");
         if (cursor.moveToFirst()) {
             do {
@@ -61,6 +62,7 @@ public class GetArtistUtil {
 
                 if (songs.size() > 0)
                     artistList.add(new ArtistBean(name, artistId, songs));
+
             } while (cursor.moveToNext());
 
         }

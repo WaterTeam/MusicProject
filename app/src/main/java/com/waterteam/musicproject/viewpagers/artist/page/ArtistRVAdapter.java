@@ -80,3 +80,4 @@ public class ArtistRVAdapter extends RecyclerView.Adapter<ArtistRVAdapter.ViewHo
         return artists.size();
     }
 }
+
