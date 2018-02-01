@@ -1,4 +1,4 @@
-package com.waterteam.musicproject.adapter;
+package com.waterteam.musicproject.viewpagers.artist.page;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.util.GetSongsCoverUtil;
+import com.waterteam.musicproject.util.GetCoverUtil;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class SongsCarViewRVAdapter extends RecyclerView.Adapter<SongsCarViewRVAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         SongsBean song = songs.get(position);
-        GetSongsCoverUtil.setCover(context, song, holder.albumImage);
+        GetCoverUtil.setCover(context, song, holder.albumImage);
         holder.songName.setText(song.getName());
     }
 

@@ -32,11 +32,11 @@
             android:layout_weight="1">
 
             <ImageView
+                android:transitionName="albumImage"
                 android:id="@+id/album_RV_item_imageView"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/play_img_default" />
+                android:scaleType="centerCrop"/>
         </LinearLayout>
         <!--歌名-->
         <LinearLayout

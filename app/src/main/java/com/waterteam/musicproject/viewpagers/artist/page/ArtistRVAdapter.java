@@ -12,10 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.waterteam.musicproject.R;
-import com.waterteam.musicproject.adapter.SongsCarViewRVAdapter;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
-import com.waterteam.musicproject.util.GetSongsCoverUtil;
+import com.waterteam.musicproject.util.GetCoverUtil;
 
 import java.util.List;
 
@@ -60,7 +59,7 @@ public class ArtistRVAdapter extends RecyclerView.Adapter<ArtistRVAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ArtistBean artist =artists.get(position);
-        GetSongsCoverUtil.setCover(context,artist.getSongs().get(artist.getSongsCount()-1)
+        GetCoverUtil.setCover(context,artist.getSongs().get(artist.getSongsCount()-1)
                 ,holder.headImage);
         holder.artistName.setText(artist.getName());
         holder.songsCount.setText(artist.getSongsCount()+"首歌曲");

@@ -1,6 +1,9 @@
 package com.waterteam.musicproject.viewpagers.album.page;
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.waterteam.musicproject.AlbumDetailsActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.util.GetSongsCoverUtil;
+import com.waterteam.musicproject.util.GetCoverUtil;
 
 import java.util.List;
 
@@ -32,7 +36,7 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_item_album, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
+        final ViewHolder viewHolder = new ViewHolder(view);
 
 
         /**
@@ -45,7 +49,11 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
         viewHolder.album_RV_item_View.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent=new Intent(context, AlbumDetailsActivity.class);
+                intent.putExtra("position",viewHolder.getAdapterPosition());
+                context.startActivity(intent,
+                        ActivityOptions.makeSceneTransitionAnimation
+                                ((AppCompatActivity)(context),viewHolder.album_RV_item_imageView,"albumImage").toBundle());
             }
         });
         return viewHolder;
@@ -55,7 +63,7 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         AlbumBean albumData = albumPV_dataList.get(position);
         holder.album_RV_item_title.setText(albumData.getName());
-        GetSongsCoverUtil.setCover(context, albumData, holder.album_RV_item_imageView);
+        GetCoverUtil.setCover(context, albumData, holder.album_RV_item_imageView);
 
         holder.album_RV_item_title.setText(albumData.getName());
 

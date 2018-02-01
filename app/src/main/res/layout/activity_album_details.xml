@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.waterteam.musicproject.AlbumDetailsActivity">
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/album_name"
+            android:background="@drawable/play_title_bg"
+            android:paddingLeft="2dp"
+            android:paddingRight="5dp"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusableInTouchMode="true"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:layout_width="138dp"
+            android:layout_height="45dp" />
+
+    <android.support.v7.widget.CardView
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="204dp"
+        app:cardElevation="18dp"
+        app:cardCornerRadius="6dp">
+
+        <ImageView
+            android:transitionName="albumImage"
+            android:id="@+id/album_image"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/songs_num"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:tr_pureScrollMode_on="true">
+
+        <android.support.v7.widget.RecyclerView
+            android:overScrollMode="never"
+            android:id="@+id/songs_rv"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+
+
+</LinearLayout>
