@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
  * Created by BA on 2018/1/31 0031.
  *
  * @Function :为了实现recyclerView的自动滚动效果。这个类主要是为了重写获取滚动速度的效果
+ * 用在{@link ArtistRVAdapter}
  */
 
 public class ScrollLinearLayoutManager extends LinearLayoutManager{
