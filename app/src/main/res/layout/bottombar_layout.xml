@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:background="#98ddd9"
+            android:background="#7f9eb2"
             android:orientation="vertical">
 
             <TextView
