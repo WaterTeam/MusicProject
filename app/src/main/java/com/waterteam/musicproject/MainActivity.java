@@ -14,7 +14,6 @@ import java.util.List;
 import com.waterteam.musicproject.customview.BottomBar;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
-import com.waterteam.musicproject.viewpagers.album.page.AlbumPageFragment;
 import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
 import com.waterteam.musicproject.viewpagers.songs.page.SongsPageFragment;
 
@@ -32,23 +31,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AllMediaBean mySongsData;
-
 
         //设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         StatusBarUtil.setStatusBarLightMode(this);
 
+        AllMediaBean mySongsData;
         //为了解决程序被杀死，再回来后空指针异常的问题我希望你这样再处理下数据源，反正这里必须要这样写
         if (savedInstanceState != null) {
             mySongsData = (AllMediaBean) savedInstanceState.getSerializable("datas");
             AllMediaBean.getInstance().setArtists(mySongsData.getArtists());
-            AllMediaBean.getInstance().setAlbums(mySongsData.getAlbums());
             AllMediaBean.getInstance().setSongs(mySongsData.getSongs());
             Log.d(TAG, "从保存的获取");
         } else if (debug) { //下面的代码你写不写都行，我只是测试而已
             mySongsData = AllMediaBean.getInstance();
             Log.d(TAG, "艺术家=" + mySongsData.getArtists().size());
-            Log.d(TAG, "专辑=" + mySongsData.getAlbums().size());
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
         initView();
@@ -85,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
         //往viewPager的数据列表中添加3个碎片；
         fragmentList.add(new ArtistPageFragment());
-        fragmentList.add(new AlbumPageFragment());
         fragmentList.add(new SongsPageFragment());
 
         fragmentPagerAdapter = new MyPageAdapter(getSupportFragmentManager(), fragmentList);

@@ -1,53 +1,60 @@
 package com.waterteam.musicproject;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.waterteam.musicproject.adapter.AlbumSongsAdapter;
 import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.AllMediaBean;
+import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
-import com.waterteam.musicproject.viewpagers.songs.page.SongsRVAdapter;
 
 import java.util.List;
 
 public class AlbumDetailsActivity extends AppCompatActivity {
     private static final String TAG = "AlbumDetailsActivity";
+    private boolean debug = false;
+    ImageView albumCover;
+    TextView albumName;
+    TextView artistName;
+    TextView songsCount;
     RecyclerView recyclerView;
-    ImageView imageView;
-    TextView textView;
-    TextView songsNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_details);
 
-        //设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         StatusBarUtil.setStatusBarLightMode(this);
 
-        //初始化控件
-        recyclerView = (RecyclerView) findViewById(R.id.songs_rv);
-        imageView = (ImageView) findViewById(R.id.album_image);
-        textView = (TextView) findViewById(R.id.album_name);
-        songsNum = (TextView) findViewById(R.id.songs_num);
+        AllMediaBean mySongsData;
+        //为了解决程序被杀死，再回来后空指针异常的问题我希望你这样再处理下数据源，反正这里必须要这样写
+        if (savedInstanceState != null) {
+            mySongsData = (AllMediaBean) savedInstanceState.getSerializable("datas");
+            AllMediaBean.getInstance().setArtists(mySongsData.getArtists());
+            AllMediaBean.getInstance().setSongs(mySongsData.getSongs());
+            Log.d(TAG, "从保存的获取");
+        } else if (debug) { //下面的代码你写不写都行，我只是测试而已
+            mySongsData = AllMediaBean.getInstance();
+            Log.d(TAG, "艺术家=" + mySongsData.getArtists().size());
+            Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
+        }
 
-        //设置数据
+        albumCover=(ImageView)findViewById(R.id.album_image);
+        albumName=(TextView) findViewById(R.id.album_name);
+        artistName=(TextView)findViewById(R.id.artist_name);
+        songsCount=(TextView)findViewById(R.id.songs_count);
+        recyclerView=(RecyclerView)findViewById(R.id.album_detail_songs);
+
         initData();
-
-        //启动动画
-        startAnimator();
-
     }
 
     /**
@@ -59,32 +66,26 @@ public class AlbumDetailsActivity extends AppCompatActivity {
      */
     private void initData(){
         Intent intent = getIntent();
-        int position = intent.getIntExtra("position", 0);
-        AlbumBean albumBean = AllMediaBean.getInstance().getAlbums().get(position);
+        int artistPosition = intent.getIntExtra("artistPosition", 0);
+        int albumPosition=intent.getIntExtra("albumPosition",0);
+        AlbumBean albumBean = AllMediaBean.getInstance().getArtists().get(artistPosition).getAlubums().get(albumPosition);
         if (albumBean != null) {
-            List<SongsBean> songs = albumBean.getSongs();
-            textView.setText(albumBean.getName());
-            songsNum.setText(songs.size() + "首歌曲");
-            GetCoverUtil.setCover(this, albumBean, imageView, 400);
+            albumName.setText("专辑名: "+albumBean.getName());
+            artistName.setText("艺术家: "+albumBean.getArtist());
+            songsCount.setText("歌曲数: "+albumBean.getSongsCount()+"首歌曲");
+            GetCoverUtil.setCover(this, albumBean, albumCover, 200);
 
-            recyclerView.setAdapter(new AlbumSongsAdapter(songs));
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            AlbumSongsAdapter albumSongsAdapter=new AlbumSongsAdapter(albumBean.getSongs());
+            LinearLayoutManager manager=new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(manager);
+            recyclerView.setAdapter(albumSongsAdapter);
         }
     }
 
-    /**
-     * 专辑标题的动画
-     * @author BA on 2018/2/1 0001
-     * @param
-     * @return
-     * @exception
-     */
-    private void startAnimator(){
-        textView.setTranslationX(-500f);
-        ObjectAnimator objectAnimator=ObjectAnimator.ofFloat(textView,"translationX",0);
-        objectAnimator.setStartDelay(500);
-        objectAnimator.setDuration(500);
-        objectAnimator.setInterpolator(new DecelerateInterpolator());
-        objectAnimator.start();
+    //必须写该方法
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("datas", AllMediaBean.getInstance());
     }
 }

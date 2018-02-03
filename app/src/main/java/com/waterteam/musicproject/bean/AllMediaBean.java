@@ -11,7 +11,6 @@ import java.util.List;
 
 public class AllMediaBean implements Serializable {
     private List<ArtistBean> artists;
-    private List<AlbumBean> albums;
     private List<SongsBean> songs;
 
     public List<ArtistBean> getArtists() {
@@ -20,14 +19,6 @@ public class AllMediaBean implements Serializable {
 
     public void setArtists(List<ArtistBean> artists) {
         this.artists = artists;
-    }
-
-    public List<AlbumBean> getAlbums() {
-        return albums;
-    }
-
-    public void setAlbums(List<AlbumBean> albums) {
-        this.albums = albums;
     }
 
     public List<SongsBean> getSongs() {

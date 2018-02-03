@@ -36,6 +36,8 @@ public class AlbumBean implements Serializable,GetCoverUri{
         return songs;
     }
 
+    public int getSongsCount(){return songs.size();}
+
     public String getName() {
         return name;
     }

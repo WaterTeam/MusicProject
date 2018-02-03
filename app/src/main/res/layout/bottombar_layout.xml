@@ -42,21 +42,14 @@
 
             <Button
                 android:id="@+id/play_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/ic_play_button" />
+                android:background="@drawable/ic_bottombar_play_button" />
         </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#ffffff"
-            android:orientation="vertical">
-
-            <include layout="@layout/bottombar_play_item" />
-        </LinearLayout>
+       <include layout="@layout/buttombar_palying_layout"/>
     </com.waterteam.musicproject.customview.BottomBar>
 </merge>
 

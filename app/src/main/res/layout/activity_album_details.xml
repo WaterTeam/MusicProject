@@ -7,61 +7,96 @@
     android:orientation="vertical"
     tools:context="com.waterteam.musicproject.AlbumDetailsActivity">
 
-        <TextView
-            android:layout_marginTop="10dp"
-            android:id="@+id/album_name"
-            android:background="@drawable/play_title_bg"
-            android:paddingLeft="2dp"
-            android:paddingRight="5dp"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:focusableInTouchMode="true"
-            android:scrollHorizontally="true"
-            android:focusable="true"
-            android:singleLine="true"
-            android:textColor="#ffffff"
-            android:gravity="center"
-            android:layout_width="138dp"
-            android:layout_height="45dp" />
-
-    <android.support.v7.widget.CardView
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+    <LinearLayout
+        android:layout_marginTop="25dp"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="204dp"
-        app:cardElevation="18dp"
-        app:cardCornerRadius="6dp">
-
+        android:layout_height="150dp">
         <ImageView
-            android:transitionName="albumImage"
+            android:transitionName="albumCover"
             android:id="@+id/album_image"
-            android:scaleType="centerCrop"
+            android:src="@drawable/playsong_bdg"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp" />
+
+        <LinearLayout
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </android.support.v7.widget.CardView>
+            android:layout_height="wrap_content">
+            <TextView
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:focusable="true"
+                android:singleLine="true"
+                android:id="@+id/album_name"
+                android:textColor="@color/titleColor"
+                android:layout_margin="8dp"
+                android:textSize="17sp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="专辑名:Youth"/>
+            <TextView
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:focusable="true"
+                android:singleLine="true"
+                android:id="@+id/artist_name"
+                android:textColor="@color/titleColor"
+                android:layout_margin="8dp"
+                android:textSize="17sp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="专辑名:Youth"/>
+            <TextView
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:focusable="true"
+                android:singleLine="true"
+                android:id="@+id/songs_count"
+                android:textColor="@color/titleColor"
+                android:layout_margin="8dp"
+                android:textSize="17sp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="歌曲数:20首歌曲"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/songs_num"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="40dp"
+        android:id="@+id/play_all"
+        android:textSize="16sp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="right"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="播放全部"/>
 
     <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:tr_pureScrollMode_on="true">
-
         <android.support.v7.widget.RecyclerView
             android:overScrollMode="never"
-            android:id="@+id/songs_rv"
-            android:layout_marginTop="5dp"
+            android:id="@+id/album_detail_songs"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
         </android.support.v7.widget.RecyclerView>
-
     </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
-
 
 </LinearLayout>

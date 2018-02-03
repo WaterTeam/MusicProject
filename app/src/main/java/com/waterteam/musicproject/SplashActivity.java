@@ -22,6 +22,7 @@ import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.util.getdatautil.GetAlbumUtil;
 import com.waterteam.musicproject.util.getdatautil.GetArtistUtil;
 import com.waterteam.musicproject.util.getdatautil.GetSongUtil;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,29 +40,30 @@ public class SplashActivity extends AppCompatActivity {
     //权限请求码
     private final int REQUEST_PERMISSION_CODE = 843;
     private boolean songsOK = false;
-    private boolean albumOK = false;
     private boolean artistOK = false;
-    public boolean waitingASecond=false;
+    public boolean waitingASecond = false;
 
     private MyHandler myHandler; //用来打开MainActivity
-    static class MyHandler extends Handler{
+
+    static class MyHandler extends Handler {
         private WeakReference<AppCompatActivity> weakReference;
-        public MyHandler(AppCompatActivity activity){
-            weakReference=new WeakReference<AppCompatActivity>(activity);
+
+        public MyHandler(AppCompatActivity activity) {
+            weakReference = new WeakReference<AppCompatActivity>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             AppCompatActivity activity = weakReference.get();
-            if (msg.what==2) {
+            if (msg.what == 2) {
                 Intent intent = new Intent(activity, MainActivity.class);
                 activity.startActivity(intent);
                 activity.overridePendingTransition(0, R.anim.anim_out);
                 activity.finish();
-            }else {
-                ((SplashActivity)activity).waitingASecond=true;
-                ((SplashActivity)activity).startActivity();
+            } else {
+                ((SplashActivity) activity).waitingASecond = true;
+                ((SplashActivity) activity).startActivity();
             }
         }
     }
@@ -76,7 +78,7 @@ public class SplashActivity extends AppCompatActivity {
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
             //初始化数据
-            myHandler=new MyHandler(this);
+            myHandler = new MyHandler(this);
             initData();
         }
     }
@@ -90,15 +92,14 @@ public class SplashActivity extends AppCompatActivity {
      * @author BA on 2017/12/8 0008
      */
     private void initData() {
-        myHandler=new MyHandler(this);
+        myHandler = new MyHandler(this);
         //默认让启动页停一秒
-        Message message=new Message();
-        message.what=1;
-        myHandler.sendMessageDelayed(message,1000);
+        Message message = new Message();
+        message.what = 1;
+        myHandler.sendMessageDelayed(message, 1000);
 
         //初始化数据
         getSongs();
-        getAlubms();
         getArtists();
     }
 
@@ -123,33 +124,12 @@ public class SplashActivity extends AppCompatActivity {
                 //再把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
                 Collections.sort(songs);
                 AllMediaBean.getInstance().setSongs(songs);
-                songsOK=true;
+                songsOK = true;
                 startActivity();
             }
         }).start();
     }
 
-
-
-    /**
-     * 获取专辑
-     *
-     * @param
-     * @return
-     * @throws
-     * @author BA on 2018/1/27 0027
-     */
-    private void getAlubms() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<AlbumBean> albums = new GetAlbumUtil().start(SplashActivity.this, null, null);
-                AllMediaBean.getInstance().setAlbums(albums);
-                albumOK=true;
-                startActivity();
-            }
-        }).start();
-    }
 
     /**
      * 获取艺术家
@@ -165,18 +145,18 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 List<ArtistBean> artists = new GetArtistUtil().start(SplashActivity.this, null, null);
                 AllMediaBean.getInstance().setArtists(artists);
-                artistOK=true;
+                artistOK = true;
                 startActivity();
             }
         }).start();
     }
 
-    private void startActivity(){
+    private void startActivity() {
         synchronized (new Object()) {
-            if (songsOK && albumOK && artistOK&&waitingASecond) {
-                waitingASecond=false;
-                Message message=new Message();
-                message.what=2;
+            if (songsOK && artistOK && waitingASecond) {
+                waitingASecond = false;
+                Message message = new Message();
+                message.what = 2;
                 myHandler.sendMessage(message);
             }
         }
@@ -184,18 +164,19 @@ public class SplashActivity extends AppCompatActivity {
 
     /**
      * 获取歌曲名的首字母
-     * @author BA on 2018/1/29 0029
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/1/29 0029
      */
-    private void songsGetFirstLetter(List<SongsBean> songList){
-        for(SongsBean song:songList){
+    private void songsGetFirstLetter(List<SongsBean> songList) {
+        for (SongsBean song : songList) {
             String name = song.getName();
             if (name != null && Cn2Spell.getPinYin(name) != null && Cn2Spell.getPinYin(name).length() >= 1) {
-                Log.d(TAG, "SongsBean: "+name);
-                song.setFirstLetter( Cn2Spell.getPinYin(name).substring(0, 1).toUpperCase());
-                if (song.getFirstLetter()!=null&&!song.getFirstLetter().matches("[A-Z]")) { // 如果不在A-Z中则默认为“#”
+                Log.d(TAG, "SongsBean: " + name);
+                song.setFirstLetter(Cn2Spell.getPinYin(name).substring(0, 1).toUpperCase());
+                if (song.getFirstLetter() != null && !song.getFirstLetter().matches("[A-Z]")) { // 如果不在A-Z中则默认为“#”
                     song.setFirstLetter("#");
                 }
             } else {

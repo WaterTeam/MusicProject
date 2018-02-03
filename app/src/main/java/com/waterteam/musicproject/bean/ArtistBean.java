@@ -13,11 +13,17 @@ public class ArtistBean implements Serializable, GetCoverUri {
     private String name;
     private long id;
     private List<SongsBean> songs;
+    private List<AlbumBean> albums;
 
-    public ArtistBean(String name, long id, List<SongsBean> songs) {
+    public List<AlbumBean> getAlubums(){
+        return albums;
+    }
+
+    public ArtistBean(String name, long id,List<AlbumBean> albums, List<SongsBean> songs) {
         this.name = name;
         this.id = id;
         this.songs = songs;
+        this.albums=albums;
     }
 
     public String getName() {
@@ -35,6 +41,8 @@ public class ArtistBean implements Serializable, GetCoverUri {
     public int getSongsCount() {
         return songs.size();
     }
+
+    public int getAlbumCount(){return albums.size();}
 
     @Override
     public long getAlbumId() {

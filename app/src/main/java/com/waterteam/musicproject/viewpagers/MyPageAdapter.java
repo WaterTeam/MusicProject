@@ -12,7 +12,9 @@ import java.util.List;
  */
 
 public class MyPageAdapter extends FragmentPagerAdapter {
-    List<Fragment> fragmentList;
+    private List<Fragment> fragmentList;
+    private List<String> titles;
+
     /**
      * 构造函数初始化适配器时，要传入数据源；
      * @author CNT on 2017/12/5.
@@ -23,6 +25,19 @@ public class MyPageAdapter extends FragmentPagerAdapter {
     public MyPageAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         fragmentList = fragments;
+    }
+
+    /**
+     * 构造函数初始化适配器时，要传入数据源；
+     * @author CNT on 2017/12/5.
+     * @param
+     * @return
+     * @exception
+     */
+    public MyPageAdapter(FragmentManager fm, List<Fragment> fragments,List<String> titles) {
+        super(fm);
+        fragmentList = fragments;
+        this.titles=titles;
     }
 
     @Override
@@ -44,5 +59,10 @@ public class MyPageAdapter extends FragmentPagerAdapter {
      */
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return titles.get(position);
     }
 }

@@ -1,4 +1,4 @@
-package com.waterteam.musicproject.viewpagers.album.page;
+package com.waterteam.musicproject.viewpagers.artist.page;
 
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-import com.waterteam.musicproject.AlbumDetailsActivity;
+import com.waterteam.musicproject.ArtistDetailsActivity;
 
 import com.waterteam.musicproject.R;
-import com.waterteam.musicproject.bean.AlbumBean;
+import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.util.GetCoverUtil;
 
@@ -25,19 +25,19 @@ import java.util.List;
  * Created by Administrator on 2017/12/6.
  */
 
-public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHolder> {
-    private static final String TAG = "AlbumRV_Adapter";
+public class ArtistRV_Adapter extends RecyclerView.Adapter<ArtistRV_Adapter.ViewHolder> {
+    private static final String TAG = "ArtistRV_Adapter";
     private Context context;
-    List<AlbumBean> albumPV_dataList;
+    List<ArtistBean> artistRV_dataList;
 
-    public AlbumRV_Adapter(Context context, List<AlbumBean> list) {
-        albumPV_dataList = list;
+    public ArtistRV_Adapter(Context context, List<ArtistBean> list) {
+        artistRV_dataList = list;
         this.context = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_item_album, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_item_artist, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
 
 
@@ -51,7 +51,7 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
         viewHolder.album_RV_item_View.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, AlbumDetailsActivity.class);
+                Intent intent=new Intent(context, ArtistDetailsActivity.class);
                 intent.putExtra("position",viewHolder.getAdapterPosition());
                 context.startActivity(intent,
                         ActivityOptions.makeSceneTransitionAnimation
@@ -63,13 +63,13 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        AlbumBean albumData = albumPV_dataList.get(position);
-        holder.album_RV_item_title.setText(albumData.getName());
-        GetCoverUtil.setCover(context, albumData, holder.album_RV_item_imageView);
+        ArtistBean artistBean = artistRV_dataList.get(position);
+        holder.album_RV_item_title.setText(artistBean.getName());
+        GetCoverUtil.setCover(context, artistBean, holder.album_RV_item_imageView);
 
-        holder.album_RV_item_title.setText(albumData.getName());
+        holder.album_RV_item_title.setText(artistBean.getName());
 
-        List<SongsBean> songsBeanList = albumData.getSongs();
+        List<SongsBean> songsBeanList = artistBean.getSongs();
 
         holder.album_RV_item_song1_name.setText(songsBeanList.get(0).getName());
         holder.album_RV_item_song1_time.setText(songsBeanList.get(0).getFormatLenght());
@@ -91,7 +91,7 @@ public class AlbumRV_Adapter extends RecyclerView.Adapter<AlbumRV_Adapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return albumPV_dataList.size();
+        return artistRV_dataList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

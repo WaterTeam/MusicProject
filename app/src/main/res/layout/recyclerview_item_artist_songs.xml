@@ -4,5 +4,5 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="16dp">
 
-    <include layout="@layout/recyclerview_item_songsname_item"/>
+    <include layout="@layout/recyclerview_item_merge_songs"/>
 </LinearLayout>

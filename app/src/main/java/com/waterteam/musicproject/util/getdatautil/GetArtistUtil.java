@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
 
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class GetArtistUtil {
     private static final String TAG = "GetArtistUtil";
-    private boolean debug = false;
+    private boolean debug = true;
     //查询歌手信息
     private static final Uri externalUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
@@ -48,6 +49,10 @@ public class GetArtistUtil {
             do {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST));
                 long artistId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID));
+
+                List<AlbumBean> albums = new GetAlbumUtil().start(context, MediaStore.Audio.Artists.ARTIST + "=?"
+                        , new String[]{name});
+
                 List<SongsBean> songs = new GetSongUtil().start(context, MediaStore.Audio.Artists.ARTIST + "=? and "
                                 + MediaStore.Audio.Media.DURATION + ">=? and "
                                 + MediaStore.Audio.Media.DURATION + "<=?"
@@ -58,10 +63,11 @@ public class GetArtistUtil {
                     Log.d(TAG, "歌手 = " + name);
                     Log.d(TAG, ("歌手ID = " + artistId));
                     Log.d(TAG, "作品数=" + songs.size());
+                    Log.d(TAG, "专辑数="+albums.size());
                 }
 
                 if (songs.size() > 0)
-                    artistList.add(new ArtistBean(name, artistId, songs));
+                    artistList.add(new ArtistBean(name, artistId,albums,songs));
 
             } while (cursor.moveToNext());
 

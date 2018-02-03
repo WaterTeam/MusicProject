@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.net.Uri;
 
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -36,14 +37,7 @@ public class GetCoverUtil {
      * @author BA on 2017/12/9 0009
      */
     public static void setCover(Context context, GetCoverUri obj, ImageView imageView) {
-        long id=obj.getAlbumId();
-        Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
-        Glide.with(context)
-                .load(uri)
-                .placeholder(R.drawable.play_img_default)
-                .error(R.drawable.play_img_default)
-                .override(200, 200)
-                .into(imageView);
+        loadByGlide(context,obj,imageView,200);
     }
 
     /**
@@ -59,13 +53,42 @@ public class GetCoverUtil {
      * @author BA on 2017/12/9 0009
      */
     public static void setCover(Context context, GetCoverUri obj, ImageView imageView,int size) {
+        loadByGlide(context,obj,imageView,size);
+    }
+
+    /**
+     * 随机选取封面
+     * @author BA on 2018/2/2 0002
+     * @param
+     * @return
+     * @exception
+     */
+    private static void loadByGlide(Context context, GetCoverUri obj, ImageView imageView,int size){
         long id=obj.getAlbumId();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
-        Glide.with(context)
-                .load(uri)
-                .placeholder(R.drawable.play_img_default)
-                .error(R.drawable.play_img_default)
-                .override(size, size)
-                .into(imageView);
+        int select=(int)System.currentTimeMillis()%3;
+        switch (select){
+            case 0:
+                Glide.with(context)
+                        .load(uri)
+                        .error(R.drawable.play_img_default)
+                        .override(size, size)
+                        .into(imageView);
+                break;
+            case 1:
+                Glide.with(context)
+                        .load(uri)
+                        .error(R.drawable.play_img_default2)
+                        .override(size, size)
+                        .into(imageView);
+                break;
+            default:
+                Glide.with(context)
+                        .load(uri)
+                        .error(R.drawable.play_img_default3)
+                        .override(size, size)
+                        .into(imageView);
+                break;
+        }
     }
 }
