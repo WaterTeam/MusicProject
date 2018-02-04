@@ -1,10 +1,17 @@
 package com.waterteam.musicproject;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.waterteam.musicproject.bean.AllMediaBean;
 
@@ -12,10 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.waterteam.musicproject.customview.BottomBar;
+import com.waterteam.musicproject.eventsforeventbus.PlayingBarEvent;
+import com.waterteam.musicproject.service.playmusic.service.PlayMusicService;
+import com.waterteam.musicproject.util.HandleBottomBar;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
 import com.waterteam.musicproject.viewpagers.songs.page.SongsPageFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     List<Fragment> fragmentList = new ArrayList<Fragment>();
     MyPageAdapter fragmentPagerAdapter;
     BottomBar bottomBar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +61,15 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
         initView();
+
+        //开启播放音乐服务
+        startService(new Intent(this, PlayMusicService.class));
+        //控制bottomBar
+        EventBus.getDefault().register(this);
+        //设置bottomBar按钮点击事件
+        new HandleBottomBar(this).handleClick();
     }
+
 
     //必须写该方法
     @Override
@@ -67,6 +88,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(this, PlayMusicService.class));
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+
+    }
+
     /**
      * initView()方法用于初始化主活动界面
      *
@@ -79,11 +108,49 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) this.findViewById(R.id.viewPager_MainActivity);
         bottomBar = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
 
-        //往viewPager的数据列表中添加3个碎片；
+        //往viewPager的数据列表中添加2个碎片；
         fragmentList.add(new ArtistPageFragment());
         fragmentList.add(new SongsPageFragment());
 
         fragmentPagerAdapter = new MyPageAdapter(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentPagerAdapter);
     }
+
+
+    /**
+     *作用于EventBus,用于设置bootomBar的控件内容
+     *
+     * @author CNT on 2018/2/5.
+     * @param
+     * @return
+     * @exception
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void setBottomBar(PlayingBarEvent playingBarEvent) {
+        //根据点击区分；
+        switch (playingBarEvent.getPlayingStatus()) {
+            case PlayingBarEvent.PLAYTOPAUSE: {
+                HandleBottomBar.changBottomBarView(PlayingBarEvent.PLAYTOPAUSE, playingBarEvent);
+            }
+            break;
+            case PlayingBarEvent.PAUSETOPLAY: {
+                HandleBottomBar.changBottomBarView(PlayingBarEvent.PAUSETOPLAY, playingBarEvent);
+            }
+            break;
+            case PlayingBarEvent.PLAYANEW: {
+                HandleBottomBar.changBottomBarView(PlayingBarEvent.PLAYANEW, playingBarEvent);
+            }
+            break;
+            case PlayingBarEvent.PLAYNEXT: {
+                HandleBottomBar.changBottomBarView(PlayingBarEvent.PLAYNEXT, playingBarEvent);
+            }
+            break;
+            case PlayingBarEvent.PLAYLAST: {
+                HandleBottomBar.changBottomBarView(PlayingBarEvent.PLAYLAST, playingBarEvent);
+            }
+            default:
+                break;
+        }
+    }
 }
+

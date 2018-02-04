@@ -64,7 +64,6 @@ public class BottomBar extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startX = (int) event.getX();
@@ -74,7 +73,7 @@ public class BottomBar extends FrameLayout {
                 //判断是否已经是播放界面，如果是则不做处理，如果不是播放界面并且点击的不是bottomBar,则不拦截该点击事件，return false；
                 if (isPullUp) {
                 } else if (!isPullUp && startY < getMeasuredHeight() - bottomBar.getMeasuredHeight()) {
-                    return false;
+                    return super.onTouchEvent(event);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:

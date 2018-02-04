@@ -7,21 +7,21 @@
     android:orientation="vertical"
     tools:context="com.waterteam.musicproject.MainActivity">
 
-        <Button
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/ic_search" />
+    <Button
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ic_search" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager_MainActivity"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="48dp"
-            android:fitsSystemWindows="true"></android.support.v4.view.ViewPager>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager_MainActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="48dp"
+        android:fitsSystemWindows="true"></android.support.v4.view.ViewPager>
 
-<include layout="@layout/bottombar_layout"/>
+    <include layout="@layout/bottombar_layout" />
 
 </FrameLayout>

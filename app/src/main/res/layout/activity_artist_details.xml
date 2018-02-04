@@ -1,97 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.waterteam.musicproject.ArtistDetailsActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
-
-        <TextView
-            android:id="@+id/album_name"
-            android:background="@drawable/play_title_bg"
-            android:paddingLeft="2dp"
-            android:paddingRight="5dp"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:focusableInTouchMode="true"
-            android:scrollHorizontally="true"
-            android:focusable="true"
-            android:singleLine="true"
-            android:textColor="#ffffff"
-            android:gravity="center"
-            android:layout_width="130dp"
-            android:layout_height="40dp" />
-
-        <TextView
-            android:id="@+id/artist_detail"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="共有5张专辑7首歌曲"/>
-
-    </RelativeLayout>
-
-    <ImageView
-        android:transitionName="albumImage"
-        android:id="@+id/album_image"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="18dp"
-        android:layout_width="match_parent"
-        android:layout_height="204dp" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
     <LinearLayout
-        android:gravity="right"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="18dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:layout_marginRight="10dp"
-            android:layout_width="84dp"
-            android:layout_height="28dp"
-            android:background="@drawable/album_unselect"/>
-        <Button
-            android:layout_marginRight="10dp"
-            android:layout_width="84dp"
-            android:layout_height="28dp"
-            android:background="@drawable/song_unselect"/>
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:gravity="right"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:id="@+id/album_name"
+                android:layout_width="130dp"
+                android:layout_height="40dp"
+                android:background="@drawable/play_title_bg"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:paddingLeft="2dp"
+                android:paddingRight="5dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:id="@+id/artist_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:text="共有5张专辑7首歌曲" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/album_image"
+            android:layout_width="match_parent"
+            android:layout_height="204dp"
             android:layout_marginTop="18dp"
-            android:layout_marginBottom="18dp"
+            android:scaleType="centerCrop"
+            android:transitionName="albumImage" />
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/button_album"
-                android:layout_marginRight="10dp"
-                android:layout_width="84dp"
-                android:layout_height="28dp"
-                android:background="@drawable/album_selected"/>
-            <Button
-                android:id="@+id/button_song"
-                android:layout_marginRight="10dp"
-                android:layout_width="84dp"
-                android:layout_height="28dp"
-                android:background="@drawable/song_selected"/>
-        </LinearLayout>
-    </FrameLayout>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/albums_and_songs"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:layout_marginTop="18dp"
+                android:gravity="right">
 
-    </android.support.v4.view.ViewPager>
-</LinearLayout>
+                <Button
+                    android:layout_width="84dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/album_unselect" />
+
+                <Button
+                    android:layout_width="84dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/song_unselect" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:layout_marginTop="18dp"
+                android:gravity="right">
+
+                <Button
+                    android:id="@+id/button_album"
+                    android:layout_width="84dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/album_selected" />
+
+                <Button
+                    android:id="@+id/button_song"
+                    android:layout_width="84dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/song_selected" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/albums_and_songs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
+    <include layout="@layout/bottombar_layout"/>
+</FrameLayout>
