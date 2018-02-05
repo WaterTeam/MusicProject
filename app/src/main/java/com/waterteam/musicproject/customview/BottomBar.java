@@ -41,7 +41,6 @@ public class BottomBar extends FrameLayout {
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-
     }
 
     @Override
@@ -89,7 +88,7 @@ public class BottomBar extends FrameLayout {
                 downY = (int) event.getY();
                 break;
             case MotionEvent.ACTION_UP:
-                if ( !isPullUp && startX == downX && startY == downY) {//如果为点击而不是滑动，则弹出播放界面
+                if (!isPullUp && startX == downX && startY == downY) {//如果为点击而不是滑动，则弹出播放界面
                     mScroller.startScroll(0, 0, 0, getMeasuredHeight(), 500);
                     isPullUp = true;
                     invalidate();

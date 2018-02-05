@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.eventsforeventbus.MusicEvent;
+import com.waterteam.musicproject.util.HandleBottomBar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 public class PlayMusicService extends Service {
+    private static AppCompatActivity mainActivity = null;
 
     private MediaPlayer mediaPlayer;
     private List<SongsBean> songsBeanList;
@@ -51,6 +54,7 @@ public class PlayMusicService extends Service {
                 .build();//先创建通知对象
         startForeground(1, notification);
         EventBus.getDefault().register(this);
+        new HandleBottomBar(mainActivity).handleClick();
     }
 
     @Override
@@ -93,7 +97,7 @@ public class PlayMusicService extends Service {
             break;
             case MusicEvent.PLAYNEXT: {//要先设置停止
                 mediaPlayer.reset();
-                position = (position+1)%songsBeanList.size();
+                position = (position + 1) % songsBeanList.size();
                 if (!"".equals(songsBeanList.get(position).getLocation())) {
                     try {
                         mediaPlayer.setDataSource(songsBeanList.get(position).getLocation());
@@ -107,7 +111,7 @@ public class PlayMusicService extends Service {
             break;
             case MusicEvent.PLAYLAST: {
                 mediaPlayer.reset();
-                position = (position-1+songsBeanList.size())%songsBeanList.size();
+                position = (position - 1 + songsBeanList.size()) % songsBeanList.size();
                 if (!"".equals(songsBeanList.get(position).getLocation())) {
                     try {
                         mediaPlayer.setDataSource(songsBeanList.get(position).getLocation());
@@ -132,5 +136,9 @@ public class PlayMusicService extends Service {
             mediaPlayer.release();
             EventBus.getDefault().unregister(this);
         }
+    }
+
+    static public void setMainActivity(AppCompatActivity mainActivity1) {
+        mainActivity = mainActivity1;
     }
 }

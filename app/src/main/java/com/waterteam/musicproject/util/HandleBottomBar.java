@@ -17,7 +17,14 @@ import org.greenrobot.eventbus.EventBus;
 
 
 /**
- * 用于设置Mainactivity中的BoottomBar点击事件
+ * 用于设置Mainactivity中的BoottomBar点击事件,设置点击事件为new HandleBottomBar(mainActivity).handleClick();
+ * <p>
+ * 如果在activity中要设置bottomBar的界面改变，例子为
+ * （1）这个例子是在activity点击一首歌时  PlayingBarEvent playingBarEvent = new PlayingBarEvent();
+ * playingBarEvent.setPosition(position);//传进歌曲在列表中的位置
+ * playingBarEvent.setSongsBeanList(songsRV_dataList);传进歌曲列表
+ * playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYANEW);//传进界面模式
+ * HandleBottomBar.changBottomBarView(playingBarEvent);
  * 还差SeekBar没有设置
  * Created by CNT on 2018/2/4.
  */
@@ -61,7 +68,8 @@ public class HandleBottomBar {
                     EventBus.getDefault().postSticky(musicEvent);
                     PlayingBarEvent playingBarEvent = new PlayingBarEvent();
                     playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYTOPAUSE);
-                    EventBus.getDefault().postSticky(playingBarEvent);
+                    //EventBus.getDefault().postSticky(playingBarEvent);
+                    changBottomBarView(playingBarEvent);
                     isPlaying = false;
                 } else {
                     MusicEvent musicEvent = new MusicEvent();
@@ -69,7 +77,8 @@ public class HandleBottomBar {
                     EventBus.getDefault().postSticky(musicEvent);
                     PlayingBarEvent playingBarEvent = new PlayingBarEvent();
                     playingBarEvent.setPlayingStatus(PlayingBarEvent.PAUSETOPLAY);
-                    EventBus.getDefault().postSticky(playingBarEvent);
+                    //EventBus.getDefault().postSticky(playingBarEvent);
+                    changBottomBarView(playingBarEvent);
                     isPlaying = true;
                 }
             }
@@ -83,7 +92,8 @@ public class HandleBottomBar {
                     EventBus.getDefault().postSticky(musicEvent);
                     PlayingBarEvent playingBarEvent = new PlayingBarEvent();
                     playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYTOPAUSE);
-                    EventBus.getDefault().postSticky(playingBarEvent);
+                    //EventBus.getDefault().postSticky(playingBarEvent);
+                    changBottomBarView(playingBarEvent);
                     isPlaying = false;
                 } else {
                     MusicEvent musicEvent = new MusicEvent();
@@ -91,7 +101,8 @@ public class HandleBottomBar {
                     EventBus.getDefault().postSticky(musicEvent);
                     PlayingBarEvent playingBarEvent = new PlayingBarEvent();
                     playingBarEvent.setPlayingStatus(PlayingBarEvent.PAUSETOPLAY);
-                    EventBus.getDefault().postSticky(playingBarEvent);
+                    //EventBus.getDefault().postSticky(playingBarEvent);
+                    changBottomBarView(playingBarEvent);
                     isPlaying = true;
                 }
             }
@@ -105,7 +116,8 @@ public class HandleBottomBar {
 
                 PlayingBarEvent playingBarEvent = new PlayingBarEvent();
                 playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYNEXT);
-                EventBus.getDefault().postSticky(playingBarEvent);
+                //EventBus.getDefault().postSticky(playingBarEvent);
+                changBottomBarView(playingBarEvent);
                 isPlaying = true;
             }
         });
@@ -118,7 +130,8 @@ public class HandleBottomBar {
 
                 PlayingBarEvent playingBarEvent = new PlayingBarEvent();
                 playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYLAST);
-                EventBus.getDefault().postSticky(playingBarEvent);
+                //EventBus.getDefault().postSticky(playingBarEvent);
+                changBottomBarView(playingBarEvent);
                 isPlaying = true;
             }
         });
@@ -138,8 +151,8 @@ public class HandleBottomBar {
         seekBar = (SeekBar) context.findViewById(R.id.seekbar);
     }
 
-    public static void changBottomBarView(int status, PlayingBarEvent playingBarEvent) {
-        switch (status) {
+    public static void changBottomBarView(PlayingBarEvent playingBarEvent) {
+        switch (playingBarEvent.getPlayingStatus()) {
             case HandleBottomBar.PLAYTOPAUSE: {
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_play_button);
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_play_button);

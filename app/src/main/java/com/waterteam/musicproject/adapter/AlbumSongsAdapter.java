@@ -70,7 +70,8 @@ public class AlbumSongsAdapter extends RecyclerView.Adapter<AlbumSongsAdapter.Vi
                 HandleBottomBar.isPlaying = true;
 
                 playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYANEW);
-                EventBus.getDefault().postSticky(playingBarEvent);
+                HandleBottomBar.changBottomBarView(playingBarEvent);
+                //EventBus.getDefault().postSticky(playingBarEvent);
             }
         });
         return viewHolder;
