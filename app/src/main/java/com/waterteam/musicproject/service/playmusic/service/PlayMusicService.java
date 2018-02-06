@@ -5,7 +5,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -28,6 +31,20 @@ public class PlayMusicService extends Service {
     private MediaPlayer mediaPlayer;
     private List<SongsBean> songsBeanList;
     private int position;
+
+    public static Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            //处理消息
+            Bundle bundle=msg.getData();
+            //获取歌曲长度和当前播放位置，并设置到进度条上
+            int duration=bundle.getInt("duration");
+            int currentposition=bundle.getInt("currentposition");
+            //seekBar.setMax(duration);
+            //seekBar.setProgress(currentposition);
+        }
+    };
+
 
     public PlayMusicService() {
         mediaPlayer = new MediaPlayer();

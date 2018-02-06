@@ -73,17 +73,11 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
                 musicEvent.setPlayintStatus(MusicEvent.PLAY);
                 EventBus.getDefault().postSticky(musicEvent);
 
-                HandleBottomBar.isPlaying = true;
-
                 PlayingBarEvent playingBarEvent = new PlayingBarEvent();
                 playingBarEvent.setPosition(position);
                 playingBarEvent.setSongsBeanList(songsRV_dataList);
-
-                HandleBottomBar.staticPlayingBarEvent = playingBarEvent;
-
                 playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYANEW);
                 HandleBottomBar.changBottomBarView(playingBarEvent);
-                //EventBus.getDefault().postSticky(playingBarEvent);
             }
         });
         return viewHolder;

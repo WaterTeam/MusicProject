@@ -49,9 +49,10 @@ public class HandleBottomBar {
     public static final int PLAYANEW = 3;
     public static final int PLAYNEXT = 4;
     public static final int PLAYLAST = 5;
+    public static final int SEEKBARCHANGE = 6;
 
-    public static boolean isPlaying = false;
-    public static PlayingBarEvent staticPlayingBarEvent;
+    private  static boolean isPlaying = false;
+    private  static PlayingBarEvent staticPlayingBarEvent;
 
     public HandleBottomBar(AppCompatActivity context) {
         initView(context);
@@ -135,7 +136,22 @@ public class HandleBottomBar {
                 isPlaying = true;
             }
         });
-
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+//                try {
+//                    iMyMusicService.seekPlayProgress(seekBar.getProgress());
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        });
     }
 
     private static void initView(AppCompatActivity context) {
@@ -166,6 +182,9 @@ public class HandleBottomBar {
             }
             break;
             case HandleBottomBar.PLAYANEW: {
+                staticPlayingBarEvent = playingBarEvent;
+                isPlaying = true;
+
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
                 bottomBar_palying_songs_name.setText(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()).getName());
@@ -173,7 +192,10 @@ public class HandleBottomBar {
                 bottomBar_singer.setText(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()).getAuthor());
                 bottomBar_playing_song_length.setText(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()).getFormatLenght());
                 GetCoverUtil.setCover(context, playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()), bottomBar_image, 200);
+
+                //seekBar.setMax(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()));
             }
+
             break;
             case HandleBottomBar.PLAYNEXT: {
                 int position = (staticPlayingBarEvent.getPosition() + 1) % staticPlayingBarEvent.getSongsBeanList().size();
@@ -198,6 +220,11 @@ public class HandleBottomBar {
                 GetCoverUtil.setCover(context, staticPlayingBarEvent.getSongsBeanList().get(position), bottomBar_image, 200);
                 staticPlayingBarEvent.setPosition(position);
             }
+            break;
+            case HandleBottomBar.SEEKBARCHANGE:{
+
+            }
+            break;
             default:
                 break;
         }
