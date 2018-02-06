@@ -32,6 +32,8 @@ import org.greenrobot.eventbus.EventBus;
 public class HandleBottomBar {
 
     private static Context context;
+    private static View bottombar;
+    private static View bottomContent;
 
     private static TextView bottomBar_songName;
     private static TextView bottomBar_singer;
@@ -57,6 +59,12 @@ public class HandleBottomBar {
     public HandleBottomBar(AppCompatActivity context) {
         initView(context);
         this.context = context;
+    }
+
+    public HandleBottomBar(View bottombar,View bottomContent){
+        this.bottombar = bottombar;
+        this.bottomContent = bottomContent;
+        initView();
     }
 
     public static void handleClick() {
@@ -167,6 +175,19 @@ public class HandleBottomBar {
         seekBar = (SeekBar) context.findViewById(R.id.seekbar);
     }
 
+    private static void initView(){
+        bottomBar_songName = (TextView) bottombar.findViewById(R.id.bottomBar_songName);
+        bottomBar_singer = (TextView) bottombar.findViewById(R.id.bottomBar_singer);
+        bottomBar_playButton = (Button) bottombar.findViewById(R.id.bottomBar_play_button);
+        bottomBar_image = (ImageView) bottomContent.findViewById(R.id.play_image);
+        bottomBar_playingLayout_button = (Button) bottomContent.findViewById(R.id.play_button);
+        bottomBar_palying_songs_name = (TextView) bottomContent.findViewById(R.id.palying_songs_name);
+        bottomBar_playing_song_length = (TextView) bottomContent.findViewById(R.id.palying_song_length);
+        bottomBar_playing_nextSong = (Button) bottomContent.findViewById(R.id.nextsong_button);
+        bottomBar_playing_lastSong = (Button) bottomContent.findViewById(R.id.lastsong_button);
+        seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
+    }
+
     public static void changBottomBarView(PlayingBarEvent playingBarEvent) {
         switch (playingBarEvent.getPlayingStatus()) {
             case HandleBottomBar.PLAYTOPAUSE: {
@@ -191,7 +212,7 @@ public class HandleBottomBar {
                 bottomBar_songName.setText(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()).getName());
                 bottomBar_singer.setText(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()).getAuthor());
                 bottomBar_playing_song_length.setText(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()).getFormatLenght());
-                GetCoverUtil.setCover(context, playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()), bottomBar_image, 200);
+                //GetCoverUtil.setCover(context,playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()), bottomBar_image, 200);
 
                 //seekBar.setMax(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()));
             }
@@ -205,7 +226,7 @@ public class HandleBottomBar {
                 bottomBar_songName.setText(staticPlayingBarEvent.getSongsBeanList().get(position).getName());
                 bottomBar_singer.setText(staticPlayingBarEvent.getSongsBeanList().get(position).getAuthor());
                 bottomBar_playing_song_length.setText(staticPlayingBarEvent.getSongsBeanList().get(position).getFormatLenght());
-                GetCoverUtil.setCover(context, staticPlayingBarEvent.getSongsBeanList().get(position), bottomBar_image, 200);
+                //GetCoverUtil.setCover(context, staticPlayingBarEvent.getSongsBeanList().get(position), bottomBar_image, 200);
                 staticPlayingBarEvent.setPosition(position);
             }
             break;
@@ -217,7 +238,7 @@ public class HandleBottomBar {
                 bottomBar_songName.setText(staticPlayingBarEvent.getSongsBeanList().get(position).getName());
                 bottomBar_singer.setText(staticPlayingBarEvent.getSongsBeanList().get(position).getAuthor());
                 bottomBar_playing_song_length.setText(staticPlayingBarEvent.getSongsBeanList().get(position).getFormatLenght());
-                GetCoverUtil.setCover(context, staticPlayingBarEvent.getSongsBeanList().get(position), bottomBar_image, 200);
+                //GetCoverUtil.setCover(context, staticPlayingBarEvent.getSongsBeanList().get(position), bottomBar_image, 200);
                 staticPlayingBarEvent.setPosition(position);
             }
             break;

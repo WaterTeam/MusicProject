@@ -71,7 +71,7 @@ public class PlayMusicService extends Service {
                 .build();//先创建通知对象
         startForeground(1, notification);
         EventBus.getDefault().register(this);
-        new HandleBottomBar(mainActivity).handleClick();
+        //new HandleBottomBar(mainActivity).handleClick();
     }
 
     @Override

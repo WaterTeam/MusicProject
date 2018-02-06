@@ -10,6 +10,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
+import com.waterteam.musicproject.eventsforeventbus.PlayingBarEvent;
+import com.waterteam.musicproject.util.HandleBottomBar;
+
 /**
  * Created by CNT on 2018/1/29.
  * <p>
@@ -23,6 +26,8 @@ public class BottomBar extends FrameLayout {
     private View bottomContent;
 
     private Scroller mScroller;
+
+    private HandleBottomBar handleBottomBar;
 
     /**
      * 控制栏的可视范围
@@ -59,6 +64,8 @@ public class BottomBar extends FrameLayout {
         mScroller = new Scroller(getContext());
         //bottomBar.getGlobalVisibleRect(barRect);
         //bottomContent.getGlobalVisibleRect(barRect);
+        handleBottomBar = new HandleBottomBar(bottomBar,bottomContent);
+        handleBottomBar.handleClick();
     }
 
     @Override
@@ -171,5 +178,9 @@ public class BottomBar extends FrameLayout {
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             invalidate();
         }
+    }
+    public void playANewSong(PlayingBarEvent playingBarEvent){
+        handleBottomBar.changBottomBarView(playingBarEvent);
+        Log.e("","测试3");
     }
 }

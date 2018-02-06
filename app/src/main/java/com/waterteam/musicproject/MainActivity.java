@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.waterteam.musicproject.customview.BottomBar;
+import com.waterteam.musicproject.eventsforeventbus.PlayingBarEvent;
 import com.waterteam.musicproject.service.playmusic.service.PlayMusicService;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
@@ -20,6 +21,8 @@ import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
 import com.waterteam.musicproject.viewpagers.songs.page.SongsPageFragment;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     List<Fragment> fragmentList = new ArrayList<Fragment>();
     MyPageAdapter fragmentPagerAdapter;
-    BottomBar bottomBar;
+    private BottomBar bottomBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         //开启播放音乐服务
         PlayMusicService.setMainActivity(this);
         startService(new Intent(this, PlayMusicService.class));
+        EventBus.getDefault().register(this);
     }
 
 
@@ -101,5 +105,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentPagerAdapter = new MyPageAdapter(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentPagerAdapter);
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void ononMoonStickyEvent(PlayingBarEvent playingBarEvent){
+        bottomBar.playANewSong(playingBarEvent);
+    }
+
 }
 
