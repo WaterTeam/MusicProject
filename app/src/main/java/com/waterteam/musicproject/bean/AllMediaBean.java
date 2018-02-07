@@ -12,6 +12,7 @@ import java.util.List;
 public class AllMediaBean implements Serializable {
     private List<ArtistBean> artists;
     private List<SongsBean> songs;
+    private WaitingPlaySongs waitingPlaySongs=new WaitingPlaySongs();
 
     public List<ArtistBean> getArtists() {
         return artists;
@@ -27,6 +28,10 @@ public class AllMediaBean implements Serializable {
 
     public void setSongs(List<SongsBean> songs) {
         this.songs = songs;
+    }
+
+    public WaitingPlaySongs getWaitingPlaySongs(){
+        return waitingPlaySongs;
     }
 
     private AllMediaBean() {

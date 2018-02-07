@@ -6,12 +6,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+
 import android.widget.Scroller;
 
-import com.waterteam.musicproject.eventsforeventbus.PlayingBarEvent;
-import com.waterteam.musicproject.util.HandleBottomBar;
+
+
+
+import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 
 /**
  * Created by CNT on 2018/1/29.
@@ -27,13 +30,6 @@ public class BottomBar extends FrameLayout {
 
     private Scroller mScroller;
 
-    private HandleBottomBar handleBottomBar;
-
-    /**
-     * 控制栏的可视范围
-     */
-    private Rect barRect;
-
     private int downX, downY, startX, startY;
     private int scrollOffset;
 
@@ -46,6 +42,10 @@ public class BottomBar extends FrameLayout {
 
     public BottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        /*
+      控制栏的可视范围
+     */
+        mScroller = new Scroller(getContext());
     }
 
     @Override
@@ -55,18 +55,12 @@ public class BottomBar extends FrameLayout {
     }
 
     private void initView() {
-        int count = getChildCount();
-        if (count != 2) {
-        }
         bottomBar = getChildAt(0);
         bottomContent = getChildAt(1);
-        barRect = new Rect();
-        mScroller = new Scroller(getContext());
-        //bottomBar.getGlobalVisibleRect(barRect);
-        //bottomContent.getGlobalVisibleRect(barRect);
-        handleBottomBar = new HandleBottomBar(bottomBar,bottomContent);
-        handleBottomBar.handleClick();
+
+        new HandleBottomBarTouchUtil(bottomBar,bottomContent);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -77,14 +71,13 @@ public class BottomBar extends FrameLayout {
                 downX = (int) event.getX();
                 downY = (int) event.getY();
                 //判断是否已经是播放界面，如果是则不做处理，如果不是播放界面并且点击的不是bottomBar,则不拦截该点击事件，return false；
-                if (isPullUp) {
-                } else if (!isPullUp && startY < getMeasuredHeight() - bottomBar.getMeasuredHeight()) {
-                    return super.onTouchEvent(event);
-                }
+               if (!isPullUp && startY < getMeasuredHeight() - bottomBar.getMeasuredHeight()) {
+                   return super.onTouchEvent(event);
+               }
                 break;
             case MotionEvent.ACTION_MOVE:
                 int endY = (int) event.getY();
-                int dy = (int) (endY - downY);
+                int dy = (endY - downY);
                 int toScroll = getScrollY() - dy;
                 if (toScroll < 0) {
                     toScroll = 0;
@@ -178,9 +171,5 @@ public class BottomBar extends FrameLayout {
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             invalidate();
         }
-    }
-    public void playANewSong(PlayingBarEvent playingBarEvent){
-        handleBottomBar.changBottomBarView(playingBarEvent);
-        Log.e("","测试3");
     }
 }

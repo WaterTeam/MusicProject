@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.waterteam.musicproject.customview.BottomBar;
-import com.waterteam.musicproject.eventsforeventbus.PlayingBarEvent;
-import com.waterteam.musicproject.service.playmusic.service.PlayMusicService;
+import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
@@ -54,11 +53,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
         initView();
-
-        //开启播放音乐服务
-        PlayMusicService.setMainActivity(this);
-        startService(new Intent(this, PlayMusicService.class));
-        EventBus.getDefault().register(this);
     }
 
 
@@ -80,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(this, PlayMusicService.class));
         EventBus.getDefault().unregister(this);
         super.onDestroy();
 
@@ -106,10 +99,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(fragmentPagerAdapter);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void ononMoonStickyEvent(PlayingBarEvent playingBarEvent){
-        bottomBar.playANewSong(playingBarEvent);
-    }
+
 
 }
 

@@ -28,8 +28,10 @@
         <activity android:name=".ArtistDetailsActivity" />
         <activity android:name=".AlbumDetailsActivity" />
 
-        <service android:name=".service.playmusic.service.PlayMusicService" />
-
+        <service
+            android:name=".service.playmusic.service.PlayService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

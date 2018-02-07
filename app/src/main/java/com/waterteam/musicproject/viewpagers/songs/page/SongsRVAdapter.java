@@ -6,12 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.eventsforeventbus.MusicEvent;
-import com.waterteam.musicproject.eventsforeventbus.PlayingBarEvent;
-import com.waterteam.musicproject.util.HandleBottomBar;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -64,22 +60,22 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 int position = viewHolder.getAdapterPosition();
-
-                MusicEvent musicEvent = new MusicEvent();
-                musicEvent.setSongsBeanList(songsRV_dataList);
-                musicEvent.setPosition(position);
-                musicEvent.setPlayintStatus(MusicEvent.STOP);
-                EventBus.getDefault().postSticky(musicEvent);
-                musicEvent.setPlayintStatus(MusicEvent.PLAY);
-                EventBus.getDefault().postSticky(musicEvent);
-
-                PlayingBarEvent playingBarEvent = new PlayingBarEvent();
-                playingBarEvent.setPosition(position);
-                playingBarEvent.setSongsBeanList(songsRV_dataList);
-                playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYANEW);
-                //HandleBottomBar.changBottomBarView(playingBarEvent);
-                //MainActivity.bottomBar.playANewSong(playingBarEvent);
-                EventBus.getDefault().postSticky(playingBarEvent);
+//
+//                MusicEvent musicEvent = new MusicEvent();
+//                musicEvent.setSongsBeanList(songsRV_dataList);
+//                musicEvent.setPosition(position);
+//                musicEvent.setPlayintStatus(MusicEvent.STOP);
+//                EventBus.getDefault().postSticky(musicEvent);
+//                musicEvent.setPlayintStatus(MusicEvent.PLAY);
+//                EventBus.getDefault().postSticky(musicEvent);
+//
+//                PlayingBarEvent playingBarEvent = new PlayingBarEvent();
+//                playingBarEvent.setPosition(position);
+//                playingBarEvent.setSongsBeanList(songsRV_dataList);
+//                playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYANEW);
+//                //HandleBottomBar.changBottomBarView(playingBarEvent);
+//                //MainActivity.bottomBar.playANewSong(playingBarEvent);
+//                EventBus.getDefault().postSticky(playingBarEvent);
             }
         });
         return viewHolder;

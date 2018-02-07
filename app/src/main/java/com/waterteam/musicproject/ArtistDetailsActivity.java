@@ -19,14 +19,12 @@ import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 
 import com.waterteam.musicproject.util.GetCoverUtil;
-import com.waterteam.musicproject.util.HandleBottomBar;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.detail.album.ArtistDetailAlbumPageFragment;
 import com.waterteam.musicproject.viewpagers.artist.detial.songs.ArtistDetailSongsPageFragment;
 
 
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -19,6 +19,7 @@ import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.getdatautil.GetAlbumUtil;
 import com.waterteam.musicproject.util.getdatautil.GetArtistUtil;
 import com.waterteam.musicproject.util.getdatautil.GetSongUtil;
@@ -101,6 +102,9 @@ public class SplashActivity extends AppCompatActivity {
         //初始化数据
         getSongs();
         getArtists();
+
+        //开启播放音乐服务
+        startService(new Intent(this, PlayService.class));
     }
 
 
