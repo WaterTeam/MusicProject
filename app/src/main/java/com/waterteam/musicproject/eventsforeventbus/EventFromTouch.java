@@ -20,7 +20,7 @@ public class EventFromTouch {
     public final static int DELETE_FROM_LIST=4;
 
     //直接传一个歌曲过来
-    public SongsBean songsBean;
+    private SongsBean songsBean;
 
     //点击播放全部按钮
     public final static int ADD_ALL_TO_LIST=5;
@@ -29,7 +29,20 @@ public class EventFromTouch {
     public List<SongsBean> songs;
 
     //区别事件类型
-    public int statu;
+    private int statu;
+
+    //点击的歌在列表中的索引
+    private int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+
 
     public void setStatu(int statu){
         this.statu=statu;

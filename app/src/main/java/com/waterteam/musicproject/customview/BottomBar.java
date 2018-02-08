@@ -36,6 +36,12 @@ public class BottomBar extends FrameLayout {
     //判断是否为播放界面
     private boolean isPullUp = false;
 
+    public HandleBottomBarTouchUtil getHandleBottomBarTouchUtil() {
+        return handleBottomBarTouchUtil;
+    }
+
+    HandleBottomBarTouchUtil handleBottomBarTouchUtil;
+
     public BottomBar(Context context) {
         this(context, null);
     }
@@ -58,7 +64,7 @@ public class BottomBar extends FrameLayout {
         bottomBar = getChildAt(0);
         bottomContent = getChildAt(1);
 
-        new HandleBottomBarTouchUtil(bottomBar,bottomContent);
+        handleBottomBarTouchUtil = new HandleBottomBarTouchUtil(bottomBar,bottomContent);
     }
 
 
@@ -172,4 +178,6 @@ public class BottomBar extends FrameLayout {
             invalidate();
         }
     }
+
+
 }

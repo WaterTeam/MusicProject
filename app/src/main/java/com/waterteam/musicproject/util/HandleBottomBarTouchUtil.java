@@ -7,9 +7,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.waterteam.musicproject.R;
+import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
+import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.List;
 
 /**
  * Created by BA on 2018/2/6 0006.
@@ -20,31 +25,34 @@ import org.greenrobot.eventbus.EventBus;
 
 public class HandleBottomBarTouchUtil {
 
-    private  TextView bottomBar_songName;
-    private  TextView bottomBar_singer;
-    private  Button bottomBar_playButton;
-    private  ImageView bottomBar_image;
-    private  Button bottomBar_playingLayout_button;//播放界面中的播放按钮
-    private  TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
-    private  TextView bottomBar_playing_song_length;
-    private  Button bottomBar_playing_nextSong;
-    private  Button bottomBar_playing_lastSong;
-    private  SeekBar seekBar;
+    public List<SongsBean> songsBeanList;
 
-    private  View bottomBar;
-    private  View bottomContent;
+    private TextView bottomBar_songName;
+    private TextView bottomBar_singer;
+    private Button bottomBar_playButton;
+    private ImageView bottomBar_image;
+    private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
+    private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
+    private TextView bottomBar_playing_song_length;
+    private Button bottomBar_playing_nextSong;
+    private Button bottomBar_playing_lastSong;
+    private SeekBar seekBar;
 
-    private  static boolean isPlaying = false;
+    private View bottomBar;
+    private View bottomContent;
 
-    public HandleBottomBarTouchUtil( View bottomBar,View bottomContent){
-        this.bottomBar=bottomBar;
-        this.bottomContent=bottomContent;
+    private static boolean isPlaying = false;
+
+    public HandleBottomBarTouchUtil(View bottomBar, View bottomContent) {
+        this.bottomBar = bottomBar;
+        this.bottomContent = bottomContent;
 
         findView();
         handleClick();
+        EventBus.getDefault().register(this);
     }
 
-    private void findView(){
+    private void findView() {
         bottomBar_songName = (TextView) bottomBar.findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) bottomBar.findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) bottomBar.findViewById(R.id.bottomBar_play_button);
@@ -61,7 +69,7 @@ public class HandleBottomBarTouchUtil {
         bottomBar_playingLayout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventFromBar eventFromBar=new EventFromBar();
+                EventFromBar eventFromBar = new EventFromBar();
                 if (isPlaying) {
                     eventFromBar.setStatu(EventFromBar.PAUSE);
                     EventBus.getDefault().post(eventFromBar);
@@ -76,7 +84,7 @@ public class HandleBottomBarTouchUtil {
         bottomBar_playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventFromBar eventFromBar=new EventFromBar();
+                EventFromBar eventFromBar = new EventFromBar();
                 if (isPlaying) {
                     eventFromBar.setStatu(EventFromBar.PAUSE);
                     EventBus.getDefault().post(eventFromBar);
@@ -91,7 +99,7 @@ public class HandleBottomBarTouchUtil {
         bottomBar_playing_nextSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventFromBar eventFromBar=new EventFromBar();
+                EventFromBar eventFromBar = new EventFromBar();
                 eventFromBar.setStatu(EventFromBar.PLAYNEXT);
                 EventBus.getDefault().post(eventFromBar);
                 isPlaying = true;
@@ -110,9 +118,11 @@ public class HandleBottomBarTouchUtil {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 //                try {
@@ -122,5 +132,44 @@ public class HandleBottomBarTouchUtil {
 //                }
             }
         });
+    }
+
+    @Subscribe
+    public void changBottomBarView(EventToBarFromService event) {
+        switch (event.getStatu()) {
+            case EventToBarFromService.PAUSE: {
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_play_button);
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_play_button);
+                //seekBar要设置停住
+            }
+            break;
+            case EventToBarFromService.PAUSETOPLAY: {
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                //seekBar设置恢复移动
+            }
+            break;
+            case EventToBarFromService.PLAYANEW: {
+                isPlaying = true;
+                SongsBean song = event.getSongsBeanList().get(event.getPosition());
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                bottomBar_palying_songs_name.setText(song.getName());
+                bottomBar_songName.setText(song.getName());
+                bottomBar_singer.setText(song.getAuthor());
+                bottomBar_playing_song_length.setText(song.getFormatLenght());
+                GetCoverUtil.setCover(bottomBar.getContext(), song, bottomBar_image, 200);
+
+                //seekBar.setMax(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()));
+            }
+
+            break;
+            case EventToBarFromService.MOVESEEKBAR:{
+
+            }
+            break;
+            default:
+                break;
+        }
     }
 }

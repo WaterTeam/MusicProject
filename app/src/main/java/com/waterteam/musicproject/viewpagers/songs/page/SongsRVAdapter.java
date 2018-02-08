@@ -1,13 +1,17 @@
 package com.waterteam.musicproject.viewpagers.songs.page;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -60,26 +64,30 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 int position = viewHolder.getAdapterPosition();
-//
-//                MusicEvent musicEvent = new MusicEvent();
-//                musicEvent.setSongsBeanList(songsRV_dataList);
-//                musicEvent.setPosition(position);
-//                musicEvent.setPlayintStatus(MusicEvent.STOP);
-//                EventBus.getDefault().postSticky(musicEvent);
-//                musicEvent.setPlayintStatus(MusicEvent.PLAY);
-//                EventBus.getDefault().postSticky(musicEvent);
-//
-//                PlayingBarEvent playingBarEvent = new PlayingBarEvent();
-//                playingBarEvent.setPosition(position);
-//                playingBarEvent.setSongsBeanList(songsRV_dataList);
-//                playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYANEW);
-//                //HandleBottomBar.changBottomBarView(playingBarEvent);
-//                //MainActivity.bottomBar.playANewSong(playingBarEvent);
-//                EventBus.getDefault().postSticky(playingBarEvent);
+
+                EventFromTouch eventFromTouch = new EventFromTouch();
+                eventFromTouch.setSong(songsRV_dataList.get(position));
+                eventFromTouch.setSongs(songsRV_dataList);
+                eventFromTouch.setPosition(position);
+                eventFromTouch.setStatu(EventFromTouch.NOW_PLAY);
+                EventBus.getDefault().post(eventFromTouch);
+            }
+        });
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                EventFromTouch eventFromTouch = new EventFromTouch();
+                eventFromTouch.setSong(songsRV_dataList.get(position));
+                eventFromTouch.setSongs(songsRV_dataList);
+                eventFromTouch.setStatu(EventFromTouch.ADD_TO_NEXT);
+                EventBus.getDefault().post(eventFromTouch);
+                return true;
             }
         });
         return viewHolder;
     }
+
 
     @Override
     public int getItemCount() {

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -50,21 +51,13 @@ public class AlbumSongsAdapter extends RecyclerView.Adapter<AlbumSongsAdapter.Vi
             @Override
             public void onClick(View v) {
                 int position = viewHolder.getAdapterPosition();
-//                MusicEvent musicEvent = new MusicEvent();
-//                musicEvent.setSongsBeanList(songsRV_dataList);
-//                musicEvent.setPosition(position);
-//                musicEvent.setPlayintStatus(MusicEvent.STOP);
-//                EventBus.getDefault().postSticky(musicEvent);
-//                musicEvent.setPlayintStatus(MusicEvent.PLAY);
-//                EventBus.getDefault().postSticky(musicEvent);
-//
-//                PlayingBarEvent playingBarEvent = new PlayingBarEvent();
-//                playingBarEvent.setPosition(position);
-//                playingBarEvent.setSongsBeanList(songsRV_dataList);
-//                playingBarEvent.setPlayingStatus(PlayingBarEvent.PLAYANEW);
-//                //HandleBottomBar.changBottomBarView(playingBarEvent);
-//                //MainActivity.bottomBar.playANewSong(playingBarEvent);
-//                EventBus.getDefault().postSticky(playingBarEvent);
+                EventFromTouch eventFromTouch = new EventFromTouch();
+                eventFromTouch.setSongs(songsRV_dataList);
+                eventFromTouch.setSong(songsRV_dataList.get(position));
+                eventFromTouch.setPosition(position);
+                //eventFromTouch.setSongs(songsRV_dataList);
+                eventFromTouch.setStatu(EventFromTouch.NOW_PLAY);
+                EventBus.getDefault().post(eventFromTouch);
             }
         });
         return viewHolder;

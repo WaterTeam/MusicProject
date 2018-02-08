@@ -17,13 +17,15 @@ import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.bean.WaitingPlaySongs;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
+import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public class PlayService extends Service {
     private MediaPlayer mediaPlayer; //播放音乐用的
-    private int position=0; //当前播放音乐在播放列表中的位置
+    private int position = 0; //当前播放音乐在播放列表中的位置
+    private int nextPosition = 0;
     WaitingPlaySongs playList; //播放列表
     private static final String TAG = "PlayService";
 
@@ -55,29 +57,33 @@ public class PlayService extends Service {
 
     /**
      * 获取播放列表
-     * @author BA on 2018/2/6 0006
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/6 0006
      */
     public void getPlayList() {
         playList = AllMediaBean.getInstance().getWaitingPlaySongs();
     }
 
     /**
-     *  来自控制播放的Bar的事件处理,注意，来自播放bar的事件只需要有状态即可
-     *  ，当然如果是seekbar要有进度，进度条的statu我在事件里面还没写
-     *  事件类是 {@link EventFromBar}，你自己去加
-     * @author BA on 2018/2/6 0006
+     * 来自控制播放的Bar的事件处理,注意，来自播放bar的事件只需要有状态即可
+     * ，当然如果是seekbar要有进度，进度条的statu我在事件里面还没写
+     * 事件类是 {@link EventFromBar}，你自己去加
+     *
      * @param event {@link EventFromBar}
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/6 0006
      */
     @Subscribe
     public void eventFromBar(EventFromBar event) {
+        EventToBarFromService eventto = new EventToBarFromService();
         Log.d(TAG, "eventFromBar: ");
         switch (event.getStatu()) {
-            case EventFromBar.PLAY:
+            case EventFromBar.PLAY://??????
+                mediaPlayer.reset();
                 Log.d(TAG, "eventFromBar: play");
                 playSong();
                 break;
@@ -86,22 +92,38 @@ public class PlayService extends Service {
                 if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                 }
+                eventto.setStatu(EventToBarFromService.PAUSE);
+                EventBus.getDefault().post(eventto);
                 break;
             case EventFromBar.PLAYNEXT:
                 Log.d(TAG, "eventFromBar: next");
                 mediaPlayer.reset();
-                position += position;
+                position = (position + 1) % playList.getSongs().size();//默认列表循环
                 playSong();
+
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                eventto.setSongsBeanList(playList.getSongs());
+                eventto.setPosition(position);
+                Log.e("MainActivity", "播放列表:" + position);
+                EventBus.getDefault().post(eventto);
                 break;
             case EventFromBar.PLAYLAST:
                 Log.d(TAG, "eventFromBar: last");
-                position-=position;
+                mediaPlayer.reset();
+                position = (position - 1 + playList.getSongs().size()) % playList.getSongs().size();
                 playSong();
+
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                eventto.setSongsBeanList(playList.getSongs());
+                eventto.setPosition(position);
+                EventBus.getDefault().post(eventto);
                 break;
             case EventFromBar.PAUSETOPLAY:
                 Log.d(TAG, "eventFromBar: paust 2 play");
                 mediaPlayer.start();
                 playSong();
+                eventto.setStatu(EventToBarFromService.PAUSETOPLAY);
+                EventBus.getDefault().post(eventto);
                 break;
             case EventFromBar.STOP:
                 Log.d(TAG, "eventFromBar: stop");
@@ -115,39 +137,66 @@ public class PlayService extends Service {
     /**
      * 处理点击歌曲，长按歌曲事件的方法,注意，这里我只是处理了添加到播放列表的方法
      * 播放的逻辑你来写
-     * @author BA on 2018/2/7 0007
+     *
      * @param event {@link EventFromTouch}
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/7 0007
      */
     @Subscribe
-    public void EventFromTouch(EventFromTouch event){
-        switch (event.getStatu()){
+    public void EventFromTouch(EventFromTouch event) {
+        EventToBarFromService eventto = new EventToBarFromService();
+        switch (event.getStatu()) {
             case EventFromTouch.NOW_PLAY:
                 //比如说列表中有abcd，当前播放的是b，那么既然是该事件就是要求马上播放
                 //传入的歌曲是f，那么f插入到播放列表后播放列表会变成abfcd，所以下面是++position
                 //你只要继续使用这个position播放就好
-                boolean success = playList.addSongToPosition(++position,event.getSong());
-                if (!success){
-                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
-                }
+//                boolean success = playList.addSongToPosition(++position,event.getSong());
+//                if (!success){
+//                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
+//                }
+//                else{
+//                    mediaPlayer.reset();
+//                    playSong();
+//                }
+                playList.addList(event.getSongs());
+                // playList.addSongToPosition(++position,event.getSong());
+                position = event.getPosition();
+                nextPosition = position;
+                mediaPlayer.reset();
+                playSong();
+
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                eventto.setSongsBeanList(event.getSongs());
+                eventto.setPosition(position);
+                EventBus.getDefault().post(eventto);
+                for (SongsBean songsBean : playList.getSongs())
+                    Log.e("MainActivity", "播放列表:" + songsBean + position);
                 break;
             case EventFromTouch.ADD_ALL_TO_LIST:
                 playList.addList(event.getSongs());
+                position = 0;
+                mediaPlayer.reset();
+                playSong();
                 break;
             case EventFromTouch.ADD_TO_LIST:
-                boolean success2foot= playList.addSongsToFoot(event.getSong());
-                if (!success2foot){
-                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
-                }else {
-                    position=0;
-                }
+//                boolean success2foot= playList.addSongsToFoot(event.getSong());
+//                if (!success2foot){
+//                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
+//                }
+                playList.addSongsToFoot(event.getSong());
+                for (SongsBean songsBean : playList.getSongs())
+                    Log.e("MainActivity", "播放列表:" + songsBean);
                 break;
             case EventFromTouch.ADD_TO_NEXT:
-                boolean success2next= playList.addSongToPosition(position+1,event.getSong());
-                if (!success2next){
-                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
-                }
+//                boolean success2next= playList.addSongToPosition(position+1,event.getSong());
+//                if (!success2next){
+//                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
+//                }
+
+                playList.addSongToPosition(++nextPosition, event.getSong());
+                for (SongsBean songsBean : playList.getSongs())
+                    Log.e("MainActivity", "播放列表:" + songsBean);
                 break;
             case EventFromTouch.DELETE_FROM_LIST:
                 playList.removeSong(event.getSong());
@@ -157,16 +206,17 @@ public class PlayService extends Service {
 
     /**
      * 播放音乐，这是你上次写的，我把他独立出来，然后有没有问题我不知道，没有测试
-     * @author BA on 2018/2/6 0006
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/6 0006
      */
     private void playSong() {
-        if (position>=playList.getSongsCount()){
+        if (position >= playList.getSongsCount() || position < 0) {
             Toast.makeText(this, "播放列表中没有歌曲！", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "playSong: noSong");
-        }else{
+        } else {
             SongsBean songsBean = playList.getSong(position);
             try {
                 mediaPlayer.setDataSource(songsBean.getLocation());
