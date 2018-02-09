@@ -1,5 +1,7 @@
 package com.waterteam.musicproject.util;
 
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ public class HandleBottomBarTouchUtil {
     private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
     private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
     private TextView bottomBar_playing_song_length;
+    private TextView bottomBar_now_play_time;
     private Button bottomBar_playing_nextSong;
     private Button bottomBar_playing_lastSong;
     private SeekBar seekBar;
@@ -42,6 +45,19 @@ public class HandleBottomBarTouchUtil {
     private View bottomContent;
 
     private static boolean isPlaying = false;
+
+
+    final Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    seekBar.setProgress(msg.arg1);
+                    break;
+            }
+            return true;
+        }
+    });
 
     public HandleBottomBarTouchUtil(View bottomBar, View bottomContent) {
         this.bottomBar = bottomBar;
@@ -62,6 +78,7 @@ public class HandleBottomBarTouchUtil {
         bottomBar_playing_song_length = (TextView) bottomContent.findViewById(R.id.palying_song_length);
         bottomBar_playing_nextSong = (Button) bottomContent.findViewById(R.id.nextsong_button);
         bottomBar_playing_lastSong = (Button) bottomContent.findViewById(R.id.lastsong_button);
+        bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.paly_progress);
         seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
     }
 
@@ -117,6 +134,7 @@ public class HandleBottomBarTouchUtil {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                bottomBar_now_play_time.setText(formatTime(progress));
             }
 
             @Override
@@ -125,11 +143,10 @@ public class HandleBottomBarTouchUtil {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-//                try {
-//                    iMyMusicService.seekPlayProgress(seekBar.getProgress());
-//                } catch (RemoteException e) {
-//                    e.printStackTrace();
-//                }
+                EventFromBar eventFromBar = new EventFromBar();
+                eventFromBar.setStatu(EventFromBar.SEEKBARMOVE);
+                eventFromBar.setProgress(seekBar.getProgress());
+                EventBus.getDefault().post(eventFromBar);
             }
         });
     }
@@ -158,18 +175,48 @@ public class HandleBottomBarTouchUtil {
                 bottomBar_songName.setText(song.getName());
                 bottomBar_singer.setText(song.getAuthor());
                 bottomBar_playing_song_length.setText(song.getFormatLenght());
-                GetCoverUtil.setCover(bottomBar.getContext(), song, bottomBar_image, 600);
+                GetCoverUtil.setCover(bottomBar.getContext(), song, bottomBar_image, 200);
+                seekBar.setProgress(0);
+                seekBar.setMax(song.getLength());
 
-                //seekBar.setMax(playingBarEvent.getSongsBeanList().get(playingBarEvent.getPosition()));
+                Message message = new Message();
+                message.what = 1;
+                message.arg1 = 0;
+                handler.sendMessage(message);
             }
 
             break;
-            case EventToBarFromService.MOVESEEKBAR:{
-
+            case EventToBarFromService.MOVESEEKBAR: {
+                bottomBar_now_play_time.setText(formatTime(event.getProgress()));
+                seekBar.setProgress(event.getProgress());
+            }
+            break;
+            case EventToBarFromService.SEEKBARMOVEITSELF:{
+                bottomBar_now_play_time.setText(formatTime(event.getProgress()));
+                seekBar.setProgress(event.getProgress());
             }
             break;
             default:
                 break;
         }
     }
+
+    private String formatTime(int Leng) {
+        //格式化时长
+        float fLength = Leng / 1000.00f / 60.00f;
+        fLength = (float) Math.round(fLength * 100);
+        fLength = fLength / 100;
+        String sLength = fLength + "";
+
+        String[] time = (sLength).split("\\.");
+        String min = "";
+        String second = "";
+        if (time.length >= 1) min = time[0];
+        if (time.length >= 2) second = time[1];
+        if (second.length() < 2) {
+            second += "0";
+        }
+        return min + ":" + second;
+    }
+
 }

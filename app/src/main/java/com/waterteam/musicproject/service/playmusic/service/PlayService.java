@@ -5,7 +5,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,6 +21,8 @@ import com.waterteam.musicproject.bean.WaitingPlaySongs;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
+import com.waterteam.musicproject.util.HandleBottomBar;
+import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,6 +36,28 @@ public class PlayService extends Service {
 
     public PlayService() {
         mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {//播放完后默认播放下一首
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.reset();
+                position = (position + 1) % playList.getSongs().size();//默认列表循环
+                SongsBean songsBean = playList.getSong(position);
+                try {
+                    mp.setDataSource(songsBean.getLocation());
+                    mp.prepare();
+                    mp.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                EventToBarFromService event = new EventToBarFromService();
+                event.setStatu(EventToBarFromService.PLAYANEW);
+                event.setSongsBeanList(playList.getSongs());
+                event.setPosition(position);
+                Log.e("MainActivity", "播放列表:" + position);
+                EventBus.getDefault().post(event);
+            }
+        });
     }
 
     @Override
@@ -131,6 +158,10 @@ public class PlayService extends Service {
                     mediaPlayer.reset();
                 }
                 break;
+            case EventFromBar.SEEKBARMOVE:
+                mediaPlayer.seekTo(event.getProgress());
+                break;
+
         }
     }
 
@@ -144,8 +175,8 @@ public class PlayService extends Service {
      * @author BA on 2018/2/7 0007
      */
     @Subscribe
-    public void EventFromTouch(EventFromTouch event) {
-        EventToBarFromService eventto = new EventToBarFromService();
+    public void EventFromTouch(final EventFromTouch event) {
+        final EventToBarFromService eventto = new EventToBarFromService();
         switch (event.getStatu()) {
             case EventFromTouch.NOW_PLAY:
                 //比如说列表中有abcd，当前播放的是b，那么既然是该事件就是要求马上播放
@@ -170,6 +201,8 @@ public class PlayService extends Service {
                 eventto.setSongsBeanList(event.getSongs());
                 eventto.setPosition(position);
                 EventBus.getDefault().post(eventto);
+
+                StartProgress();
                 for (SongsBean songsBean : playList.getSongs())
                     Log.e("MainActivity", "播放列表:" + songsBean + position);
                 break;
@@ -180,20 +213,11 @@ public class PlayService extends Service {
                 playSong();
                 break;
             case EventFromTouch.ADD_TO_LIST:
-//                boolean success2foot= playList.addSongsToFoot(event.getSong());
-//                if (!success2foot){
-//                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
-//                }
                 playList.addSongsToFoot(event.getSong());
                 for (SongsBean songsBean : playList.getSongs())
                     Log.e("MainActivity", "播放列表:" + songsBean);
                 break;
             case EventFromTouch.ADD_TO_NEXT:
-//                boolean success2next= playList.addSongToPosition(position+1,event.getSong());
-//                if (!success2next){
-//                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
-//                }
-
                 playList.addSongToPosition(++nextPosition, event.getSong());
                 for (SongsBean songsBean : playList.getSongs())
                     Log.e("MainActivity", "播放列表:" + songsBean);
@@ -235,6 +259,38 @@ public class PlayService extends Service {
             mediaPlayer.stop();
             mediaPlayer.release();
             EventBus.getDefault().unregister(this);
+        }
+    }
+
+    public void StartProgress(){
+        //开辟新的Thread用于定期刷新SeekBar;
+        DelayThread dThread = new DelayThread(500);
+        dThread.start();
+    }
+    //开启一个线程进行实时刷新
+    Handler handler = new Handler(){
+        public void handleMessage(Message msg){
+            EventToBarFromService eventto = new EventToBarFromService();
+            eventto.setStatu(EventToBarFromService.SEEKBARMOVEITSELF);
+            eventto.setProgress(mediaPlayer.getCurrentPosition());
+            Log.e("MainActivity", "播放列表:" + position);
+            EventBus.getDefault().post(eventto);
+        }
+    };
+    public class DelayThread extends Thread{
+        int milliseconds;
+        public DelayThread(int i){
+            milliseconds=i;
+        }
+        public void run(){
+            while(true){
+                try {
+                    sleep(milliseconds);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.sendEmptyMessage(0);
+            }
         }
     }
 }

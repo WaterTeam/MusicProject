@@ -15,6 +15,12 @@ public class EventFromBar {
     public final static int PAUSETOPLAY = 4;
     public final static int PLAYNEXT = 5;
     public final static int PLAYLAST = 6;
+    public final static int SEEKBARMOVE = 7;
+
+    public int getProgress() {
+        return progress;
+    }
+
     public int progress; //歌曲进度
 
     public int getStatu(){return statu;}

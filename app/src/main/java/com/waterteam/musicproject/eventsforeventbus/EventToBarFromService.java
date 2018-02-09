@@ -54,4 +54,5 @@ public class EventToBarFromService {
     public final static int PAUSE = 2;
     public final static int PAUSETOPLAY = 4;
     public final static int MOVESEEKBAR = 5;
+    public final static int SEEKBARMOVEITSELF = 6;
 }
