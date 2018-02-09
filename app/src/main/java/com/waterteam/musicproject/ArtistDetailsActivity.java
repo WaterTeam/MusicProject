@@ -2,18 +2,24 @@ package com.waterteam.musicproject;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+
+
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerTabStrip;
+
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
+
 import android.view.View;
+
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
+
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
 
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
@@ -25,20 +31,19 @@ import com.waterteam.musicproject.viewpagers.artist.detail.album.ArtistDetailAlb
 import com.waterteam.musicproject.viewpagers.artist.detial.songs.ArtistDetailSongsPageFragment;
 
 
-
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArtistDetailsActivity extends AppCompatActivity {
     private static final String TAG = "ArtistDetailsActivity";
     private boolean debug = false;
-    ImageView imageView;
+    ImageView headImage;
     TextView textView;
     TextView artistDetail;
     ViewPager viewPager;
     ArtistBean artistBean;
-    Button albumButton;
-    Button songButton;
+    TabLayout tabLayout;
     int position; //记录艺术家的位置，用来取数据
 
     @Override
@@ -46,8 +51,10 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_details);
 
-        //设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
+       // 设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         StatusBarUtil.setStatusBarLightMode(this);
+
+
 
         AllMediaBean mySongsData;
         //为了解决程序被杀死，再回来后空指针异常的问题我希望你这样再处理下数据源，反正这里必须要这样写
@@ -63,16 +70,15 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         }
 
         //初始化控件
-        imageView = (ImageView) findViewById(R.id.album_image);
+        headImage = (ImageView) findViewById(R.id.album_image);
         textView = (TextView) findViewById(R.id.album_name);
         artistDetail = (TextView) findViewById(R.id.artist_detail);
+
+
 
         //设置数据
         initData();
         initView();
-
-        //设置监听
-        setButtonOnClick();
 
         //启动动画
         startAnimator();
@@ -81,32 +87,34 @@ public class ArtistDetailsActivity extends AppCompatActivity {
 
     /**
      * 设置数据
-     * @author BA on 2018/2/1 0001
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/1 0001
      */
-    private void initData(){
+    private void initData() {
         Intent intent = getIntent();
         position = intent.getIntExtra("position", 0);
         artistBean = AllMediaBean.getInstance().getArtists().get(position);
         if (artistBean != null) {
             textView.setText(artistBean.getName());
             artistDetail.setText("共有"+artistBean.getAlbumCount()+"张专辑和"+artistBean.getSongsCount()+"首歌曲");
-            GetCoverUtil.setCover(this, artistBean, imageView, 400);
+            GetCoverUtil.setCover(this, artistBean, headImage, 400);
         }
     }
 
     /**
      * 专辑标题的动画
-     * @author BA on 2018/2/1 0001
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/1 0001
      */
-    private void startAnimator(){
+    private void startAnimator() {
         textView.setTranslationX(-500f);
-        ObjectAnimator objectAnimator=ObjectAnimator.ofFloat(textView,"translationX",0);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(textView, "translationX", 0);
         objectAnimator.setStartDelay(500);
         objectAnimator.setDuration(500);
         objectAnimator.setInterpolator(new DecelerateInterpolator());
@@ -124,86 +132,30 @@ public class ArtistDetailsActivity extends AppCompatActivity {
     private void initView() {
 
         viewPager = (ViewPager) findViewById(R.id.albums_and_songs);
-        albumButton=(Button)findViewById(R.id.button_album);
-        songButton=(Button)findViewById(R.id.button_song);
-        songButton.setAlpha(0);
 
-        List<Fragment> fragmentList=new ArrayList<>();
 
-        ArtistDetailAlbumPageFragment artistDetailAlbumPageFragment= new ArtistDetailAlbumPageFragment();
-        ArtistDetailSongsPageFragment artistDetailSongsPageFragment=
+        List<Fragment> fragmentList = new ArrayList<>();
+
+        ArtistDetailAlbumPageFragment artistDetailAlbumPageFragment = new ArtistDetailAlbumPageFragment();
+        ArtistDetailSongsPageFragment artistDetailSongsPageFragment =
                 new ArtistDetailSongsPageFragment();
 
         artistDetailSongsPageFragment.setData(artistBean.getSongs());
-        artistDetailAlbumPageFragment.setData(artistBean.getAlubums(),position);
+        artistDetailAlbumPageFragment.setData(artistBean.getAlubums(), position);
 
         //往viewPager的数据列表中添加碎片；
         fragmentList.add(artistDetailAlbumPageFragment);
         fragmentList.add(artistDetailSongsPageFragment);
 
-        viewPager.setAdapter( new MyPageAdapter(getSupportFragmentManager(), fragmentList));
+        List<String> titles=new ArrayList<>();
+        titles.add("专辑");
+        titles.add("歌曲");
 
-        //监听页数改变
-        setOnPageChangeListener();
-    }
+        tabLayout= (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.setAdapter(new MyPageAdapter(getSupportFragmentManager(), fragmentList,titles));
 
-    /**
-     *  实现点击后切换ViewPage
-     * @author BA on 2018/2/3 0003
-     * @param
-     * @return
-     * @exception
-     */
-    private void setButtonOnClick(){
-        songButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(1,true);
-            }
-        });
-
-        albumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(0,true);
-            }
-        });
-    }
-
-    /**
-     * 实现滑动时按钮颜色渐变
-     * @author BA on 2018/2/3 0003
-     * @param
-     * @return
-     * @exception
-     */
-    private void setOnPageChangeListener(){
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (positionOffset!=0){
-                    songButton.setAlpha(positionOffset);
-                    albumButton.setAlpha(1-positionOffset);
-                }
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (position==0){
-                    songButton.setAlpha(0);
-                    albumButton.setAlpha(1);
-                }else {
-                    songButton.setAlpha(1);
-                    albumButton.setAlpha(0);
-                }
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        reflex(tabLayout);
     }
 
     //必须写该方法
@@ -212,4 +164,64 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putSerializable("datas", AllMediaBean.getInstance());
     }
+
+    /**
+     * 设置Tab下划线
+     * @author BA on 2018/2/8 0008
+     * @param
+     * @return
+     * @exception
+     */
+    public void reflex(final TabLayout tabLayout){
+        //了解源码得知 线的宽度是根据 tabView的宽度来设置的
+        tabLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //拿到tabLayout的mTabStrip属性
+                    LinearLayout mTabStrip = (LinearLayout) tabLayout.getChildAt(0);
+
+//                    int dp10 = dip2px(tabLayout.getContext(), 10);
+
+                    int dp10 = 200;
+
+                    for (int i = 0; i < mTabStrip.getChildCount(); i++) {
+                        View tabView = mTabStrip.getChildAt(i);
+
+                        //拿到tabView的mTextView属性  tab的字数不固定一定用反射取mTextView
+                        Field mTextViewField = tabView.getClass().getDeclaredField("mTextView");
+                        mTextViewField.setAccessible(true);
+
+                        TextView mTextView = (TextView) mTextViewField.get(tabView);
+
+                        tabView.setPadding(0, 0, 0, 0);
+
+                        //因为我想要的效果是   字多宽线就多宽，所以测量mTextView的宽度
+                        int width = 0;
+                        width = mTextView.getWidth();
+                        if (width == 0) {
+                            mTextView.measure(0, 0);
+                            width = mTextView.getMeasuredWidth();
+                        }
+
+                        //设置tab左右间距为10dp  注意这里不能使用Padding 因为源码中线的宽度是根据 tabView的宽度来设置的
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabView.getLayoutParams();
+                        params.width = width ;
+                        params.leftMargin = dp10;
+                        params.rightMargin = dp10;
+                        tabView.setLayoutParams(params);
+
+                        tabView.invalidate();
+                    }
+
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
 }

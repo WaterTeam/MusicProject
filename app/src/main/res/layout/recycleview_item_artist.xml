@@ -32,7 +32,7 @@
             android:layout_weight="1">
 
             <ImageView
-                android:transitionName="albumImage"
+                android:transitionName="albumCover"
                 android:id="@+id/album_RV_item_imageView"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"

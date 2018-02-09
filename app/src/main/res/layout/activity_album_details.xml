@@ -97,6 +97,7 @@
         <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+           
             app:tr_pureScrollMode_on="true">
 
             <android.support.v7.widget.RecyclerView

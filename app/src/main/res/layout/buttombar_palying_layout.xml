@@ -9,26 +9,30 @@
 
         <TextView
             android:id="@+id/palying_songs_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"
+            android:layout_width="130dp"
+            android:layout_height="40dp"
+            android:background="@drawable/play_title_bg"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="center"
-            android:text="BULE"
-            android:textColor="#222222"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:marqueeRepeatLimit="marquee_forever"
+            android:paddingLeft="2dp"
+            android:paddingRight="8dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="#ffffff" />
 
         <ImageView
             android:id="@+id/play_image"
             android:layout_width="match_parent"
             android:layout_height="320dp"
             android:layout_below="@id/palying_songs_name"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="18dp"
+
+            android:layout_marginTop="20dp"
             android:scaleType="centerCrop"
             android:src="@drawable/playsong_bdg" />
+
         <Button
             android:id="@+id/play_button"
             android:layout_width="46dp"
@@ -40,42 +44,59 @@
             android:background="@drawable/ic_play_button" />
 
         <LinearLayout
+
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/play_button"
-            android:layout_marginBottom="44dp">
-
-            <TextView
-                android:layout_marginLeft="16dp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="2:10"
-                android:textColor="@color/colorAccent"
-                android:textSize="12sp" />
-
+            android:layout_marginBottom="34dp">
             <SeekBar
                 android:id="@+id/seekbar"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_weight="10"
                 android:max="100"
                 android:maxHeight="20dp"
                 android:progress="20" />
 
-            <TextView
-                android:id="@+id/palying_song_length"
-                android:layout_marginRight="16dp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="3:10"
-                android:textSize="12sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/palying_song_length"
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="3:10"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/paly_progress"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="2:10"
+                    android:textSize="12sp" />
+
+
+            </LinearLayout>
         </LinearLayout>
 
+
+        <Button
+            android:id="@+id/play_mode"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="32dp"
+            android:layout_marginLeft="26dp"
+            android:background="@drawable/ic_liebiao" />
 
         <Button
             android:id="@+id/lastsong_button"
@@ -89,6 +110,7 @@
 
 
 
+
         <Button
             android:id="@+id/nextsong_button"
             android:layout_width="36dp"
@@ -98,6 +120,17 @@
             android:layout_marginBottom="25dp"
             android:layout_marginRight="80dp"
             android:background="@drawable/ic_next_button" />
+
+        <Button
+            android:layout_alignParentEnd="true"
+            android:id="@+id/play_list"
+            android:layout_width="18dp"
+            android:layout_height="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="34dp"
+            android:layout_marginRight="26dp"
+            android:background="@drawable/ic_play_list" />
     </RelativeLayout>
 
 

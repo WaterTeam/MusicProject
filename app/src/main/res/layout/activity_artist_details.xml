@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.waterteam.musicproject.ArtistDetailsActivity">
+    android:background="@color/colorPrimaryDark">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="280dp">
 
-        <RelativeLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="match_parent"
+            app:contentScrim="@color/colorAccent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:statusBarScrim="@android:color/transparent"
+            app:titleEnabled="false">
+
+            <ImageView
+                android:transitionName="albumImage"
+                android:layout_marginTop="55dp"
+                android:id="@+id/album_image"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/playsong_bdg"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.4" />
 
             <TextView
                 android:id="@+id/album_name"
@@ -30,79 +47,44 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textColor="#ffffff" />
-
             <TextView
+                android:layout_gravity="right"
                 android:id="@+id/artist_detail"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
+                android:layout_height="40dp"
+                android:gravity="center"
                 android:text="共有5张专辑7首歌曲" />
 
-        </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/album_image"
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.design.widget.TabLayout
+            app:tabIndicatorHeight="3dp"
+            app:tabSelectedTextColor="@color/titleColor"
+            app:tabTextColor="#919191"
+            app:tabTextAppearance="@style/TabTextStyle"
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="204dp"
-            android:layout_marginTop="18dp"
-            android:scaleType="centerCrop"
-            android:transitionName="albumImage" />
+            android:layout_height="48dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+           />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="18dp"
-                android:layout_marginTop="18dp"
-                android:gravity="right">
-
-                <Button
-                    android:layout_width="84dp"
-                    android:layout_height="28dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/album_unselect" />
-
-                <Button
-                    android:layout_width="84dp"
-                    android:layout_height="28dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/song_unselect" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="18dp"
-                android:layout_marginTop="18dp"
-                android:gravity="right">
-
-                <Button
-                    android:id="@+id/button_album"
-                    android:layout_width="84dp"
-                    android:layout_height="28dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/album_selected" />
-
-                <Button
-                    android:id="@+id/button_song"
-                    android:layout_width="84dp"
-                    android:layout_height="28dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/song_selected" />
-            </LinearLayout>
-        </FrameLayout>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/albums_and_songs"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </android.support.v4.view.ViewPager>
+            android:layout_height="match_parent"
+            android:layout_marginBottom="48dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v4.view.ViewPager>
     </LinearLayout>
-    <include layout="@layout/bottombar_layout"/>
-</FrameLayout>
+
+    <include layout="@layout/bottombar_layout" />
+</android.support.design.widget.CoordinatorLayout>

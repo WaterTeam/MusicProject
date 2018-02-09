@@ -42,7 +42,7 @@ public class AlbumSongsAdapter extends RecyclerView.Adapter<AlbumSongsAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recyclerview_item_artist_songs, parent, false);
+                .inflate(R.layout.recycleview_item_artist_songs, parent, false);
         final ViewHolder viewHolder = new ViewHolder(view);
         if (viewHolder.getAdapterPosition() <= 5) {
             startAnimator(viewHolder.itemView);

@@ -3,22 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#f1f1f1">
 
-    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:tr_pureScrollMode_on="true"
-        android:background="#f1f1f1"
-        >
+
     <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:overScrollMode="never"
-        android:background="#f1f1f1"
         android:id="@+id/artist_detail_album_song"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
-    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+
 </LinearLayout>
