@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
@@ -17,6 +18,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by BA on 2018/2/6 0006.
@@ -26,8 +29,6 @@ import java.util.List;
  */
 
 public class HandleBottomBarTouchUtil {
-
-    public List<SongsBean> songsBeanList;
 
     private TextView bottomBar_songName;
     private TextView bottomBar_singer;
@@ -39,25 +40,14 @@ public class HandleBottomBarTouchUtil {
     private TextView bottomBar_now_play_time;
     private Button bottomBar_playing_nextSong;
     private Button bottomBar_playing_lastSong;
+    private Button play_mode;
     private SeekBar seekBar;
 
     private View bottomBar;
     private View bottomContent;
 
     private static boolean isPlaying = false;
-
-
-    final Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    seekBar.setProgress(msg.arg1);
-                    break;
-            }
-            return true;
-        }
-    });
+    private static int playMode = 0;
 
     public HandleBottomBarTouchUtil(View bottomBar, View bottomContent) {
         this.bottomBar = bottomBar;
@@ -79,6 +69,7 @@ public class HandleBottomBarTouchUtil {
         bottomBar_playing_nextSong = (Button) bottomContent.findViewById(R.id.nextsong_button);
         bottomBar_playing_lastSong = (Button) bottomContent.findViewById(R.id.lastsong_button);
         bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.paly_progress);
+        play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
         seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
     }
 
@@ -149,6 +140,38 @@ public class HandleBottomBarTouchUtil {
                 EventBus.getDefault().post(eventFromBar);
             }
         });
+        play_mode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventFromBar eventFromBar = new EventFromBar();
+                playMode = (playMode + 1) % 3;
+                switch (playMode) {
+                    case 0:
+                        eventFromBar.setStatu(EventFromBar.LISTMODE);
+                        EventBus.getDefault().post(eventFromBar);
+                        play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                        Toast toast = Toast.makeText(bottomBar.getContext(),"列表循环",Toast.LENGTH_LONG);
+                        showMyToast(toast,500);
+                        break;
+                    case 1:
+                        eventFromBar.setStatu(EventFromBar.SIMPLEMODE);
+                        EventBus.getDefault().post(eventFromBar);
+                        play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                        Toast toast1 = Toast.makeText(bottomBar.getContext(),"单曲循环",Toast.LENGTH_LONG);
+                        showMyToast(toast1,500);
+                        break;
+                    case 2:
+                        eventFromBar.setStatu(EventFromBar.RANDOMMODE);
+                        EventBus.getDefault().post(eventFromBar);
+                        play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                        Toast toast2 = Toast.makeText(bottomBar.getContext(),"随机播放",Toast.LENGTH_LONG);
+                        showMyToast(toast2,500);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
     }
 
     @Subscribe
@@ -161,15 +184,14 @@ public class HandleBottomBarTouchUtil {
             }
             break;
             case EventToBarFromService.PAUSETOPLAY: {
-                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-                //seekBar设置恢复移动
             }
             break;
             case EventToBarFromService.PLAYANEW: {
                 isPlaying = true;
                 SongsBean song = event.getSongsBeanList().get(event.getPosition());
-                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
                 bottomBar_palying_songs_name.setText(song.getName());
                 bottomBar_songName.setText(song.getName());
@@ -179,10 +201,6 @@ public class HandleBottomBarTouchUtil {
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
 
-                Message message = new Message();
-                message.what = 1;
-                message.arg1 = 0;
-                handler.sendMessage(message);
             }
 
             break;
@@ -191,7 +209,7 @@ public class HandleBottomBarTouchUtil {
                 seekBar.setProgress(event.getProgress());
             }
             break;
-            case EventToBarFromService.SEEKBARMOVEITSELF:{
+            case EventToBarFromService.SEEKBARMOVEITSELF: {
                 bottomBar_now_play_time.setText(formatTime(event.getProgress()));
                 seekBar.setProgress(event.getProgress());
             }
@@ -217,6 +235,22 @@ public class HandleBottomBarTouchUtil {
             second += "0";
         }
         return min + ":" + second;
+    }
+    public void showMyToast(final Toast toast, final int cnt) {//设置了Toast显示的时间
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                toast.show();
+            }
+        }, 0, 3500);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                toast.cancel();
+                timer.cancel();
+            }
+        }, cnt );
     }
 
 }

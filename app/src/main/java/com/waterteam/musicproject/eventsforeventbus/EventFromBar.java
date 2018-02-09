@@ -16,6 +16,9 @@ public class EventFromBar {
     public final static int PLAYNEXT = 5;
     public final static int PLAYLAST = 6;
     public final static int SEEKBARMOVE = 7;
+    public final static int LISTMODE = 8;//列表循环
+    public final static int SIMPLEMODE = 9;//单曲循环
+    public final static int RANDOMMODE = 10;//随机模式
 
     public int getProgress() {
         return progress;

@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -21,17 +20,23 @@ import com.waterteam.musicproject.bean.WaitingPlaySongs;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
-import com.waterteam.musicproject.util.HandleBottomBar;
-import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class PlayService extends Service {
     private MediaPlayer mediaPlayer; //播放音乐用的
     private int position = 0; //当前播放音乐在播放列表中的位置
-    private int nextPosition = 0;
+    private int nextPosition = 0;//用户指定的下一首的位置，记住这个位置是为了用户指定了一个下一首之后，再指定了下一个下一首
+
+    private int playMode = EventFromBar.LISTMODE;
     WaitingPlaySongs playList; //播放列表
+    List<SongsBean>  randomList = new ArrayList<>();//随机模式下记录下的播放列表
+    int randomListPosition = -1;
     private static final String TAG = "PlayService";
 
     public PlayService() {
@@ -123,27 +128,10 @@ public class PlayService extends Service {
                 EventBus.getDefault().post(eventto);
                 break;
             case EventFromBar.PLAYNEXT:
-                Log.d(TAG, "eventFromBar: next");
-                mediaPlayer.reset();
-                position = (position + 1) % playList.getSongs().size();//默认列表循环
-                playSong();
-
-                eventto.setStatu(EventToBarFromService.PLAYANEW);
-                eventto.setSongsBeanList(playList.getSongs());
-                eventto.setPosition(position);
-                Log.e("MainActivity", "播放列表:" + position);
-                EventBus.getDefault().post(eventto);
+                playNext();
                 break;
             case EventFromBar.PLAYLAST:
-                Log.d(TAG, "eventFromBar: last");
-                mediaPlayer.reset();
-                position = (position - 1 + playList.getSongs().size()) % playList.getSongs().size();
-                playSong();
-
-                eventto.setStatu(EventToBarFromService.PLAYANEW);
-                eventto.setSongsBeanList(playList.getSongs());
-                eventto.setPosition(position);
-                EventBus.getDefault().post(eventto);
+                playLast();
                 break;
             case EventFromBar.PAUSETOPLAY:
                 Log.d(TAG, "eventFromBar: paust 2 play");
@@ -161,7 +149,17 @@ public class PlayService extends Service {
             case EventFromBar.SEEKBARMOVE:
                 mediaPlayer.seekTo(event.getProgress());
                 break;
-
+            case EventFromBar.LISTMODE:
+                playMode = event.getStatu();
+                break;
+            case EventFromBar.SIMPLEMODE:
+                playMode = event.getStatu();
+                break;
+            case EventFromBar.RANDOMMODE:
+                playMode = event.getStatu();
+                break;
+            default:
+                break;
         }
     }
 
@@ -196,6 +194,10 @@ public class PlayService extends Service {
                 nextPosition = position;
                 mediaPlayer.reset();
                 playSong();
+
+                randomList.add(event.getSongs().get(position));
+                randomListPosition = -1;
+                randomListPosition++;
 
                 eventto.setStatu(EventToBarFromService.PLAYANEW);
                 eventto.setSongsBeanList(event.getSongs());
@@ -262,14 +264,15 @@ public class PlayService extends Service {
         }
     }
 
-    public void StartProgress(){
+    public void StartProgress() {
         //开辟新的Thread用于定期刷新SeekBar;
         DelayThread dThread = new DelayThread(500);
         dThread.start();
     }
+
     //开启一个线程进行实时刷新
-    Handler handler = new Handler(){
-        public void handleMessage(Message msg){
+    Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
             EventToBarFromService eventto = new EventToBarFromService();
             eventto.setStatu(EventToBarFromService.SEEKBARMOVEITSELF);
             eventto.setProgress(mediaPlayer.getCurrentPosition());
@@ -277,13 +280,16 @@ public class PlayService extends Service {
             EventBus.getDefault().post(eventto);
         }
     };
-    public class DelayThread extends Thread{
+
+    public class DelayThread extends Thread {
         int milliseconds;
-        public DelayThread(int i){
-            milliseconds=i;
+
+        public DelayThread(int i) {
+            milliseconds = i;
         }
-        public void run(){
-            while(true){
+
+        public void run() {
+            while (true) {
                 try {
                     sleep(milliseconds);
                 } catch (InterruptedException e) {
@@ -291,6 +297,112 @@ public class PlayService extends Service {
                 }
                 handler.sendEmptyMessage(0);
             }
+        }
+    }
+
+    private void listNextPlay() {
+        mediaPlayer.reset();
+        position = (position + 1) % playList.getSongs().size();//默认列表循环
+        playSong();
+
+        EventToBarFromService eventto = new EventToBarFromService();
+        eventto.setStatu(EventToBarFromService.PLAYANEW);
+        eventto.setSongsBeanList(playList.getSongs());
+        eventto.setPosition(position);
+        EventBus.getDefault().post(eventto);
+    }
+
+    private void listLastPlay() {
+        mediaPlayer.reset();
+        position = (position - 1 + playList.getSongs().size()) % playList.getSongs().size();
+        playSong();
+
+        EventToBarFromService eventto = new EventToBarFromService();
+        eventto.setStatu(EventToBarFromService.PLAYANEW);
+        eventto.setSongsBeanList(playList.getSongs());
+        eventto.setPosition(position);
+        EventBus.getDefault().post(eventto);
+    }
+
+    private void simplePlay() {
+        mediaPlayer.reset();
+        playSong();
+
+        EventToBarFromService eventto = new EventToBarFromService();
+        eventto.setStatu(EventToBarFromService.PLAYANEW);
+        eventto.setSongsBeanList(playList.getSongs());
+        eventto.setPosition(position);
+        EventBus.getDefault().post(eventto);
+    }
+
+    private void randomNextPlay() {
+        mediaPlayer.reset();
+        Random random = new Random();
+        position = random.nextInt(playList.getSongs().size());
+        playSong();
+
+        randomList.add(playList.getSong(position));
+        randomListPosition++;
+
+        EventToBarFromService eventto = new EventToBarFromService();
+        eventto.setStatu(EventToBarFromService.PLAYANEW);
+        eventto.setSongsBeanList(playList.getSongs());
+        eventto.setPosition(position);
+        EventBus.getDefault().post(eventto);
+    }
+
+    private void randomLastPlay() {
+        if (randomListPosition < 1) {
+            randomNextPlay();
+        } else {
+            mediaPlayer.reset();
+            randomListPosition--;
+            SongsBean songsBean = randomList.get(randomListPosition);
+            try {
+                mediaPlayer.setDataSource(songsBean.getLocation());
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            EventToBarFromService eventto = new EventToBarFromService();
+            eventto.setStatu(EventToBarFromService.PLAYANEW);
+            eventto.setSongsBeanList(randomList);
+            eventto.setPosition(randomListPosition);
+            EventBus.getDefault().post(eventto);
+        }
+    }
+
+    private void playNext() {
+        switch (playMode) {
+            case EventFromBar.LISTMODE:
+                listNextPlay();
+                break;
+            case EventFromBar.SIMPLEMODE:
+                simplePlay();
+                break;
+            case EventFromBar.RANDOMMODE:
+                randomNextPlay();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void playLast() {
+        switch (playMode) {
+            case EventFromBar.LISTMODE:
+                listLastPlay();
+                break;
+            case EventFromBar.SIMPLEMODE:
+                simplePlay();
+                break;
+            case EventFromBar.RANDOMMODE:
+                randomLastPlay();
+                break;
+            default:
+                break;
         }
     }
 }
