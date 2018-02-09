@@ -33,10 +33,11 @@ public class PlayService extends Service {
     private int position = 0; //当前播放音乐在播放列表中的位置
     private int nextPosition = 0;//用户指定的下一首的位置，记住这个位置是为了用户指定了一个下一首之后，再指定了下一个下一首
 
-    private int playMode = EventFromBar.LISTMODE;
+    private int playMode = EventFromBar.LISTMODE;//默认列表循环
     WaitingPlaySongs playList; //播放列表
-    List<SongsBean>  randomList = new ArrayList<>();//随机模式下记录下的播放列表
-    int randomListPosition = -1;
+
+    int randomListPosition = -1;//记录随机播放的上一首的位置
+    private boolean iff = false;//用于randomLastPlay()方法
     private static final String TAG = "PlayService";
 
     public PlayService() {
@@ -45,7 +46,21 @@ public class PlayService extends Service {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mp.reset();
-                position = (position + 1) % playList.getSongs().size();//默认列表循环
+                switch (playMode) {
+                    case EventFromBar.LISTMODE:
+                        position = (position + 1) % playList.getSongs().size();//默认列表循环
+                        break;
+                    case EventFromBar.SIMPLEMODE:
+                        break;
+                    case EventFromBar.RANDOMMODE:
+                        Random random = new Random();
+                        position = random.nextInt(playList.getSongs().size());
+                        break;
+                    default:
+                        position = (position + 1) % playList.getSongs().size();
+                        break;
+                }
+
                 SongsBean songsBean = playList.getSong(position);
                 try {
                     mp.setDataSource(songsBean.getLocation());
@@ -177,27 +192,11 @@ public class PlayService extends Service {
         final EventToBarFromService eventto = new EventToBarFromService();
         switch (event.getStatu()) {
             case EventFromTouch.NOW_PLAY:
-                //比如说列表中有abcd，当前播放的是b，那么既然是该事件就是要求马上播放
-                //传入的歌曲是f，那么f插入到播放列表后播放列表会变成abfcd，所以下面是++position
-                //你只要继续使用这个position播放就好
-//                boolean success = playList.addSongToPosition(++position,event.getSong());
-//                if (!success){
-//                    Toast.makeText(this, "列表中已经有该歌曲", Toast.LENGTH_SHORT).show();
-//                }
-//                else{
-//                    mediaPlayer.reset();
-//                    playSong();
-//                }
                 playList.addList(event.getSongs());
-                // playList.addSongToPosition(++position,event.getSong());
                 position = event.getPosition();
                 nextPosition = position;
                 mediaPlayer.reset();
                 playSong();
-
-                randomList.add(event.getSongs().get(position));
-                randomListPosition = -1;
-                randomListPosition++;
 
                 eventto.setStatu(EventToBarFromService.PLAYANEW);
                 eventto.setSongsBeanList(event.getSongs());
@@ -205,8 +204,6 @@ public class PlayService extends Service {
                 EventBus.getDefault().post(eventto);
 
                 StartProgress();
-                for (SongsBean songsBean : playList.getSongs())
-                    Log.e("MainActivity", "播放列表:" + songsBean + position);
                 break;
             case EventFromTouch.ADD_ALL_TO_LIST:
                 playList.addList(event.getSongs());
@@ -216,13 +213,9 @@ public class PlayService extends Service {
                 break;
             case EventFromTouch.ADD_TO_LIST:
                 playList.addSongsToFoot(event.getSong());
-                for (SongsBean songsBean : playList.getSongs())
-                    Log.e("MainActivity", "播放列表:" + songsBean);
                 break;
             case EventFromTouch.ADD_TO_NEXT:
                 playList.addSongToPosition(++nextPosition, event.getSong());
-                for (SongsBean songsBean : playList.getSongs())
-                    Log.e("MainActivity", "播放列表:" + songsBean);
                 break;
             case EventFromTouch.DELETE_FROM_LIST:
                 playList.removeSong(event.getSong());
@@ -270,7 +263,7 @@ public class PlayService extends Service {
         dThread.start();
     }
 
-    //开启一个线程进行实时刷新
+    //开启一个线程进行seekbar实时刷新
     Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             EventToBarFromService eventto = new EventToBarFromService();
@@ -336,28 +329,29 @@ public class PlayService extends Service {
     }
 
     private void randomNextPlay() {
+
+        randomListPosition = position;
         mediaPlayer.reset();
         Random random = new Random();
         position = random.nextInt(playList.getSongs().size());
         playSong();
 
-        randomList.add(playList.getSong(position));
-        randomListPosition++;
 
         EventToBarFromService eventto = new EventToBarFromService();
         eventto.setStatu(EventToBarFromService.PLAYANEW);
         eventto.setSongsBeanList(playList.getSongs());
         eventto.setPosition(position);
         EventBus.getDefault().post(eventto);
+        iff = true;
     }
 
     private void randomLastPlay() {
-        if (randomListPosition < 1) {
+        if (!iff) {
             randomNextPlay();
         } else {
             mediaPlayer.reset();
-            randomListPosition--;
-            SongsBean songsBean = randomList.get(randomListPosition);
+
+            SongsBean songsBean = playList.getSong(randomListPosition);
             try {
                 mediaPlayer.setDataSource(songsBean.getLocation());
                 mediaPlayer.prepare();
@@ -368,11 +362,22 @@ public class PlayService extends Service {
 
             EventToBarFromService eventto = new EventToBarFromService();
             eventto.setStatu(EventToBarFromService.PLAYANEW);
-            eventto.setSongsBeanList(randomList);
+            eventto.setSongsBeanList(playList.getSongs());
             eventto.setPosition(randomListPosition);
             EventBus.getDefault().post(eventto);
+
+            iff = false;
         }
     }
+
+    /**
+     * 处理3种播放模式下的下一首播放和上一首播放
+     *
+     * @param
+     * @return
+     * @throws
+     * @author CNT on 2018/2/10.
+     */
 
     private void playNext() {
         switch (playMode) {

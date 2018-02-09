@@ -236,6 +236,13 @@ public class HandleBottomBarTouchUtil {
         }
         return min + ":" + second;
     }
+    /**
+     * 自定义Toast的显示时间
+     * @author CNT on 2018/2/10.
+     * @param
+     * @return
+     * @exception
+     */
     public void showMyToast(final Toast toast, final int cnt) {//设置了Toast显示的时间
         final Timer timer = new Timer();
         timer.schedule(new TimerTask() {
