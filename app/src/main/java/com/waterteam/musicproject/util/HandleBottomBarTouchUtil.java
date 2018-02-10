@@ -47,7 +47,10 @@ public class HandleBottomBarTouchUtil {
     private View bottomContent;
 
     private static boolean isPlaying = false;
-    private static int playMode = 0;
+    private static final int LISTPLAY = 0;
+    private static final int ALWAYSPLAY = 1;
+    private static final int RANDOMPLAY = 2;
+    private static int playMode = LISTPLAY;
 
     public HandleBottomBarTouchUtil(View bottomBar, View bottomContent) {
         this.bottomBar = bottomBar;
@@ -146,26 +149,26 @@ public class HandleBottomBarTouchUtil {
                 EventFromBar eventFromBar = new EventFromBar();
                 playMode = (playMode + 1) % 3;
                 switch (playMode) {
-                    case 0:
+                    case LISTPLAY:
                         eventFromBar.setStatu(EventFromBar.LISTMODE);
                         EventBus.getDefault().post(eventFromBar);
                         play_mode.setBackgroundResource(R.drawable.ic_liebiao);
-                        Toast toast = Toast.makeText(bottomBar.getContext(),"列表循环",Toast.LENGTH_LONG);
-                        showMyToast(toast,500);
+                        Toast toast = Toast.makeText(bottomBar.getContext(), "列表循环", Toast.LENGTH_LONG);
+                        showMyToast(toast, 500);
                         break;
-                    case 1:
+                    case ALWAYSPLAY:
                         eventFromBar.setStatu(EventFromBar.SIMPLEMODE);
                         EventBus.getDefault().post(eventFromBar);
                         play_mode.setBackgroundResource(R.drawable.ic_danqu);
-                        Toast toast1 = Toast.makeText(bottomBar.getContext(),"单曲循环",Toast.LENGTH_LONG);
-                        showMyToast(toast1,500);
+                        Toast toast1 = Toast.makeText(bottomBar.getContext(), "单曲循环", Toast.LENGTH_LONG);
+                        showMyToast(toast1, 500);
                         break;
-                    case 2:
+                    case RANDOMPLAY:
                         eventFromBar.setStatu(EventFromBar.RANDOMMODE);
                         EventBus.getDefault().post(eventFromBar);
                         play_mode.setBackgroundResource(R.drawable.ic_suiji);
-                        Toast toast2 = Toast.makeText(bottomBar.getContext(),"随机播放",Toast.LENGTH_LONG);
-                        showMyToast(toast2,500);
+                        Toast toast2 = Toast.makeText(bottomBar.getContext(), "随机播放", Toast.LENGTH_LONG);
+                        showMyToast(toast2, 500);
                         break;
                     default:
                         break;
@@ -189,6 +192,22 @@ public class HandleBottomBarTouchUtil {
             }
             break;
             case EventToBarFromService.PLAYANEW: {
+                if (event.getPlayMode() != -1) {
+                    switch (event.getPlayMode()) {
+                        case LISTPLAY:
+                            play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                            break;
+                        case ALWAYSPLAY:
+                            play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                            break;
+                        case RANDOMPLAY:
+                            play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                            break;
+                        default:
+                            break;
+                    }
+                    playMode = event.getPlayMode();
+                }
                 isPlaying = true;
                 SongsBean song = event.getSongsBeanList().get(event.getPosition());
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
@@ -236,12 +255,14 @@ public class HandleBottomBarTouchUtil {
         }
         return min + ":" + second;
     }
+
     /**
      * 自定义Toast的显示时间
-     * @author CNT on 2018/2/10.
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author CNT on 2018/2/10.
      */
     public void showMyToast(final Toast toast, final int cnt) {//设置了Toast显示的时间
         final Timer timer = new Timer();
@@ -257,7 +278,7 @@ public class HandleBottomBarTouchUtil {
                 toast.cancel();
                 timer.cancel();
             }
-        }, cnt );
+        }, cnt);
     }
 
 }

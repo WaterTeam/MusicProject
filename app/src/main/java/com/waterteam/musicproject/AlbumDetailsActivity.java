@@ -16,10 +16,15 @@ import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
+
+import static java.security.AccessController.getContext;
 
 public class AlbumDetailsActivity extends AppCompatActivity {
     private static final String TAG = "AlbumDetailsActivity";
@@ -29,6 +34,9 @@ public class AlbumDetailsActivity extends AppCompatActivity {
     TextView artistName;
     TextView songsCount;
     RecyclerView recyclerView;
+
+    AlbumBean albumBean;
+
     AlbumSongsAdapter albumSongsAdapter;
 
     @Override
@@ -51,35 +59,36 @@ public class AlbumDetailsActivity extends AppCompatActivity {
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
 
-        albumCover=(ImageView)findViewById(R.id.album_image);
-        albumName=(TextView) findViewById(R.id.album_name);
-        artistName=(TextView)findViewById(R.id.artist_name);
-        songsCount=(TextView)findViewById(R.id.songs_count);
-        recyclerView=(RecyclerView)findViewById(R.id.album_detail_songs);
+        albumCover = (ImageView) findViewById(R.id.album_image);
+        albumName = (TextView) findViewById(R.id.album_name);
+        artistName = (TextView) findViewById(R.id.artist_name);
+        songsCount = (TextView) findViewById(R.id.songs_count);
+        recyclerView = (RecyclerView) findViewById(R.id.album_detail_songs);
 
         initData();
     }
 
     /**
      * 设置数据
-     * @author BA on 2018/2/1 0001
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/1 0001
      */
-    private void initData(){
+    private void initData() {
         Intent intent = getIntent();
         int artistPosition = intent.getIntExtra("artistPosition", 0);
-        int albumPosition=intent.getIntExtra("albumPosition",0);
-        AlbumBean albumBean = AllMediaBean.getInstance().getArtists().get(artistPosition).getAlubums().get(albumPosition);
+        int albumPosition = intent.getIntExtra("albumPosition", 0);
+        albumBean = AllMediaBean.getInstance().getArtists().get(artistPosition).getAlubums().get(albumPosition);
         if (albumBean != null) {
-            albumName.setText("专辑名: "+albumBean.getName());
-            artistName.setText("艺术家: "+albumBean.getArtist());
-            songsCount.setText("歌曲数: "+albumBean.getSongsCount()+"首歌曲");
+            albumName.setText("专辑名: " + albumBean.getName());
+            artistName.setText("艺术家: " + albumBean.getArtist());
+            songsCount.setText("歌曲数: " + albumBean.getSongsCount() + "首歌曲");
             GetCoverUtil.setCover(this, albumBean, albumCover, 200);
 
-            albumSongsAdapter=new AlbumSongsAdapter(albumBean.getSongs());
-            LinearLayoutManager manager=new LinearLayoutManager(this);
+            albumSongsAdapter = new AlbumSongsAdapter(albumBean.getSongs());
+            LinearLayoutManager manager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(albumSongsAdapter);
         }
@@ -94,15 +103,28 @@ public class AlbumDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        int position=albumSongsAdapter.getLongPassPosition();
-        switch (item.getItemId()){
+        int position = albumSongsAdapter.getLongPassPosition();
+        EventFromTouch eventFromTouch = new EventFromTouch();
+        switch (item.getItemId()) {
             case AlbumSongsAdapter.NEXT_PLAY_ID:
-                Toast.makeText(this, "下一首播放", Toast.LENGTH_SHORT).show();
+                eventFromTouch.setSong(albumBean.getSongs().get(position));
+                eventFromTouch.setSongs(albumBean.getSongs());
+                eventFromTouch.setStatu(EventFromTouch.ADD_TO_NEXT);
+                EventBus.getDefault().post(eventFromTouch);
+                Toast.makeText(this,"下一首播放", Toast.LENGTH_SHORT).show();
                 return true;
             case AlbumSongsAdapter.ADD_TO_LIST_ID:
+                eventFromTouch.setSong(albumBean.getSongs().get(position));
+                eventFromTouch.setSongs(albumBean.getSongs());
+                eventFromTouch.setStatu(EventFromTouch.ADD_TO_LIST);
+                EventBus.getDefault().post(eventFromTouch);
                 Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show();
                 return true;
             case AlbumSongsAdapter.ALWAYS_PLAY_ID:
+                eventFromTouch.setSong(albumBean.getSongs().get(position));
+                eventFromTouch.setSongs(albumBean.getSongs());
+                eventFromTouch.setStatu(EventFromTouch.ALWAYS_PLAY);
+                EventBus.getDefault().post(eventFromTouch);
                 Toast.makeText(this, "单曲循环播放", Toast.LENGTH_SHORT).show();
                 return true;
         }
