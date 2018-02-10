@@ -50,6 +50,16 @@ public class EventToBarFromService {
     private int statu;
     private int progress;
 
+    public int getPlayMode() {
+        return playMode;
+    }
+
+    public void setPlayMode(int playMode) {
+        this.playMode = playMode;
+    }
+
+    private int playMode = -1;
+
     public final static int PLAYANEW = 1;
     public final static int PAUSE = 2;
     public final static int PAUSETOPLAY = 4;

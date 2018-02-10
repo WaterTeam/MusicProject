@@ -17,6 +17,9 @@ import android.widget.Toast;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
+import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -71,6 +74,11 @@ public class ArtistPageFragment extends Fragment {
         switch (item.getItemId()){
             case ArtistRV_Adapter.PLAY_ALL_SONGS_ID:
                 //这里你写播放该艺术家全部歌曲的实现
+                EventFromTouch eventFromTouch = new EventFromTouch();
+                eventFromTouch.setStatu(EventFromTouch.NOW_PLAY);
+                eventFromTouch.setPosition(0);
+                eventFromTouch.setSongs(artistRV_dataList.get(position).getSongs());
+                EventBus.getDefault().post(eventFromTouch);
                 Toast.makeText(getContext(),"播放该艺术家的全部歌曲", Toast.LENGTH_SHORT).show();
                 return true;
         }

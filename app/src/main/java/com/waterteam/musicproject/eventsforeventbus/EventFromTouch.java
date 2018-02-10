@@ -24,7 +24,7 @@ public class EventFromTouch {
     private SongsBean songsBean;
 
     //点击播放全部按钮
-    public final static int ADD_ALL_TO_LIST=5;
+    public final static int ADD_ALL_TO_LIST=6;
 
     //传一个歌曲lis过来
     public List<SongsBean> songs;

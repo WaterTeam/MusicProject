@@ -15,6 +15,9 @@ import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.adapter.AlbumSongsAdapter;
 
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -56,14 +59,27 @@ public class ArtistDetailSongsPageFragment extends Fragment{
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         int position=albumSongsAdapter.getLongPassPosition();
+        EventFromTouch eventFromTouch = new EventFromTouch();
         switch (item.getItemId()){
             case AlbumSongsAdapter.NEXT_PLAY_ID:
+                eventFromTouch.setSong(songs.get(position));
+                eventFromTouch.setSongs(songs);
+                eventFromTouch.setStatu(EventFromTouch.ADD_TO_NEXT);
+                EventBus.getDefault().post(eventFromTouch);
                 Toast.makeText(getContext(), "下一首播放", Toast.LENGTH_SHORT).show();
                 return true;
             case AlbumSongsAdapter.ADD_TO_LIST_ID:
+                eventFromTouch.setSong(songs.get(position));
+                eventFromTouch.setSongs(songs);
+                eventFromTouch.setStatu(EventFromTouch.ADD_TO_LIST);
+                EventBus.getDefault().post(eventFromTouch);
                 Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
                 return true;
             case AlbumSongsAdapter.ALWAYS_PLAY_ID:
+                eventFromTouch.setSong(songs.get(position));
+                eventFromTouch.setSongs(songs);
+                eventFromTouch.setStatu(EventFromTouch.ALWAYS_PLAY);
+                EventBus.getDefault().post(eventFromTouch);
                 Toast.makeText(getContext(), "单曲循环播放", Toast.LENGTH_SHORT).show();
                 return true;
         }

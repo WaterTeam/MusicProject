@@ -32,6 +32,7 @@ public class PlayService extends Service {
     private MediaPlayer mediaPlayer; //播放音乐用的
     private int position = 0; //当前播放音乐在播放列表中的位置
     private int nextPosition = 0;//用户指定的下一首的位置，记住这个位置是为了用户指定了一个下一首之后，再指定了下一个下一首
+    private int nextSongCount = 0;//记录用户连续点击了指定某首歌为下一首的次数
 
     private int playMode = EventFromBar.LISTMODE;//默认列表循环
     WaitingPlaySongs playList; //播放列表
@@ -46,36 +47,7 @@ public class PlayService extends Service {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mp.reset();
-                switch (playMode) {
-                    case EventFromBar.LISTMODE:
-                        position = (position + 1) % playList.getSongs().size();//默认列表循环
-                        break;
-                    case EventFromBar.SIMPLEMODE:
-                        break;
-                    case EventFromBar.RANDOMMODE:
-                        Random random = new Random();
-                        position = random.nextInt(playList.getSongs().size());
-                        break;
-                    default:
-                        position = (position + 1) % playList.getSongs().size();
-                        break;
-                }
-
-                SongsBean songsBean = playList.getSong(position);
-                try {
-                    mp.setDataSource(songsBean.getLocation());
-                    mp.prepare();
-                    mp.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                EventToBarFromService event = new EventToBarFromService();
-                event.setStatu(EventToBarFromService.PLAYANEW);
-                event.setSongsBeanList(playList.getSongs());
-                event.setPosition(position);
-                Log.e("MainActivity", "播放列表:" + position);
-                EventBus.getDefault().post(event);
+                playNext();
             }
         });
     }
@@ -195,6 +167,7 @@ public class PlayService extends Service {
                 playList.addList(event.getSongs());
                 position = event.getPosition();
                 nextPosition = position;
+                nextSongCount = 0;
                 mediaPlayer.reset();
                 playSong();
 
@@ -216,9 +189,26 @@ public class PlayService extends Service {
                 break;
             case EventFromTouch.ADD_TO_NEXT:
                 playList.addSongToPosition(++nextPosition, event.getSong());
+                nextSongCount++;
                 break;
             case EventFromTouch.DELETE_FROM_LIST:
                 playList.removeSong(event.getSong());
+                break;
+            case EventFromTouch.ALWAYS_PLAY:
+                playList.addSongToPosition(++position, event.getSong());
+                nextPosition = position;
+                mediaPlayer.reset();
+                playSong();
+
+                playMode = EventFromBar.SIMPLEMODE;
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                eventto.setSongsBeanList(playList.getSongs());
+                eventto.setPosition(position);
+                eventto.setPlayMode(playMode);
+                EventBus.getDefault().post(eventto);
+
+                StartProgress();
+
                 break;
         }
     }
@@ -383,16 +373,25 @@ public class PlayService extends Service {
         switch (playMode) {
             case EventFromBar.LISTMODE:
                 listNextPlay();
+                nextPosition = position;
                 break;
             case EventFromBar.SIMPLEMODE:
                 simplePlay();
+                nextPosition = position;
                 break;
             case EventFromBar.RANDOMMODE:
-                randomNextPlay();
+                if (nextSongCount>0) {//当用户有了下一首的动作之后，则此时下一首应该为用户选定的歌曲（即使是随机播放模式）
+                    listNextPlay();
+                    nextSongCount--;
+                } else {
+                    randomNextPlay();
+                    nextPosition = position;
+                }
                 break;
             default:
                 break;
         }
+        nextPosition = position;
     }
 
     private void playLast() {
@@ -409,5 +408,6 @@ public class PlayService extends Service {
             default:
                 break;
         }
+        nextPosition = position;
     }
 }
