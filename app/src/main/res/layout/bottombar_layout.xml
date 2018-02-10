@@ -16,9 +16,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
                 android:id="@+id/bottomBar_songName"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
@@ -32,9 +29,6 @@
                 android:textSize="16dp" />
 
             <TextView
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
                 android:id="@+id/bottomBar_singer"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
