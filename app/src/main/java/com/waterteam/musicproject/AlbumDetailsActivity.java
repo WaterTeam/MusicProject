@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.waterteam.musicproject.adapter.AlbumSongsAdapter;
 import com.waterteam.musicproject.bean.AlbumBean;
@@ -27,6 +29,7 @@ public class AlbumDetailsActivity extends AppCompatActivity {
     TextView artistName;
     TextView songsCount;
     RecyclerView recyclerView;
+    AlbumSongsAdapter albumSongsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +78,7 @@ public class AlbumDetailsActivity extends AppCompatActivity {
             songsCount.setText("歌曲数: "+albumBean.getSongsCount()+"首歌曲");
             GetCoverUtil.setCover(this, albumBean, albumCover, 200);
 
-            AlbumSongsAdapter albumSongsAdapter=new AlbumSongsAdapter(albumBean.getSongs());
+            albumSongsAdapter=new AlbumSongsAdapter(albumBean.getSongs());
             LinearLayoutManager manager=new LinearLayoutManager(this);
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(albumSongsAdapter);
@@ -87,5 +90,22 @@ public class AlbumDetailsActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("datas", AllMediaBean.getInstance());
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position=albumSongsAdapter.getLongPassPosition();
+        switch (item.getItemId()){
+            case AlbumSongsAdapter.NEXT_PLAY_ID:
+                Toast.makeText(this, "下一首播放", Toast.LENGTH_SHORT).show();
+                return true;
+            case AlbumSongsAdapter.ADD_TO_LIST_ID:
+                Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show();
+                return true;
+            case AlbumSongsAdapter.ALWAYS_PLAY_ID:
+                Toast.makeText(this, "单曲循环播放", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 }

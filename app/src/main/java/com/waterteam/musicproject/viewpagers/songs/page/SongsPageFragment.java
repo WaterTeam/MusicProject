@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AllMediaBean;
@@ -23,6 +25,7 @@ import java.util.List;
 public class SongsPageFragment extends Fragment {
     List<SongsBean> songsRV_dataList = new ArrayList<>();
     RecyclerView recyclerView;
+    SongsRVAdapter songsRV_adapter;
 
     @Nullable
     @Override
@@ -39,7 +42,7 @@ public class SongsPageFragment extends Fragment {
         init();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        SongsRVAdapter songsRV_adapter = new SongsRVAdapter(songsRV_dataList);
+        songsRV_adapter= new SongsRVAdapter(songsRV_dataList);
         recyclerView.setAdapter(songsRV_adapter);
     }
 
@@ -47,5 +50,29 @@ public class SongsPageFragment extends Fragment {
         //测试
 
         songsRV_dataList =  AllMediaBean.getInstance().getSongs();
+    }
+
+    /**
+     * 传递给服务的，让服务处理对应点击的Item的内容我没写，你在下面对应的case添加就好
+     * @author BA on 2018/2/10 0010
+     * @param
+     * @return
+     * @exception
+     */
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position=songsRV_adapter.getLongPassPosition();
+        switch (item.getItemId()){
+            case SongsRVAdapter.NEXT_PLAY_ID:
+                Toast.makeText(getContext(), "下一首播放", Toast.LENGTH_SHORT).show();
+                return true;
+            case SongsRVAdapter.ADD_TO_LIST_ID:
+                Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+                return true;
+            case SongsRVAdapter.ALWAYS_PLAY_ID:
+                Toast.makeText(getContext(), "单曲循环播放", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 }

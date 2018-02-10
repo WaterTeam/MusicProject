@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.adapter.AlbumSongsAdapter;
@@ -25,6 +27,7 @@ import java.util.List;
 public class ArtistDetailSongsPageFragment extends Fragment{
     List<SongsBean> songs;
     RecyclerView recyclerView;
+    AlbumSongsAdapter albumSongsAdapter;
 
     @Nullable
     @Override
@@ -41,10 +44,29 @@ public class ArtistDetailSongsPageFragment extends Fragment{
         LinearLayoutManager manager=new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
 
-        recyclerView.setAdapter(new AlbumSongsAdapter(songs));
+        albumSongsAdapter= new AlbumSongsAdapter(songs);
+
+        recyclerView.setAdapter(albumSongsAdapter);
     }
 
         public void setData(List<SongsBean> songs){
         this.songs=songs;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position=albumSongsAdapter.getLongPassPosition();
+        switch (item.getItemId()){
+            case AlbumSongsAdapter.NEXT_PLAY_ID:
+                Toast.makeText(getContext(), "下一首播放", Toast.LENGTH_SHORT).show();
+                return true;
+            case AlbumSongsAdapter.ADD_TO_LIST_ID:
+                Toast.makeText(getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+                return true;
+            case AlbumSongsAdapter.ALWAYS_PLAY_ID:
+                Toast.makeText(getContext(), "单曲循环播放", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 }

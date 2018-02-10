@@ -6,9 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AllMediaBean;
@@ -26,6 +30,7 @@ public class ArtistPageFragment extends Fragment {
 
     List<ArtistBean> artistRV_dataList ;
     RecyclerView recyclerView;
+    private ArtistRV_Adapter albumRV_Adapter;
 
     @Nullable
     @Override
@@ -46,8 +51,30 @@ public class ArtistPageFragment extends Fragment {
         initAlbumPV_Data();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        ArtistRV_Adapter albumRV_Adaper = new ArtistRV_Adapter(getActivity(),artistRV_dataList);
-        recyclerView.setAdapter(albumRV_Adaper);
+        albumRV_Adapter = new ArtistRV_Adapter(getActivity(),artistRV_dataList);
+        recyclerView.setAdapter(albumRV_Adapter);
+    }
+
+    /**
+     *  实现长按菜单
+     * @author BA on 2018/2/10 0010
+     * @param
+     * @return
+     * @exception
+     */
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        //这个会获取被长按的艺术家位置，你直接可以用
+        int position=albumRV_Adapter.getLongPassPosition();
+
+        switch (item.getItemId()){
+            case ArtistRV_Adapter.PLAY_ALL_SONGS_ID:
+                //这里你写播放该艺术家全部歌曲的实现
+                Toast.makeText(getContext(),"播放该艺术家的全部歌曲", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     /**

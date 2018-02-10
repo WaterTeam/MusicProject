@@ -18,6 +18,7 @@ public class EventFromTouch {
     public final static int ADD_TO_NEXT=1; //添加到下一首播放
     public final static int ADD_TO_LIST=3;
     public final static int DELETE_FROM_LIST=4;
+    public final static int ALWAYS_PLAY=5; //单曲循环
 
     //直接传一个歌曲过来
     private SongsBean songsBean;

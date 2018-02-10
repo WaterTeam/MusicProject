@@ -197,7 +197,7 @@ public class HandleBottomBarTouchUtil {
                 bottomBar_songName.setText(song.getName());
                 bottomBar_singer.setText(song.getAuthor());
                 bottomBar_playing_song_length.setText(song.getFormatLenght());
-                GetCoverUtil.setCover(bottomBar.getContext(), song, bottomBar_image, 200);
+                GetCoverUtil.setCover(bottomBar.getContext(), song, bottomBar_image, 600);
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
 

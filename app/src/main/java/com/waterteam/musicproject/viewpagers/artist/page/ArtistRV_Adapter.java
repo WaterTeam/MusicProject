@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,13 @@ import java.util.List;
 public class ArtistRV_Adapter extends RecyclerView.Adapter<ArtistRV_Adapter.ViewHolder> {
     private static final String TAG = "ArtistRV_Adapter";
     private Context context;
-    List<ArtistBean> artistRV_dataList;
+    private List<ArtistBean> artistRV_dataList;
+
+    //长按菜单的Id
+    static final int PLAY_ALL_SONGS_ID=0;
+
+    //被长按的Item的位置
+    int longPassItemPosition;
 
     public ArtistRV_Adapter(Context context, List<ArtistBean> list) {
         artistRV_dataList = list;
@@ -51,18 +58,18 @@ public class ArtistRV_Adapter extends RecyclerView.Adapter<ArtistRV_Adapter.View
         viewHolder.album_RV_item_View.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, ArtistDetailsActivity.class);
-                intent.putExtra("position",viewHolder.getAdapterPosition());
+                Intent intent = new Intent(context, ArtistDetailsActivity.class);
+                intent.putExtra("position", viewHolder.getAdapterPosition());
                 context.startActivity(intent,
                         ActivityOptions.makeSceneTransitionAnimation
-                                ((AppCompatActivity)(context),viewHolder.album_RV_item_imageView,"albumImage").toBundle());
+                                ((AppCompatActivity) (context), viewHolder.album_RV_item_imageView, "albumImage").toBundle());
             }
         });
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         ArtistBean artistBean = artistRV_dataList.get(position);
         holder.album_RV_item_title.setText(artistBean.getName());
         GetCoverUtil.setCover(context, artistBean, holder.album_RV_item_imageView);
@@ -87,6 +94,16 @@ public class ArtistRV_Adapter extends RecyclerView.Adapter<ArtistRV_Adapter.View
             holder.album_RV_item_song3_name.setText("");
             holder.album_RV_item_song3_time.setText("");
         }
+
+        //获取长按的位置
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longPassItemPosition=holder.getAdapterPosition();
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -94,7 +111,9 @@ public class ArtistRV_Adapter extends RecyclerView.Adapter<ArtistRV_Adapter.View
         return artistRV_dataList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+
+
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         TextView album_RV_item_title;
         ImageView album_RV_item_imageView;
         View album_RV_item_View;
@@ -118,6 +137,33 @@ public class ArtistRV_Adapter extends RecyclerView.Adapter<ArtistRV_Adapter.View
             album_RV_item_song3_name = (TextView) view.findViewById(R.id.album_RV_item_song3_name);
             album_RV_item_song3_time = (TextView) view.findViewById(R.id.album_RV_item_song3_time);
             album_RV_item_View = view;
+
+            //设置长按上下文菜单
+            view.setOnCreateContextMenuListener(this);
+        }
+
+        /**
+         *  创建菜单
+         * @author BA on 2018/2/10 0010
+         * @param
+         * @return
+         * @exception
+         */
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(0,PLAY_ALL_SONGS_ID,0,"播放全部歌曲");
         }
     }
+
+    /**
+     * 获取长按的位置
+     * @author BA on 2018/2/10 0010
+     * @param
+     * @return
+     * @exception
+     */
+    public int getLongPassPosition(){
+        return longPassItemPosition;
+    }
+
 }

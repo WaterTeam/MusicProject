@@ -2,6 +2,7 @@ package com.waterteam.musicproject.viewpagers.songs.page;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,20 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
 
     List<SongsBean> songsRV_dataList;
 
+    //被长按的Item的位置
+    int longPassPosition;
+
+    //长按菜单Item的ID
+    static final int NEXT_PLAY_ID=1;
+    static final int ADD_TO_LIST_ID=2;
+    static final int ALWAYS_PLAY_ID=3;
+
     public SongsRVAdapter(List<SongsBean> list) {
         songsRV_dataList = list;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
 
         SongsBean songsRV_data = songsRV_dataList.get(position);
         holder.song_RV_item_songName.setText(songsRV_data.getName());
@@ -53,6 +62,14 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
             holder.line.setVisibility(View.GONE);
         }
 
+        //设置长按监听获取Item位置
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longPassPosition=holder.getAdapterPosition();
+                return false;
+            }
+        });
 
     }
 
@@ -112,7 +129,7 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
         return -1;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView song_RV_item_songName;
         TextView song_RV_item_singer;
         TextView song_RV_item_songTime;
@@ -127,7 +144,27 @@ public class SongsRVAdapter extends RecyclerView.Adapter<SongsRVAdapter.ViewHold
             song_RV_item_songName = (TextView) itemView.findViewById(R.id.song_RV_item_songName);
             song_RV_item_songTime = (TextView) itemView.findViewById(R.id.songs_RV_item_songTime);
             song_RV_item_catalog = (TextView) itemView.findViewById(R.id.song_RV_item_catalog);
-            line = (View) itemView.findViewById(R.id.song_RV_item_line);
+            line = itemView.findViewById(R.id.song_RV_item_line);
+
+            itemView.setOnCreateContextMenuListener(this);
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(0,NEXT_PLAY_ID,0,"下一首播放");
+            menu.add(0,ADD_TO_LIST_ID,0,"添加到播放列表");
+            menu.add(0,ALWAYS_PLAY_ID,0,"单曲循环");
+        }
+    }
+
+    /**
+     *  获取长按位置被 {@link SongsPageFragment}使用
+     * @author BA on 2018/2/10 0010
+     * @param
+     * @return
+     * @exception
+     */
+    public int getLongPassPosition() {
+        return longPassPosition;
     }
 }
