@@ -254,7 +254,7 @@ public class PlayService extends Service {
 
     public void StartProgress() {
         //开辟新的Thread用于定期刷新SeekBar;
-        DelayThread dThread = new DelayThread(500);
+        DelayThread dThread = new DelayThread(600);
         dThread.start();
     }
 

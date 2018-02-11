@@ -157,15 +157,13 @@ public class AlbumDetailsActivity extends AppCompatActivity {
     private void handleBottomBar(){
         SongsBean songsBean = PlayService.NowPlaySong;
         if(PlayService.isPlay){
-//            EventToBarFromService event = new EventToBarFromService();
-//            event.setStatu(EventToBarFromService.PAUSETOPLAY);
-//            EventBus.getDefault().post(event);
             bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
             bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
         }
         bottomBar_songName.setText(songsBean.getName());
         bottomBar_singer.setText(songsBean.getAuthor());
         bottomBar_palying_songs_name.setText(songsBean.getName());
+        bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
         GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
     }
 }
