@@ -16,7 +16,7 @@
             android:src="@drawable/playsong_bdg" />
 
         <TextView
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="16dp"
             android:text="BULE"
             android:textSize="16sp"
             android:textStyle="bold"

@@ -14,8 +14,6 @@ import android.widget.FrameLayout;
 import android.widget.Scroller;
 
 
-
-
 import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 
 /**
@@ -26,6 +24,7 @@ import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
  */
 
 public class BottomBar extends FrameLayout {
+    private static final String TAG = "BottomBar";
     private View bottomBar;
 
     private View bottomContent;
@@ -60,14 +59,13 @@ public class BottomBar extends FrameLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        bottomBar = getChildAt(0);
+        bottomContent = getChildAt(1);
         initView();
     }
 
     private void initView() {
-        bottomBar = getChildAt(0);
-        bottomContent = getChildAt(1);
-
-        handleBottomBarTouchUtil = new HandleBottomBarTouchUtil(bottomBar,bottomContent);
+        handleBottomBarTouchUtil = new HandleBottomBarTouchUtil(bottomBar, bottomContent);
     }
 
 
@@ -75,22 +73,26 @@ public class BottomBar extends FrameLayout {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.d(TAG, "onTouchEvent: 0");
                 startX = (int) event.getX();
                 startY = (int) event.getY();
                 downX = (int) event.getX();
                 downY = (int) event.getY();
                 //判断是否已经是播放界面，如果是则不做处理，如果不是播放界面并且点击的不是bottomBar,则不拦截该点击事件，return false；
-               if (!isPullUp && startY < getMeasuredHeight() - bottomBar.getMeasuredHeight()) {
-                   return super.onTouchEvent(event);
-               }
+                if (!isPullUp && startY < getMeasuredHeight() - bottomBar.getMeasuredHeight()) {
+                    Log.d(TAG, "onTouchEvent: 1");
+                    return super.onTouchEvent(event);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 int endY = (int) event.getY();
                 int dy = (endY - downY);
                 int toScroll = getScrollY() - dy;
                 if (toScroll < 0) {
+                    Log.d(TAG, "onTouchEvent: 2");
                     toScroll = 0;
                 } else if (toScroll > bottomContent.getMeasuredHeight()) {
+                    Log.d(TAG, "onTouchEvent: 3");
                     toScroll = bottomContent.getMeasuredHeight();
                 }
                 scrollTo(0, toScroll);
@@ -98,24 +100,32 @@ public class BottomBar extends FrameLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 if (!isPullUp && startX == downX && startY == downY) {//如果为点击而不是滑动，则弹出播放界面
-                    mScroller.startScroll(0, 0, 0, getMeasuredHeight(), 500);
+                    mScroller.startScroll(0, 0, 0, getMeasuredHeight() + getStatusBarHeigth(), 500);
                     isPullUp = true;
+                    setFullScreen();
                     invalidate();
+                    Log.d(TAG, "onTouchEvent: 4");
                 } else {
                     scrollOffset = getScrollY();
+
                     if (!isPullUp) {
+                        Log.d(TAG, "onTouchEvent: 5");
                         if (scrollOffset > bottomContent.getMeasuredHeight() / 8) {
+                            Log.d(TAG, "onTouchEvent: 6");
                             showNavigation();
                             isPullUp = true;
                         } else {
+                            Log.d(TAG, "onTouchEvent: 7");
                             closeNavigation();
                             isPullUp = false;
                         }
                     } else {
-                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8 * 7) {
+                        if ((scrollOffset > bottomContent.getMeasuredHeight()-getStatusBarHeigth()+50 )) {
+                            Log.d(TAG, "onTouchEvent: 8");
                             showNavigation();
                             isPullUp = true;
                         } else {
+                            Log.d(TAG, "onTouchEvent: 9");
                             closeNavigation();
                             isPullUp = false;
                         }
@@ -127,10 +137,12 @@ public class BottomBar extends FrameLayout {
     }
 
     private void showNavigation() {
-        int dy = bottomContent.getMeasuredHeight() - scrollOffset;
-        mScroller.startScroll(getScrollX(), getScrollY(), 0, dy+getStatusBarHeigth(), 500);
-        invalidate();
-        setFullScreen();
+        if (!isPullUp) {
+            int dy = bottomContent.getMeasuredHeight() - scrollOffset;
+            mScroller.startScroll(getScrollX(), getScrollY(), 0, dy + getStatusBarHeigth(), 500);
+            invalidate();
+            setFullScreen();
+        }
     }
 
     private void closeNavigation() {
@@ -185,16 +197,16 @@ public class BottomBar extends FrameLayout {
     }
 
 
-    private void setFullScreen(){
-        ((Activity)getContext()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    private void setFullScreen() {
+        ((Activity) getContext()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
 
-    private void quitFullScreen(){
-        final WindowManager.LayoutParams attrs = ((Activity)getContext()).getWindow().getAttributes();
+    private void quitFullScreen() {
+        final WindowManager.LayoutParams attrs = ((Activity) getContext()).getWindow().getAttributes();
         attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ((Activity)getContext()).getWindow().setAttributes(attrs);
-        ((Activity)getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        ((Activity) getContext()).getWindow().setAttributes(attrs);
+        ((Activity) getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
     /**

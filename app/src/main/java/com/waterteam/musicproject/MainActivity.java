@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         if (bottomBar.getIsPullUp()) {
             bottomBar.pullDown();
         } else {
-            //super.onBackPressed();
+            super.onBackPressed();
         }
     }
 
