@@ -2,6 +2,7 @@ package com.waterteam.musicproject.util;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -184,11 +185,13 @@ public class HandleBottomBarTouchUtil {
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_play_button);
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_play_button);
                 //seekBar要设置停住
+                isPlaying = false;
             }
             break;
             case EventToBarFromService.PAUSETOPLAY: {
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                isPlaying = true;
             }
             break;
             case EventToBarFromService.PLAYANEW: {
@@ -219,7 +222,7 @@ public class HandleBottomBarTouchUtil {
                 GetCoverUtil.setCover(bottomBar.getContext(), song, bottomBar_image, 600);
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
-
+                Log.e("MainActivity","执行一次");
             }
 
             break;
@@ -230,6 +233,7 @@ public class HandleBottomBarTouchUtil {
             break;
             case EventToBarFromService.SEEKBARMOVEITSELF: {
                 bottomBar_now_play_time.setText(formatTime(event.getProgress()));
+                seekBar.setMax(event.getSongsBeanList().get(event.getPosition()).getLength());
                 seekBar.setProgress(event.getProgress());
             }
             break;

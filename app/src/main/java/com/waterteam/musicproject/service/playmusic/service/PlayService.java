@@ -34,12 +34,14 @@ public class PlayService extends Service {
     private int nextPosition = 0;//用户指定的下一首的位置，记住这个位置是为了用户指定了一个下一首之后，再指定了下一个下一首
     private int nextSongCount = 0;//记录用户连续点击了指定某首歌为下一首的次数
 
-    private int playMode = EventFromBar.LISTMODE;//默认列表循环
+    public static int playMode = EventFromBar.LISTMODE;//默认列表循环
     WaitingPlaySongs playList; //播放列表
 
     int randomListPosition = -1;//记录随机播放的上一首的位置
     private boolean iff = false;//用于randomLastPlay()方法
     private static final String TAG = "PlayService";
+    public static SongsBean NowPlaySong;
+    public static boolean isPlay = false;
 
     public PlayService() {
         mediaPlayer = new MediaPlayer();
@@ -110,6 +112,7 @@ public class PlayService extends Service {
                 Log.d(TAG, "eventFromBar: pause");
                 if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
+                    isPlay = false;
                 }
                 eventto.setStatu(EventToBarFromService.PAUSE);
                 EventBus.getDefault().post(eventto);
@@ -227,6 +230,8 @@ public class PlayService extends Service {
             Log.d(TAG, "playSong: noSong");
         } else {
             SongsBean songsBean = playList.getSong(position);
+            NowPlaySong = songsBean;
+            isPlay = true;
             try {
                 mediaPlayer.setDataSource(songsBean.getLocation());
                 mediaPlayer.prepare();
@@ -258,8 +263,9 @@ public class PlayService extends Service {
         public void handleMessage(Message msg) {
             EventToBarFromService eventto = new EventToBarFromService();
             eventto.setStatu(EventToBarFromService.SEEKBARMOVEITSELF);
+            eventto.setPosition(position);
+            eventto.setSongsBeanList(playList.getSongs());
             eventto.setProgress(mediaPlayer.getCurrentPosition());
-            Log.e("MainActivity", "播放列表:" + position);
             EventBus.getDefault().post(eventto);
         }
     };

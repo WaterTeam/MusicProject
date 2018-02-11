@@ -16,6 +16,7 @@ import android.view.View;
 
 import android.view.animation.DecelerateInterpolator;
 
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,12 +25,18 @@ import android.widget.TextView;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 
+import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
+import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
+import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.detail.album.ArtistDetailAlbumPageFragment;
 import com.waterteam.musicproject.viewpagers.artist.detial.songs.ArtistDetailSongsPageFragment;
 
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,14 +53,23 @@ public class ArtistDetailsActivity extends AppCompatActivity {
     TabLayout tabLayout;
     int position; //记录艺术家的位置，用来取数据
 
+    private TextView bottomBar_songName;
+    private TextView bottomBar_singer;
+    private Button bottomBar_playButton;
+    private ImageView bottomBar_image;
+    private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
+    private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
+    private TextView bottomBar_playing_song_length;
+    private TextView bottomBar_now_play_time;
+    private Button play_mode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_details);
 
-       // 设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
+        // 设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         StatusBarUtil.setStatusBarLightMode(this);
-
 
 
         AllMediaBean mySongsData;
@@ -74,7 +90,8 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.album_name);
         artistDetail = (TextView) findViewById(R.id.artist_detail);
 
-
+        initBottomBar();
+        //handleBottomBar();
 
         //设置数据
         initData();
@@ -82,6 +99,9 @@ public class ArtistDetailsActivity extends AppCompatActivity {
 
         //启动动画
         startAnimator();
+
+
+
 
     }
 
@@ -99,7 +119,7 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         artistBean = AllMediaBean.getInstance().getArtists().get(position);
         if (artistBean != null) {
             textView.setText(artistBean.getName());
-            artistDetail.setText("共有"+artistBean.getAlbumCount()+"张专辑和"+artistBean.getSongsCount()+"首歌曲");
+            artistDetail.setText("共有" + artistBean.getAlbumCount() + "张专辑和" + artistBean.getSongsCount() + "首歌曲");
             GetCoverUtil.setCover(this, artistBean, headImage, 400);
         }
     }
@@ -147,13 +167,13 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         fragmentList.add(artistDetailAlbumPageFragment);
         fragmentList.add(artistDetailSongsPageFragment);
 
-        List<String> titles=new ArrayList<>();
+        List<String> titles = new ArrayList<>();
         titles.add("专辑");
         titles.add("歌曲");
 
-        tabLayout= (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setAdapter(new MyPageAdapter(getSupportFragmentManager(), fragmentList,titles));
+        viewPager.setAdapter(new MyPageAdapter(getSupportFragmentManager(), fragmentList, titles));
 
         reflex(tabLayout);
     }
@@ -165,14 +185,21 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         outState.putSerializable("datas", AllMediaBean.getInstance());
     }
 
+    @Override
+    protected void onResume() {
+        handleBottomBar();
+        super.onResume();
+    }
+
     /**
      * 设置Tab下划线
-     * @author BA on 2018/2/8 0008
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/8 0008
      */
-    public void reflex(final TabLayout tabLayout){
+    public void reflex(final TabLayout tabLayout) {
         //了解源码得知 线的宽度是根据 tabView的宽度来设置的
         tabLayout.post(new Runnable() {
             @Override
@@ -206,7 +233,7 @@ public class ArtistDetailsActivity extends AppCompatActivity {
 
                         //设置tab左右间距为10dp  注意这里不能使用Padding 因为源码中线的宽度是根据 tabView的宽度来设置的
                         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabView.getLayoutParams();
-                        params.width = width ;
+                        params.width = width;
                         params.leftMargin = dp10;
                         params.rightMargin = dp10;
                         tabView.setLayoutParams(params);
@@ -222,6 +249,43 @@ public class ArtistDetailsActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private void initBottomBar(){
+        bottomBar_songName = (TextView) findViewById(R.id.bottomBar_songName);
+        bottomBar_singer = (TextView) findViewById(R.id.bottomBar_singer);
+        bottomBar_playButton = (Button) findViewById(R.id.bottomBar_play_button);
+        bottomBar_image = (ImageView) findViewById(R.id.play_image);
+        bottomBar_playingLayout_button = (Button) findViewById(R.id.play_button);
+        bottomBar_palying_songs_name = (TextView) findViewById(R.id.palying_songs_name);
+        bottomBar_playing_song_length = (TextView) findViewById(R.id.palying_song_length);
+        play_mode = (Button) findViewById(R.id.play_mode);
+    }
+    private void handleBottomBar(){
+        SongsBean songsBean = PlayService.NowPlaySong;
+        if(PlayService.isPlay){
+//            EventToBarFromService event = new EventToBarFromService();
+//            event.setStatu(EventToBarFromService.PAUSETOPLAY);
+//            EventBus.getDefault().post(event);
+            bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+            bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+        }
+        bottomBar_songName.setText(songsBean.getName());
+        bottomBar_singer.setText(songsBean.getAuthor());
+        bottomBar_palying_songs_name.setText(songsBean.getName());
+        GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
+        switch (PlayService.playMode){
+            case EventFromBar.LISTMODE:
+                play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                break;
+            case EventFromBar.SIMPLEMODE:
+                play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                break;
+            case EventFromBar.RANDOMMODE:
+                play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                break;
+            default:
+                break;
+        }
     }
 
 }
