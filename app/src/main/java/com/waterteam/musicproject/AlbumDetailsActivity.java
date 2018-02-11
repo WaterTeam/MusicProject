@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,8 @@ import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
+import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
+import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 
@@ -38,6 +41,15 @@ public class AlbumDetailsActivity extends AppCompatActivity {
     AlbumBean albumBean;
 
     AlbumSongsAdapter albumSongsAdapter;
+
+    private TextView bottomBar_songName;
+    private TextView bottomBar_singer;
+    private Button bottomBar_playButton;
+    private ImageView bottomBar_image;
+    private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
+    private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
+    private TextView bottomBar_playing_song_length;
+    private TextView bottomBar_now_play_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +78,9 @@ public class AlbumDetailsActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.album_detail_songs);
 
         initData();
+
+        initBottomBar();
+        handleBottomBar();
     }
 
     /**
@@ -129,5 +144,28 @@ public class AlbumDetailsActivity extends AppCompatActivity {
                 return true;
         }
         return super.onContextItemSelected(item);
+    }
+    private void initBottomBar(){
+        bottomBar_songName = (TextView) findViewById(R.id.bottomBar_songName);
+        bottomBar_singer = (TextView) findViewById(R.id.bottomBar_singer);
+        bottomBar_playButton = (Button) findViewById(R.id.bottomBar_play_button);
+        bottomBar_image = (ImageView) findViewById(R.id.play_image);
+        bottomBar_playingLayout_button = (Button) findViewById(R.id.play_button);
+        bottomBar_palying_songs_name = (TextView) findViewById(R.id.palying_songs_name);
+        bottomBar_playing_song_length = (TextView) findViewById(R.id.palying_song_length);
+    }
+    private void handleBottomBar(){
+        SongsBean songsBean = PlayService.NowPlaySong;
+        if(PlayService.isPlay){
+//            EventToBarFromService event = new EventToBarFromService();
+//            event.setStatu(EventToBarFromService.PAUSETOPLAY);
+//            EventBus.getDefault().post(event);
+            bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+            bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+        }
+        bottomBar_songName.setText(songsBean.getName());
+        bottomBar_singer.setText(songsBean.getAuthor());
+        bottomBar_palying_songs_name.setText(songsBean.getName());
+        GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
     }
 }
