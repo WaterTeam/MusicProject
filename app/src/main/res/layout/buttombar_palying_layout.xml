@@ -7,33 +7,35 @@
         android:layout_height="match_parent"
         android:background="#ffffff">
 
+
+        <ImageView
+            android:id="@+id/play_image"
+            android:layout_width="match_parent"
+            android:layout_height="460dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/playsong_bdg" />
+
         <TextView
+            android:layout_marginTop="6dp"
+            android:text="BULE"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:id="@+id/palying_songs_name"
-            android:layout_width="130dp"
-            android:layout_height="40dp"
+            android:layout_width="150dp"
+            android:layout_height="44dp"
             android:background="@drawable/play_title_bg"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
             android:marqueeRepeatLimit="marquee_forever"
-            android:paddingLeft="2dp"
-            android:paddingRight="8dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="9dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="#ffffff" />
 
 
-            <ImageView
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_below="@id/palying_songs_name"
-                android:layout_marginTop="25dp"
-                android:id="@+id/play_image"
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/playsong_bdg" />
         
 
         <Button

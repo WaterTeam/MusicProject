@@ -1,5 +1,6 @@
 package com.waterteam.musicproject.customview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import android.widget.Scroller;
@@ -32,6 +34,7 @@ public class BottomBar extends FrameLayout {
 
     private int downX, downY, startX, startY;
     private int scrollOffset;
+
 
     //判断是否为播放界面
     private boolean isPullUp = false;
@@ -125,14 +128,16 @@ public class BottomBar extends FrameLayout {
 
     private void showNavigation() {
         int dy = bottomContent.getMeasuredHeight() - scrollOffset;
-        mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
+        mScroller.startScroll(getScrollX(), getScrollY(), 0, dy+getStatusBarHeigth(), 500);
         invalidate();
+        setFullScreen();
     }
 
     private void closeNavigation() {
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
+        quitFullScreen();
     }
 
     /**
@@ -180,4 +185,32 @@ public class BottomBar extends FrameLayout {
     }
 
 
+    private void setFullScreen(){
+        ((Activity)getContext()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+
+    private void quitFullScreen(){
+        final WindowManager.LayoutParams attrs = ((Activity)getContext()).getWindow().getAttributes();
+        attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        ((Activity)getContext()).getWindow().setAttributes(attrs);
+        ((Activity)getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+    }
+
+    /**
+     * function : 获取状态栏高度
+     * param :
+     * return : 返回获取到的状态栏高度，没有获取到就返回-1
+     * exception :
+     */
+    public int getStatusBarHeigth() {
+        int statusBarHeight = -1;
+        //获取status_bar_height资源的ID
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取响应的尺寸值
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
+    }
 }
