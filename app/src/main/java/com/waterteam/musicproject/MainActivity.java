@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
         initView();
-      //  initBottomBar();
+        initBottomBar();
         initFirstSong();
     }
 

@@ -101,8 +101,6 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         startAnimator();
 
 
-
-
     }
 
     /**
@@ -250,7 +248,8 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         });
 
     }
-    private void initBottomBar(){
+
+    private void initBottomBar() {
         bottomBar_songName = (TextView) findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) findViewById(R.id.bottomBar_play_button);
@@ -260,29 +259,32 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         bottomBar_playing_song_length = (TextView) findViewById(R.id.palying_song_length);
         play_mode = (Button) findViewById(R.id.play_mode);
     }
-    private void handleBottomBar(){
+
+    private void handleBottomBar() {
         SongsBean songsBean = PlayService.NowPlaySong;
-        if(PlayService.isPlay){
-            bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
-            bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-        }
-        bottomBar_songName.setText(songsBean.getName());
-        bottomBar_singer.setText(songsBean.getAuthor());
-        bottomBar_palying_songs_name.setText(songsBean.getName());
-        bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
-        GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
-        switch (PlayService.playMode){
-            case EventFromBar.LISTMODE:
-                play_mode.setBackgroundResource(R.drawable.ic_liebiao);
-                break;
-            case EventFromBar.SIMPLEMODE:
-                play_mode.setBackgroundResource(R.drawable.ic_danqu);
-                break;
-            case EventFromBar.RANDOMMODE:
-                play_mode.setBackgroundResource(R.drawable.ic_suiji);
-                break;
-            default:
-                break;
+        if (songsBean != null) {
+            if (PlayService.isPlay) {
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+            }
+            bottomBar_songName.setText(songsBean.getName());
+            bottomBar_singer.setText(songsBean.getAuthor());
+            bottomBar_palying_songs_name.setText(songsBean.getName());
+            bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
+            GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
+            switch (PlayService.playMode) {
+                case EventFromBar.LISTMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                    break;
+                case EventFromBar.SIMPLEMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                    break;
+                case EventFromBar.RANDOMMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

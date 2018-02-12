@@ -33,13 +33,13 @@ public class StatusBarUtil {
             if (MIUISetStatusBarLightMode(activity, true) || FlymeSetStatusBarLightMode(activity, true)) {
                 //设置状态栏为透明颜色
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0以上
-                    activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+                    //activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4以上
-                    Window window = activity.getWindow();
-                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    //Window window = activity.getWindow();
+                    //window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                 }
             } else if (Build.VERSION.SDK_INT >= 21) {
-                activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+                //activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     //如果是6.0以上将状态栏文字改为黑色，并设置状态栏颜色
                     activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);

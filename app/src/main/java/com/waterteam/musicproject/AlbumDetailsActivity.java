@@ -17,6 +17,7 @@ import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
@@ -50,6 +51,7 @@ public class AlbumDetailsActivity extends AppCompatActivity {
     private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
     private TextView bottomBar_playing_song_length;
     private TextView bottomBar_now_play_time;
+    private Button play_mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +128,7 @@ public class AlbumDetailsActivity extends AppCompatActivity {
                 eventFromTouch.setSongs(albumBean.getSongs());
                 eventFromTouch.setStatu(EventFromTouch.ADD_TO_NEXT);
                 EventBus.getDefault().post(eventFromTouch);
-                Toast.makeText(this,"下一首播放", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "下一首播放", Toast.LENGTH_SHORT).show();
                 return true;
             case AlbumSongsAdapter.ADD_TO_LIST_ID:
                 eventFromTouch.setSong(albumBean.getSongs().get(position));
@@ -145,7 +147,8 @@ public class AlbumDetailsActivity extends AppCompatActivity {
         }
         return super.onContextItemSelected(item);
     }
-    private void initBottomBar(){
+
+    private void initBottomBar() {
         bottomBar_songName = (TextView) findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) findViewById(R.id.bottomBar_play_button);
@@ -153,17 +156,34 @@ public class AlbumDetailsActivity extends AppCompatActivity {
         bottomBar_playingLayout_button = (Button) findViewById(R.id.play_button);
         bottomBar_palying_songs_name = (TextView) findViewById(R.id.palying_songs_name);
         bottomBar_playing_song_length = (TextView) findViewById(R.id.palying_song_length);
+        play_mode = (Button) findViewById(R.id.play_mode);
     }
-    private void handleBottomBar(){
+
+    private void handleBottomBar() {
         SongsBean songsBean = PlayService.NowPlaySong;
-        if(PlayService.isPlay){
-            bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
-            bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+        if (songsBean != null) {
+            if (PlayService.isPlay) {
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+            }
+            bottomBar_songName.setText(songsBean.getName());
+            bottomBar_singer.setText(songsBean.getAuthor());
+            bottomBar_palying_songs_name.setText(songsBean.getName());
+            bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
+            GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
+            switch (PlayService.playMode) {
+                case EventFromBar.LISTMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                    break;
+                case EventFromBar.SIMPLEMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                    break;
+                case EventFromBar.RANDOMMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                    break;
+                default:
+                    break;
+            }
         }
-        bottomBar_songName.setText(songsBean.getName());
-        bottomBar_singer.setText(songsBean.getAuthor());
-        bottomBar_palying_songs_name.setText(songsBean.getName());
-        bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
-        GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
     }
 }
