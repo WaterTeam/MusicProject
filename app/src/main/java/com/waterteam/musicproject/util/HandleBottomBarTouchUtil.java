@@ -14,6 +14,7 @@ import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
+import com.waterteam.musicproject.service.playmusic.service.PlayService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,6 +31,7 @@ import java.util.TimerTask;
  */
 
 public class HandleBottomBarTouchUtil {
+    private static final String TAG = "HandleBottomBarTouchUti";
 
     private TextView bottomBar_songName;
     private TextView bottomBar_singer;
@@ -43,6 +45,8 @@ public class HandleBottomBarTouchUtil {
     private Button bottomBar_playing_lastSong;
     private Button play_mode;
     private SeekBar seekBar;
+    private View play_control_layout;
+    private View bottomBar_head_layout;
 
     private View bottomBar;
     private View bottomContent;
@@ -57,8 +61,11 @@ public class HandleBottomBarTouchUtil {
         this.bottomBar = bottomBar;
         this.bottomContent = bottomContent;
 
+        Log.d(TAG, "HandleBottomBarTouchUtil: ");
+
         findView();
         handleClick();
+        flashBottomBar();
         EventBus.getDefault().register(this);
     }
 
@@ -75,6 +82,8 @@ public class HandleBottomBarTouchUtil {
         bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.paly_progress);
         play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
         seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
+        play_control_layout=bottomContent.findViewById(R.id.play_handle_bar_layout);
+        bottomBar_head_layout=bottomBar.findViewById(R.id.bottomBar_head_layout);
     }
 
     public void handleClick() {
@@ -176,6 +185,49 @@ public class HandleBottomBarTouchUtil {
                 }
             }
         });
+    }
+
+    private void flashBottomBar() {
+        Log.d(TAG, "flashBottomBar: ");
+        SongsBean songsBean = PlayService.NowPlaySong;
+        if (songsBean != null) {
+            if (PlayService.isPlay) {
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+            }
+            bottomBar_songName.setText(songsBean.getName());
+            bottomBar_singer.setText(songsBean.getAuthor());
+            bottomBar_palying_songs_name.setText(songsBean.getName());
+            bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
+
+            GetCoverUtil.setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
+                @Override
+                public void completed() {
+                    PaletteUtil paletteUtil=new PaletteUtil();
+                    paletteUtil.from(bottomBar_image).to(play_control_layout);
+                    paletteUtil.from(bottomBar_image).to(bottomBar_head_layout);
+                    Log.d(TAG, "completed: ");
+                }
+            });
+            
+            GetCoverUtil.setCover(bottomBar.getContext(), songsBean, bottomBar_image, 600);
+
+
+
+            switch (PlayService.playMode) {
+                case EventFromBar.LISTMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                    break;
+                case EventFromBar.SIMPLEMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                    break;
+                case EventFromBar.RANDOMMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @Subscribe

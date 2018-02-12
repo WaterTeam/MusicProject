@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.example.bastatusbar.BAStatusBar;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 
@@ -70,6 +71,7 @@ public class ArtistDetailsActivity extends AppCompatActivity {
 
         // 设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         StatusBarUtil.setStatusBarLightMode(this);
+        new BAStatusBar().setfitsSystemWindowsBar(this);
 
 
         AllMediaBean mySongsData;
@@ -89,9 +91,6 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         headImage = (ImageView) findViewById(R.id.album_image);
         textView = (TextView) findViewById(R.id.album_name);
         artistDetail = (TextView) findViewById(R.id.artist_detail);
-
-        initBottomBar();
-        //handleBottomBar();
 
         //设置数据
         initData();
@@ -185,7 +184,6 @@ public class ArtistDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        handleBottomBar();
         super.onResume();
     }
 
@@ -248,44 +246,4 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         });
 
     }
-
-    private void initBottomBar() {
-        bottomBar_songName = (TextView) findViewById(R.id.bottomBar_songName);
-        bottomBar_singer = (TextView) findViewById(R.id.bottomBar_singer);
-        bottomBar_playButton = (Button) findViewById(R.id.bottomBar_play_button);
-        bottomBar_image = (ImageView) findViewById(R.id.play_image);
-        bottomBar_playingLayout_button = (Button) findViewById(R.id.play_button);
-        bottomBar_palying_songs_name = (TextView) findViewById(R.id.palying_songs_name);
-        bottomBar_playing_song_length = (TextView) findViewById(R.id.palying_song_length);
-        play_mode = (Button) findViewById(R.id.play_mode);
-    }
-
-    private void handleBottomBar() {
-        SongsBean songsBean = PlayService.NowPlaySong;
-        if (songsBean != null) {
-            if (PlayService.isPlay) {
-                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
-                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-            }
-            bottomBar_songName.setText(songsBean.getName());
-            bottomBar_singer.setText(songsBean.getAuthor());
-            bottomBar_palying_songs_name.setText(songsBean.getName());
-            bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
-            GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
-            switch (PlayService.playMode) {
-                case EventFromBar.LISTMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
-                    break;
-                case EventFromBar.SIMPLEMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
-                    break;
-                case EventFromBar.RANDOMMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
 }

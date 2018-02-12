@@ -16,6 +16,8 @@ import android.widget.Scroller;
 
 import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by CNT on 2018/1/29.
  * <p>
@@ -34,15 +36,13 @@ public class BottomBar extends FrameLayout {
     private int downX, downY, startX, startY;
     private int scrollOffset;
 
+    private HandleBottomBarTouchUtil handleBottomBarTouchUtil;
+
 
     //判断是否为播放界面
     private boolean isPullUp = false;
 
-    public HandleBottomBarTouchUtil getHandleBottomBarTouchUtil() {
-        return handleBottomBarTouchUtil;
-    }
 
-    HandleBottomBarTouchUtil handleBottomBarTouchUtil;
 
     public BottomBar(Context context) {
         this(context, null);
@@ -54,14 +54,23 @@ public class BottomBar extends FrameLayout {
       控制栏的可视范围
      */
         mScroller = new Scroller(getContext());
+
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        bottomBar = getChildAt(0);
+        bottomContent = getChildAt(1);
+        initView();
+        Log.d(TAG, "onFinishInflate: ");
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        bottomBar = getChildAt(0);
-        bottomContent = getChildAt(1);
-        initView();
+        Log.d(TAG, "onMeasure: ");
+
     }
 
     private void initView() {
@@ -100,9 +109,8 @@ public class BottomBar extends FrameLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 if (!isPullUp && startX == downX && startY == downY) {//如果为点击而不是滑动，则弹出播放界面
-                    mScroller.startScroll(0, 0, 0, getMeasuredHeight() + getStatusBarHeigth(), 500);
+                    mScroller.startScroll(0, 0, 0, getMeasuredHeight(), 500);
                     isPullUp = true;
-                    setFullScreen();
                     invalidate();
                     Log.d(TAG, "onTouchEvent: 4");
                 } else {
@@ -120,7 +128,7 @@ public class BottomBar extends FrameLayout {
                             isPullUp = false;
                         }
                     } else {
-                        if ((scrollOffset > bottomContent.getMeasuredHeight()-getStatusBarHeigth()+50 )) {
+                        if (scrollOffset > bottomContent.getMeasuredHeight()/8*7) {
                             Log.d(TAG, "onTouchEvent: 8");
                             showNavigation();
                             isPullUp = true;
@@ -137,19 +145,15 @@ public class BottomBar extends FrameLayout {
     }
 
     private void showNavigation() {
-        if (!isPullUp) {
             int dy = bottomContent.getMeasuredHeight() - scrollOffset;
-            mScroller.startScroll(getScrollX(), getScrollY(), 0, dy + getStatusBarHeigth(), 500);
+            mScroller.startScroll(getScrollX(), getScrollY(), 0, dy , 500);
             invalidate();
-            setFullScreen();
-        }
     }
 
     private void closeNavigation() {
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
-        quitFullScreen();
     }
 
     /**
@@ -176,7 +180,6 @@ public class BottomBar extends FrameLayout {
         if (isPullUp) {
             mScroller.startScroll(0, bottomContent.getMeasuredHeight(), 0, -bottomContent.getMeasuredHeight(), 500);
             invalidate();
-            quitFullScreen();
             isPullUp = false;
         }
     }
@@ -197,33 +200,9 @@ public class BottomBar extends FrameLayout {
         }
     }
 
-
-    private void setFullScreen() {
-        ((Activity) getContext()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-
-    private void quitFullScreen() {
-        final WindowManager.LayoutParams attrs = ((Activity) getContext()).getWindow().getAttributes();
-        attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ((Activity) getContext()).getWindow().setAttributes(attrs);
-        ((Activity) getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-    }
-
-    /**
-     * function : 获取状态栏高度
-     * param :
-     * return : 返回获取到的状态栏高度，没有获取到就返回-1
-     * exception :
-     */
-    public int getStatusBarHeigth() {
-        int statusBarHeight = -1;
-        //获取status_bar_height资源的ID
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            //根据资源ID获取响应的尺寸值
-            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-        }
-        return statusBarHeight;
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        EventBus.getDefault().unregister(handleBottomBarTouchUtil);
     }
 }

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bastatusbar.BAStatusBar;
 import com.waterteam.musicproject.adapter.AlbumSongsAdapter;
 import com.waterteam.musicproject.bean.AlbumBean;
 import com.waterteam.musicproject.bean.AllMediaBean;
@@ -59,6 +60,7 @@ public class AlbumDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_album_details);
 
         StatusBarUtil.setStatusBarLightMode(this);
+        new BAStatusBar().setfitsSystemWindowsBar(this);
 
         AllMediaBean mySongsData;
         //为了解决程序被杀死，再回来后空指针异常的问题我希望你这样再处理下数据源，反正这里必须要这样写
@@ -80,9 +82,6 @@ public class AlbumDetailsActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.album_detail_songs);
 
         initData();
-
-        initBottomBar();
-        handleBottomBar();
     }
 
     /**
@@ -146,44 +145,5 @@ public class AlbumDetailsActivity extends AppCompatActivity {
                 return true;
         }
         return super.onContextItemSelected(item);
-    }
-
-    private void initBottomBar() {
-        bottomBar_songName = (TextView) findViewById(R.id.bottomBar_songName);
-        bottomBar_singer = (TextView) findViewById(R.id.bottomBar_singer);
-        bottomBar_playButton = (Button) findViewById(R.id.bottomBar_play_button);
-        bottomBar_image = (ImageView) findViewById(R.id.play_image);
-        bottomBar_playingLayout_button = (Button) findViewById(R.id.play_button);
-        bottomBar_palying_songs_name = (TextView) findViewById(R.id.palying_songs_name);
-        bottomBar_playing_song_length = (TextView) findViewById(R.id.palying_song_length);
-        play_mode = (Button) findViewById(R.id.play_mode);
-    }
-
-    private void handleBottomBar() {
-        SongsBean songsBean = PlayService.NowPlaySong;
-        if (songsBean != null) {
-            if (PlayService.isPlay) {
-                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
-                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-            }
-            bottomBar_songName.setText(songsBean.getName());
-            bottomBar_singer.setText(songsBean.getAuthor());
-            bottomBar_palying_songs_name.setText(songsBean.getName());
-            bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
-            GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
-            switch (PlayService.playMode) {
-                case EventFromBar.LISTMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
-                    break;
-                case EventFromBar.SIMPLEMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
-                    break;
-                case EventFromBar.RANDOMMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 }

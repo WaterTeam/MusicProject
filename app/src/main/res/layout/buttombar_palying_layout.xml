@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,8 +18,7 @@
                 android:id="@+id/play_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/playsong_bdg" />
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:layout_marginTop="20dp"
@@ -41,14 +41,6 @@
                 android:textColor="#ffffff" />
 
         </FrameLayout>
-
-
-
-
-
-        
-
-
 
         <LinearLayout
             android:layout_marginTop="16dp"

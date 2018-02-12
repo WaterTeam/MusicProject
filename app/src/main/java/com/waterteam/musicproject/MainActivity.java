@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bastatusbar.BAStatusBar;
 import com.waterteam.musicproject.bean.AllMediaBean;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         //设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         StatusBarUtil.setStatusBarLightMode(this);
+        new  BAStatusBar().setfitsSystemWindowsBar(this);
 
         AllMediaBean mySongsData;
         //为了解决程序被杀死，再回来后空指针异常的问题我希望你这样再处理下数据源，反正这里必须要这样写
@@ -73,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
         initView();
-        initBottomBar();
-        initFirstSong();
+        //initBottomBar();
+        //initFirstSong();
     }
 
 
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        handleBottomBar();
+       // handleBottomBar();
         super.onResume();
     }
 
@@ -155,32 +157,6 @@ public class MainActivity extends AppCompatActivity {
         play_mode = (Button) findViewById(R.id.play_mode);
     }
 
-    private void handleBottomBar() {
-        SongsBean songsBean = PlayService.NowPlaySong;
-        if (songsBean != null) {
-            if (PlayService.isPlay) {
-                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
-                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-            }
-            bottomBar_songName.setText(songsBean.getName());
-            bottomBar_singer.setText(songsBean.getAuthor());
-            bottomBar_palying_songs_name.setText(songsBean.getName());
-            bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
-            GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
-            switch (PlayService.playMode) {
-                case EventFromBar.LISTMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
-                    break;
-                case EventFromBar.SIMPLEMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
-                    break;
-                case EventFromBar.RANDOMMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+
 }
 

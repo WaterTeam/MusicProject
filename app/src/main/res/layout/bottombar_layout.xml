@@ -3,12 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.waterteam.musicproject.customview.BottomBar
+        android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/MainActivity_bottomBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <FrameLayout
+            android:id="@+id/bottomBar_head_layout"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
