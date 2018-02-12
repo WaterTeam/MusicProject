@@ -176,6 +176,7 @@ public class BottomBar extends FrameLayout {
         if (isPullUp) {
             mScroller.startScroll(0, bottomContent.getMeasuredHeight(), 0, -bottomContent.getMeasuredHeight(), 500);
             invalidate();
+            quitFullScreen();
             isPullUp = false;
         }
     }

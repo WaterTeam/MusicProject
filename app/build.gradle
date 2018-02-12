@@ -35,5 +35,6 @@ dependencies {
     compile 'com.belerweb:pinyin4j:2.5.0'
     compile 'com.lcodecorex:tkrefreshlayout:1.0.7'
     compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:palette-v7:25.3.1'
     testCompile 'junit:junit:4.12'
 }

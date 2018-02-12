@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
         initView();
-        initBottomBar();
+      //  initBottomBar();
         initFirstSong();
     }
 
@@ -130,16 +130,18 @@ public class MainActivity extends AppCompatActivity {
     private void initFirstSong() {
 
         AllMediaBean mySongs = AllMediaBean.getInstance();
-        EventFromTouch eventFromTouch = new EventFromTouch();
-        eventFromTouch.setSong(mySongs.getSongs().get(0));
-        eventFromTouch.setSongs(mySongs.getSongs());
-        eventFromTouch.setPosition(0);
-        eventFromTouch.setStatu(EventFromTouch.NOW_PLAY);
-        EventBus.getDefault().post(eventFromTouch);
+        if (mySongs.getSongs().size()>0) {
+            EventFromTouch eventFromTouch = new EventFromTouch();
+            eventFromTouch.setSong(mySongs.getSongs().get(0));
+            eventFromTouch.setSongs(mySongs.getSongs());
+            eventFromTouch.setPosition(0);
+            eventFromTouch.setStatu(EventFromTouch.NOW_PLAY);
+            EventBus.getDefault().post(eventFromTouch);
 
-        EventFromBar eventFromBar = new EventFromBar();
-        eventFromBar.setStatu(EventFromBar.PAUSE);
-        EventBus.getDefault().post(eventFromBar);
+            EventFromBar eventFromBar = new EventFromBar();
+            eventFromBar.setStatu(EventFromBar.PAUSE);
+            EventBus.getDefault().post(eventFromBar);
+        }
     }
 
     private void initBottomBar() {
@@ -155,27 +157,29 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleBottomBar() {
         SongsBean songsBean = PlayService.NowPlaySong;
-        if (PlayService.isPlay) {
-            bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
-            bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-        }
-        bottomBar_songName.setText(songsBean.getName());
-        bottomBar_singer.setText(songsBean.getAuthor());
-        bottomBar_palying_songs_name.setText(songsBean.getName());
-        bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
-        GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
-        switch (PlayService.playMode) {
-            case EventFromBar.LISTMODE:
-                play_mode.setBackgroundResource(R.drawable.ic_liebiao);
-                break;
-            case EventFromBar.SIMPLEMODE:
-                play_mode.setBackgroundResource(R.drawable.ic_danqu);
-                break;
-            case EventFromBar.RANDOMMODE:
-                play_mode.setBackgroundResource(R.drawable.ic_suiji);
-                break;
-            default:
-                break;
+        if (songsBean != null) {
+            if (PlayService.isPlay) {
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+            }
+            bottomBar_songName.setText(songsBean.getName());
+            bottomBar_singer.setText(songsBean.getAuthor());
+            bottomBar_palying_songs_name.setText(songsBean.getName());
+            bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
+            GetCoverUtil.setCover(this, songsBean, bottomBar_image, 600);
+            switch (PlayService.playMode) {
+                case EventFromBar.LISTMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                    break;
+                case EventFromBar.SIMPLEMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                    break;
+                case EventFromBar.RANDOMMODE:
+                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
