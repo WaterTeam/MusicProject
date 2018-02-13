@@ -127,7 +127,7 @@ public class GetCoverUtil {
                 }).into(imageView);
     }
 
-    public void
+    //public void
 
     public interface CompletedLoadListener {
         public void completed();

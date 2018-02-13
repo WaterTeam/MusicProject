@@ -130,6 +130,7 @@ public class SplashActivity extends AppCompatActivity {
                 //再把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
                 Collections.sort(songs);
                 AllMediaBean.getInstance().setSongs(songs);
+                PlayService.playList.addList(songs);
                 songsOK = true;
                 startActivity();
             }

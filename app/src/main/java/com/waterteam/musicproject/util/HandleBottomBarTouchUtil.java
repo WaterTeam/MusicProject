@@ -199,6 +199,7 @@ public class HandleBottomBarTouchUtil {
             bottomBar_singer.setText(songsBean.getAuthor());
             bottomBar_palying_songs_name.setText(songsBean.getName());
             bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
+            seekBar.setMax(songsBean.getLength());
 
             GetCoverUtil.setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
                 @Override
