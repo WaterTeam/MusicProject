@@ -50,7 +50,7 @@ public class StatusBarUtil {
     public static void setStatusBarDarkMode(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //先判断是否为小米或魅族手机，如果是则将状态栏文字改为白色
-            if (MIUISetStatusBarLightMode(activity, false) || FlymeSetStatusBarLightMode(activity, false)) {
+            if (MIUISetStatusBarDarkMode(activity, false) || FlymeSetStatusBarLightMode(activity, false)) {
                 //设置状态栏为透明颜色
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0以上
                     //activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
