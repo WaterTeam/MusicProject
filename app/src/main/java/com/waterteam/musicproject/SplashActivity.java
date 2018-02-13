@@ -79,11 +79,18 @@ public class SplashActivity extends AppCompatActivity {
         boolean havePermission = checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
-            //初始化数据
-            myHandler = new MyHandler(this);
-            initData();
-            //开启播放音乐服务
-            startService(new Intent(this, PlayService.class));
+
+            if (AllMediaBean.getInstance().getSongs()==null) {
+                //开启播放音乐服务
+                startService(new Intent(this, PlayService.class));
+                //初始化数据
+                initData();
+                myHandler = new MyHandler(this);
+            }else {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
@@ -130,6 +137,8 @@ public class SplashActivity extends AppCompatActivity {
                 //再把歌曲按字母顺序排好序，如若在碎片中排序，则打开这个碎片页面要延迟大约1秒多
                 Collections.sort(songs);
                 AllMediaBean.getInstance().setSongs(songs);
+                PlayService.playList.addList(songs);
+                PlayService.NowPlaySong=songs.get(0);
                 songsOK = true;
                 startActivity();
             }
@@ -229,8 +238,15 @@ public class SplashActivity extends AppCompatActivity {
                 }
             }
 
-            //初始化数据，然后启动主界面
-            initData();
+            if (AllMediaBean.getInstance().getSongs()==null) {
+                //开启播放音乐服务
+                startService(new Intent(this, PlayService.class));
+                initData();
+            }else {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         } else {
             Toast.makeText(this, "没有权限，程序无法正常运行", Toast.LENGTH_SHORT).show();
             finish();

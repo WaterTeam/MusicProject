@@ -42,17 +42,6 @@ public class MainActivity extends AppCompatActivity {
     MyPageAdapter fragmentPagerAdapter;
     private BottomBar bottomBar;
 
-    private TextView bottomBar_songName;
-    private TextView bottomBar_singer;
-    private Button bottomBar_playButton;
-    private ImageView bottomBar_image;
-    private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
-    private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
-    private TextView bottomBar_playing_song_length;
-    private TextView bottomBar_now_play_time;
-    private Button play_mode;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
         initView();
-        //initBottomBar();
-        //initFirstSong();
     }
 
 
@@ -128,35 +115,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentPagerAdapter = new MyPageAdapter(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentPagerAdapter);
     }
-
-    private void initFirstSong() {
-
-        AllMediaBean mySongs = AllMediaBean.getInstance();
-        if (mySongs.getSongs().size()>0) {
-            EventFromTouch eventFromTouch = new EventFromTouch();
-            eventFromTouch.setSong(mySongs.getSongs().get(0));
-            eventFromTouch.setSongs(mySongs.getSongs());
-            eventFromTouch.setPosition(0);
-            eventFromTouch.setStatu(EventFromTouch.NOW_PLAY);
-            EventBus.getDefault().post(eventFromTouch);
-
-            EventFromBar eventFromBar = new EventFromBar();
-            eventFromBar.setStatu(EventFromBar.PAUSE);
-            EventBus.getDefault().post(eventFromBar);
-        }
-    }
-
-    private void initBottomBar() {
-        bottomBar_songName = (TextView) findViewById(R.id.bottomBar_songName);
-        bottomBar_singer = (TextView) findViewById(R.id.bottomBar_singer);
-        bottomBar_playButton = (Button) findViewById(R.id.bottomBar_play_button);
-        bottomBar_image = (ImageView) findViewById(R.id.play_image);
-        bottomBar_playingLayout_button = (Button) findViewById(R.id.play_button);
-        bottomBar_palying_songs_name = (TextView) findViewById(R.id.palying_songs_name);
-        bottomBar_playing_song_length = (TextView) findViewById(R.id.palying_song_length);
-        play_mode = (Button) findViewById(R.id.play_mode);
-    }
-
 
 }
 

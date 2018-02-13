@@ -43,16 +43,7 @@ public class AlbumDetailsActivity extends AppCompatActivity {
     AlbumBean albumBean;
 
     AlbumSongsAdapter albumSongsAdapter;
-
-    private TextView bottomBar_songName;
-    private TextView bottomBar_singer;
-    private Button bottomBar_playButton;
-    private ImageView bottomBar_image;
-    private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
-    private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
-    private TextView bottomBar_playing_song_length;
-    private TextView bottomBar_now_play_time;
-    private Button play_mode;
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

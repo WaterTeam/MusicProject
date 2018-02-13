@@ -47,6 +47,26 @@ public class StatusBarUtil {
             }
         }
     }
+    public static void setStatusBarDarkMode(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //先判断是否为小米或魅族手机，如果是则将状态栏文字改为白色
+            if (MIUISetStatusBarLightMode(activity, false) || FlymeSetStatusBarLightMode(activity, false)) {
+                //设置状态栏为透明颜色
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0以上
+                    //activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4以上
+                    //Window window = activity.getWindow();
+                    //window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                }
+            } else if (Build.VERSION.SDK_INT >= 21) {
+                //activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    //如果是6.0以上将状态栏文字改为白色，并设置状态栏颜色
+                    activity.getWindow().getDecorView().setSystemUiVisibility(View.ACCESSIBILITY_LIVE_REGION_NONE);
+                }
+            }
+        }
+    }
 
     /**
      * 判断是否为MIUI，如果是，则修改其状态栏字体颜色为黑色；否则return false

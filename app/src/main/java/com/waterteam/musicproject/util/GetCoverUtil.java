@@ -113,6 +113,7 @@ public class GetCoverUtil {
         builder.override(size, size).into(imageView);
     }
 
+
     public  void getCoverAsBitmap(Context context, GetCoverUri obj, int size) {
         long id = obj.getAlbumId();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
@@ -126,6 +127,7 @@ public class GetCoverUtil {
             }
         }); //方法中设置asBitmap可以设置回调类型
     }
+
 
     public interface CompletedLoadListener {
         public void completed(Bitmap bitmap);

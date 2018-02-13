@@ -15,6 +15,7 @@ import android.widget.Scroller;
 
 
 import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
+import com.waterteam.musicproject.util.StatusBarUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -41,7 +42,6 @@ public class BottomBar extends FrameLayout {
 
     //判断是否为播放界面
     private boolean isPullUp = false;
-
 
 
     public BottomBar(Context context) {
@@ -112,6 +112,7 @@ public class BottomBar extends FrameLayout {
                     mScroller.startScroll(0, 0, 0, getMeasuredHeight(), 500);
                     isPullUp = true;
                     invalidate();
+                    StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
                     Log.d(TAG, "onTouchEvent: 4");
                 } else {
                     scrollOffset = getScrollY();
@@ -128,7 +129,7 @@ public class BottomBar extends FrameLayout {
                             isPullUp = false;
                         }
                     } else {
-                        if (scrollOffset > bottomContent.getMeasuredHeight()/8*7) {
+                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8 * 7) {
                             Log.d(TAG, "onTouchEvent: 8");
                             showNavigation();
                             isPullUp = true;
@@ -145,12 +146,14 @@ public class BottomBar extends FrameLayout {
     }
 
     private void showNavigation() {
-            int dy = bottomContent.getMeasuredHeight() - scrollOffset;
-            mScroller.startScroll(getScrollX(), getScrollY(), 0, dy , 500);
-            invalidate();
+        int dy = bottomContent.getMeasuredHeight() - scrollOffset;
+        mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
+        invalidate();
+        StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
     }
 
     private void closeNavigation() {
+        StatusBarUtil.setStatusBarLightMode((Activity) getContext());
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();

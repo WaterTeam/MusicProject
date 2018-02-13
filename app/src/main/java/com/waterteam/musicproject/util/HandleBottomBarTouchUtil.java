@@ -200,8 +200,11 @@ public class HandleBottomBarTouchUtil {
             bottomBar_singer.setText(songsBean.getAuthor());
             bottomBar_palying_songs_name.setText(songsBean.getName());
             bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
+
             setPlayingUI(songsBean);
-            
+
+            seekBar.setMax(songsBean.getLength());
+
             switch (PlayService.playMode) {
                 case EventFromBar.LISTMODE:
                     play_mode.setBackgroundResource(R.drawable.ic_liebiao);
