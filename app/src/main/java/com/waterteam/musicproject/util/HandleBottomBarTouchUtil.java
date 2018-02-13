@@ -1,5 +1,6 @@
 package com.waterteam.musicproject.util;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -82,8 +83,8 @@ public class HandleBottomBarTouchUtil {
         bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.paly_progress);
         play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
         seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
-        play_control_layout=bottomContent.findViewById(R.id.play_handle_bar_layout);
-        bottomBar_head_layout=bottomBar.findViewById(R.id.bottomBar_head_layout);
+        play_control_layout = bottomContent.findViewById(R.id.play_handle_bar_layout);
+        bottomBar_head_layout = bottomBar.findViewById(R.id.bottomBar_head_layout);
     }
 
     public void handleClick() {
@@ -199,21 +200,8 @@ public class HandleBottomBarTouchUtil {
             bottomBar_singer.setText(songsBean.getAuthor());
             bottomBar_palying_songs_name.setText(songsBean.getName());
             bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
-
-            GetCoverUtil.setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
-                @Override
-                public void completed() {
-                    PaletteUtil paletteUtil=new PaletteUtil();
-                    paletteUtil.from(bottomBar_image).to(play_control_layout);
-                    paletteUtil.from(bottomBar_image).to(bottomBar_head_layout);
-                    Log.d(TAG, "completed: ");
-                }
-            });
+            setPlayingUI(songsBean);
             
-            GetCoverUtil.setCover(bottomBar.getContext(), songsBean, bottomBar_image, 600);
-
-
-
             switch (PlayService.playMode) {
                 case EventFromBar.LISTMODE:
                     play_mode.setBackgroundResource(R.drawable.ic_liebiao);
@@ -271,10 +259,10 @@ public class HandleBottomBarTouchUtil {
                 bottomBar_songName.setText(song.getName());
                 bottomBar_singer.setText(song.getAuthor());
                 bottomBar_playing_song_length.setText(song.getFormatLenght());
-                GetCoverUtil.setCover(bottomBar.getContext(), song, bottomBar_image, 800);
+                setPlayingUI(song);
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
-                Log.e("MainActivity","执行一次");
+                Log.e("MainActivity", "执行一次");
             }
 
             break;
@@ -337,4 +325,17 @@ public class HandleBottomBarTouchUtil {
         }, cnt);
     }
 
+    private void setPlayingUI(SongsBean song) {
+        new GetCoverUtil().setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
+            @Override
+            public void completed(Bitmap bitmap) {
+                Log.d(TAG, "completed: " + bitmap);
+                PaletteUtil paletteUtil = new PaletteUtil();
+                paletteUtil.from(bitmap).to(play_control_layout);
+                paletteUtil.from(bitmap).to(bottomBar_head_layout);
+                bottomBar_image.setImageBitmap(bitmap);
+
+            }
+        }).getCoverAsBitmap(bottomBar.getContext(), song, 600);
+    }
 }

@@ -24,7 +24,7 @@ public class PaletteUtil {
     public PaletteUtil from(Bitmap bitmap) {
         builder = Palette.from(bitmap);
         builder.maximumColorCount(8) // 构建Palette时使用的最大颜色数，默认是16，风景图推荐取值8-16，人脸图像推荐取值24-32（值越大，花费的时间越长，可选择的色彩越多）
-                .setRegion(0, 0, 0, bitmap.getHeight() / 10); // 设置Palette颜色分析的图像区域
+                .setRegion(0, 0, bitmap.getWidth(), 10); // 设置Palette颜色分析的图像区域
         return this;
     }
 
@@ -107,7 +107,6 @@ public class PaletteUtil {
                             int green = Color.green(rgb);
                             int blue = Color.blue(rgb);
                             int alpha = Color.alpha(rgb);
-                            alpha = (int) (alpha * 1);
                             color = Color.argb(alpha, red, green, blue);
                         } else {
                             Log.d(TAG, "onGenerated: 7p");

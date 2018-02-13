@@ -4,6 +4,7 @@ package com.waterteam.musicproject.util;
 import android.content.ContentUris;
 import android.content.Context;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import android.util.Log;
@@ -13,9 +14,13 @@ import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.GetCoverUri;
+
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -27,7 +32,7 @@ import com.waterteam.musicproject.bean.GetCoverUri;
 public class GetCoverUtil {
     private static final String TAG = "GetCoverUtil";
     private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
-    private static CompletedLoadListener loadListener;
+    private  CompletedLoadListener loadListener;
 
     /**
      * 设置封面
@@ -47,13 +52,15 @@ public class GetCoverUtil {
 
     /**
      * 设置加载成功回调
-     * @author BA on 2018/2/12 0012
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/12 0012
      */
-    public static void setOnCompletedListener(CompletedLoadListener listener){
-        loadListener=listener;
+    public  GetCoverUtil setOnCompletedListener(CompletedLoadListener listener) {
+        loadListener = listener;
+        return this;
     }
 
     /**
@@ -103,33 +110,24 @@ public class GetCoverUtil {
                 break;
         }
 
-        builder.override(size, size)
-                .listener(new RequestListener<Uri, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        if (loadListener != null) {
-                            loadListener.completed();
-                            loadListener=null;
-                            Log.d(TAG, "onException: ");
-                        }
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        if (loadListener != null) {
-                            loadListener.completed();
-                            loadListener=null;
-                            Log.d(TAG, "onResourceReady: "+imageView.getDrawable());
-                        }
-                        return false;
-                    }
-                }).into(imageView);
+        builder.override(size, size).into(imageView);
     }
 
-    public void
+    public  void getCoverAsBitmap(Context context, GetCoverUri obj, int size) {
+        long id = obj.getAlbumId();
+        Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
+        Glide.with(context).load(uri).asBitmap().override(size,size).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                if (loadListener != null) {
+                    loadListener.completed(resource);
+                    loadListener = null;
+                }
+            }
+        }); //方法中设置asBitmap可以设置回调类型
+    }
 
     public interface CompletedLoadListener {
-        public void completed();
+        public void completed(Bitmap bitmap);
     }
 }
