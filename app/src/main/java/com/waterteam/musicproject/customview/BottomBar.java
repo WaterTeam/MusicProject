@@ -2,18 +2,19 @@ package com.waterteam.musicproject.customview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
+
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import android.view.WindowManager;
+
 import android.widget.FrameLayout;
 
 import android.widget.Scroller;
 
 
+import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 
@@ -39,6 +40,10 @@ public class BottomBar extends FrameLayout {
 
     private HandleBottomBarTouchUtil handleBottomBarTouchUtil;
 
+    //播放界面的标题.封面，用来实现动画
+    private View playingSongsNameView;
+    private View playingImage;
+
 
     //判断是否为播放界面
     private boolean isPullUp = false;
@@ -54,14 +59,11 @@ public class BottomBar extends FrameLayout {
       控制栏的可视范围
      */
         mScroller = new Scroller(getContext());
-
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        bottomBar = getChildAt(0);
-        bottomContent = getChildAt(1);
         initView();
         Log.d(TAG, "onFinishInflate: ");
     }
@@ -74,6 +76,10 @@ public class BottomBar extends FrameLayout {
     }
 
     private void initView() {
+        bottomBar = getChildAt(0);
+        bottomContent = getChildAt(1);
+        playingSongsNameView = bottomContent.findViewById(R.id.palying_songs_name);
+        playingImage=bottomContent.findViewById(R.id.play_image);
         handleBottomBarTouchUtil = new HandleBottomBarTouchUtil(bottomBar, bottomContent);
     }
 
@@ -184,6 +190,7 @@ public class BottomBar extends FrameLayout {
             mScroller.startScroll(0, bottomContent.getMeasuredHeight(), 0, -bottomContent.getMeasuredHeight(), 500);
             invalidate();
             isPullUp = false;
+            StatusBarUtil.setStatusBarLightMode((Activity)getContext());
         }
     }
 
@@ -201,6 +208,8 @@ public class BottomBar extends FrameLayout {
             scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             invalidate();
         }
+
+        setAnimator();
     }
 
     @Override
@@ -208,4 +217,24 @@ public class BottomBar extends FrameLayout {
         super.onDetachedFromWindow();
         EventBus.getDefault().unregister(handleBottomBarTouchUtil);
     }
+
+    /**
+     * 实现标题,歌曲封面跟着滑动的动画
+     * @author BA on 2018/2/13 0013
+     * @param
+     * @return
+     * @exception
+     */
+    private void setAnimator() {
+        float progress = (float) getScrollY() / (float) bottomContent.getMeasuredHeight();
+        float nowPosition = progress * 500f - 500;
+        playingSongsNameView.setTranslationX(nowPosition);
+
+        float nowScale=2-progress;
+        playingImage.setScaleX(nowScale);
+        playingImage.setScaleY(nowScale);
+        Log.d(TAG, "setTitleTranslation: " + nowPosition);
+    }
+
+
 }

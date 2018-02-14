@@ -80,13 +80,13 @@ public class SplashActivity extends AppCompatActivity {
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (havePermission) {
 
-            if (AllMediaBean.getInstance().getSongs()==null) {
+            if (AllMediaBean.getInstance().getSongs() == null) {
                 //开启播放音乐服务
                 startService(new Intent(this, PlayService.class));
                 //初始化数据
                 initData();
                 myHandler = new MyHandler(this);
-            }else {
+            } else {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -138,7 +138,8 @@ public class SplashActivity extends AppCompatActivity {
                 Collections.sort(songs);
                 AllMediaBean.getInstance().setSongs(songs);
                 PlayService.playList.addList(songs);
-                PlayService.NowPlaySong=songs.get(0);
+                if (songs.size() > 0)
+                    PlayService.NowPlaySong = songs.get(0);
                 songsOK = true;
                 startActivity();
             }
@@ -238,11 +239,11 @@ public class SplashActivity extends AppCompatActivity {
                 }
             }
 
-            if (AllMediaBean.getInstance().getSongs()==null) {
+            if (AllMediaBean.getInstance().getSongs() == null) {
                 //开启播放音乐服务
                 startService(new Intent(this, PlayService.class));
                 initData();
-            }else {
+            } else {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();

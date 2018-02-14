@@ -10,6 +10,7 @@
         android:layout_height="match_parent">
 
         <FrameLayout
+            android:fitsSystemWindows="true"
             android:id="@+id/bottomBar_head_layout"
             android:layout_width="match_parent"
             android:layout_height="48dp"

@@ -1,10 +1,12 @@
 package com.waterteam.musicproject.util;
 
+import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -340,5 +342,22 @@ public class HandleBottomBarTouchUtil {
 
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 600);
+    }
+
+    /**
+     * 专辑标题的动画
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/2/1 0001
+     */
+    private void startAnimator(View view) {
+        view.setTranslationX(-500f);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, "translationX", 0);
+        objectAnimator.setStartDelay(500);
+        objectAnimator.setDuration(500);
+        objectAnimator.setInterpolator(new DecelerateInterpolator());
+        objectAnimator.start();
     }
 }
