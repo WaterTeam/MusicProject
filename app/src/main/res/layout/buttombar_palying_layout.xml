@@ -6,8 +6,7 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffffff">
+        android:layout_height="match_parent">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -44,6 +43,7 @@
         </FrameLayout>
 
         <FrameLayout
+            android:background="#fff"
             android:layout_width="match_parent"
             android:layout_height="85dp">
 
@@ -93,7 +93,7 @@
         <RelativeLayout
             android:id="@+id/play_handle_bar_layout"
             android:orientation="horizontal"
-            android:background="#000"
+            android:background="#efefef"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="85dp">

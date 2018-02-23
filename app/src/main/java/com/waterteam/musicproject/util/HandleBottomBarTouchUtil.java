@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
@@ -67,6 +68,7 @@ public class HandleBottomBarTouchUtil {
         Log.d(TAG, "HandleBottomBarTouchUtil: ");
 
         findView();
+        handleTouch();
         handleClick();
         flashBottomBar();
         EventBus.getDefault().register(this);
@@ -87,6 +89,20 @@ public class HandleBottomBarTouchUtil {
         seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
         play_control_layout = bottomContent.findViewById(R.id.play_handle_bar_layout);
         bottomBar_head_layout = bottomBar.findViewById(R.id.bottomBar_head_layout);
+    }
+
+    /**
+     *  设置点击反馈。这里就简单的放大就好
+     * @author BA on 2018/2/14 0014
+     * @param
+     * @return
+     * @exception
+     */
+    private void handleTouch(){
+        setTouchScale(bottomBar_playingLayout_button);
+        setTouchScale(bottomBar_playing_nextSong);
+        setTouchScale(bottomBar_playing_lastSong);
+        setTouchScale(play_mode);
     }
 
     public void handleClick() {
@@ -330,6 +346,13 @@ public class HandleBottomBarTouchUtil {
         }, cnt);
     }
 
+    /**
+     * 变色
+     * @author BA on 2018/2/14 0014
+     * @param
+     * @return
+     * @exception
+     */
     private void setPlayingUI(SongsBean song) {
         new GetCoverUtil().setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
             @Override
@@ -345,19 +368,28 @@ public class HandleBottomBarTouchUtil {
     }
 
     /**
-     * 专辑标题的动画
-     *
-     * @param
+     * 点击变大，实现反馈
+     * @author BA on 2018/2/14 0014
+     * @param view 要设置的控件
      * @return
-     * @throws
-     * @author BA on 2018/2/1 0001
+     * @exception
      */
-    private void startAnimator(View view) {
-        view.setTranslationX(-500f);
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, "translationX", 0);
-        objectAnimator.setStartDelay(500);
-        objectAnimator.setDuration(500);
-        objectAnimator.setInterpolator(new DecelerateInterpolator());
-        objectAnimator.start();
+    private void setTouchScale(final View view){
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        view.setScaleY(1.5f);
+                        view.setScaleX(1.5f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        view.setScaleY(1);
+                        view.setScaleX(1);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 }
