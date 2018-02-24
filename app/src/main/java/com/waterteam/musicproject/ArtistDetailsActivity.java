@@ -60,7 +60,8 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artist_details);
 
         // 设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
-        StatusBarUtil.setStatusBarLightMode(this);
+        //StatusBarUtil.setStatusBarLightMode(this);
+        StatusBarUtil.setStatusBarDarkMode(this);
         new BAStatusBar().setfitsSystemWindowsBar(this);
 
 

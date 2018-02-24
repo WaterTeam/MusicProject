@@ -125,6 +125,7 @@ public class PlayService extends Service {
                 break;
             case EventFromBar.PAUSETOPLAY:
                 Log.d(TAG, "eventFromBar: paust 2 play");
+                isPlay = true;
                 mediaPlayer.start();
                 //playSong();
                 eventto.setStatu(EventToBarFromService.PAUSETOPLAY);
