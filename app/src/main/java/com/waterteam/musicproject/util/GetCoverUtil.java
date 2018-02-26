@@ -114,10 +114,10 @@ public class GetCoverUtil {
     }
 
 
-    public  void getCoverAsBitmap(Context context, GetCoverUri obj, int size) {
+    public  void getCoverAsBitmap(Context context, GetCoverUri obj, int w,int h) {
         long id = obj.getAlbumId();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
-        Glide.with(context).load(uri).asBitmap().override(size,size).into(new SimpleTarget<Bitmap>() {
+        Glide.with(context).load(uri).asBitmap().override(w,h).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 if (loadListener != null) {

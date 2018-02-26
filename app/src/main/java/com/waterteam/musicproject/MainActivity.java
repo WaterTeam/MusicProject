@@ -31,6 +31,7 @@ import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.GetCoverUtil;
+import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
@@ -102,11 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        // handleBottomBar();
-        super.onResume();
-    }
+
 
     /**
      * initView()方法用于初始化主活动界面
@@ -119,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         viewPager = (ViewPager) this.findViewById(R.id.viewPager_MainActivity);
         bottomBar = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
+        //设置点击处理事件
+        bottomBar.setTouchListener(new HandleBottomBarTouchUtil());
 
         //往viewPager的数据列表中添加2个碎片；
         fragmentList.add(new ArtistPageFragment());
@@ -206,6 +205,19 @@ public class MainActivity extends AppCompatActivity {
 //        notify.icon = R.drawable.notification_bar_icon;
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(1, notify);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bottomBar.setVisilityChange(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bottomBar!=null&&bottomBar.getIsPullUp())
+            bottomBar.setVisilityChange(true);
     }
 }
 

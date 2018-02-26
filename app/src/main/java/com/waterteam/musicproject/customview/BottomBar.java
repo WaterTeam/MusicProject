@@ -3,6 +3,8 @@ package com.waterteam.musicproject.customview;
 import android.app.Activity;
 import android.content.Context;
 
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -29,25 +31,23 @@ import org.greenrobot.eventbus.EventBus;
 
 public class BottomBar extends FrameLayout {
     private static final String TAG = "BottomBar";
-    private View bottomBar;
+    public View bottomBar;
 
-    private View bottomContent;
+    public View bottomContent;
 
     private Scroller mScroller;
 
     private int downX, downY, startX, startY;
     private int scrollOffset;
 
-    private HandleBottomBarTouchUtil handleBottomBarTouchUtil;
-
-    //播放界面的标题.封面，用来实现动画
-    private View playingSongsNameView;
-    private View playingImage;
-
-
     //判断是否为播放界面
     private boolean isPullUp = false;
 
+    //触摸监听
+    private BottomBarTouchListener touchListener;
+
+    //上下拉状态改变监听
+    private VisibilityListener visibilityListener;
 
     public BottomBar(Context context) {
         this(context, null);
@@ -78,11 +78,33 @@ public class BottomBar extends FrameLayout {
     private void initView() {
         bottomBar = getChildAt(0);
         bottomContent = getChildAt(1);
-        playingSongsNameView = bottomContent.findViewById(R.id.palying_songs_name);
-        playingImage=bottomContent.findViewById(R.id.play_image);
-        handleBottomBarTouchUtil = new HandleBottomBarTouchUtil(bottomBar, bottomContent);
+
     }
 
+    /**
+     * 设置触摸事件
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/2/25 0025
+     */
+    public void setTouchListener(BottomBarTouchListener listener) {
+        touchListener = listener;
+        touchListener.setContentView(this);
+    }
+
+    /**
+     * 设置上下拉状态的监听
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/2/26 0026
+     */
+    public void setVisibilityListener(VisibilityListener visibilityListener) {
+        this.visibilityListener = visibilityListener;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -119,6 +141,7 @@ public class BottomBar extends FrameLayout {
                     isPullUp = true;
                     invalidate();
                     StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
+                   setVisilityChange(true);
                     Log.d(TAG, "onTouchEvent: 4");
                 } else {
                     scrollOffset = getScrollY();
@@ -156,6 +179,7 @@ public class BottomBar extends FrameLayout {
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
         StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
+       setVisilityChange(true);
     }
 
     private void closeNavigation() {
@@ -163,6 +187,7 @@ public class BottomBar extends FrameLayout {
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
+        setVisilityChange(false);
     }
 
     /**
@@ -190,7 +215,8 @@ public class BottomBar extends FrameLayout {
             mScroller.startScroll(0, bottomContent.getMeasuredHeight(), 0, -bottomContent.getMeasuredHeight(), 500);
             invalidate();
             isPullUp = false;
-            StatusBarUtil.setStatusBarLightMode((Activity)getContext());
+            StatusBarUtil.setStatusBarLightMode((Activity) getContext());
+            setVisilityChange(false);
         }
     }
 
@@ -209,32 +235,37 @@ public class BottomBar extends FrameLayout {
             invalidate();
         }
 
-        setAnimator();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        EventBus.getDefault().unregister(handleBottomBarTouchUtil);
+        EventBus.getDefault().unregister(touchListener);
+        Log.d(TAG, "onDetachedFromWindow: 死亡");
     }
 
     /**
-     * 实现标题,歌曲封面跟着滑动的动画
-     * @author BA on 2018/2/13 0013
+     * 上下拉的监听
+     *
      * @param
+     * @author BA on 2018/2/26 0026
      * @return
      * @exception
      */
-    private void setAnimator() {
-        float progress = (float) getScrollY() / (float) bottomContent.getMeasuredHeight();
-        float nowPosition = progress * 500f - 500;
-        playingSongsNameView.setTranslationX(nowPosition);
-
-        float nowScale=2-progress;
-        playingImage.setScaleX(nowScale);
-        playingImage.setScaleY(nowScale);
-        Log.d(TAG, "setTitleTranslation: " + nowPosition);
+    public interface VisibilityListener {
+        public void statusChange(boolean isUp);
     }
 
-
+    /**
+     * 设置可见状态改变
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/2/26 0026
+     */
+    public void setVisilityChange(boolean isUp) {
+        if (visibilityListener != null)
+            visibilityListener.statusChange(isUp);
+    }
 }

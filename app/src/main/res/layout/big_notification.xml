@@ -51,7 +51,7 @@
                 android:layout_marginLeft="20dp"
                 android:background="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_up_button" />
+                android:src="@drawable/ic_last_button" />
 
             <ImageButton
                 android:id="@+id/big_notification_play"

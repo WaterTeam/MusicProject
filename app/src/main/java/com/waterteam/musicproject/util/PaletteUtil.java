@@ -110,7 +110,7 @@ public class PaletteUtil {
                             color = Color.argb(alpha, red, green, blue);
                         } else {
                             Log.d(TAG, "onGenerated: 7p");
-                            color = R.color.colorAccent;
+                            color = Color.GRAY;
                         }
 
                         Log.d(TAG, "onGenerated: " + darkMutedSwatch);

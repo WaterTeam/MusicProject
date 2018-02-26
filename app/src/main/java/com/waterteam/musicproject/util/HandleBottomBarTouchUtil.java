@@ -14,8 +14,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.commit451.nativestackblur.NativeStackBlur;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.customview.BottomBar;
+import com.waterteam.musicproject.customview.BottomBarTouchListener;
+import com.waterteam.musicproject.customview.gravity_imageview.MyGravityImageView;
+import com.waterteam.musicproject.customview.gravity_imageview.MySensorObserver;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
@@ -34,13 +39,13 @@ import java.util.TimerTask;
  * 不用传歌曲位置
  */
 
-public class HandleBottomBarTouchUtil {
+public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
     private static final String TAG = "HandleBottomBarTouchUti";
 
     private TextView bottomBar_songName;
     private TextView bottomBar_singer;
     private Button bottomBar_playButton;
-    private ImageView bottomBar_image;
+    private MyGravityImageView bottomBar_image;
     private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
     private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
     private TextView bottomBar_playing_song_length;
@@ -49,8 +54,8 @@ public class HandleBottomBarTouchUtil {
     private Button bottomBar_playing_lastSong;
     private Button play_mode;
     private SeekBar seekBar;
-    private View play_control_layout;
-    private View bottomBar_head_layout;
+    private ImageView frostedGlassImage;
+    private MySensorObserver sensorObserver;
 
     private View bottomBar;
     private View bottomContent;
@@ -61,51 +66,53 @@ public class HandleBottomBarTouchUtil {
     private static final int RANDOMPLAY = 2;
     private static int playMode = LISTPLAY;
 
-    public HandleBottomBarTouchUtil(View bottomBar, View bottomContent) {
-        this.bottomBar = bottomBar;
-        this.bottomContent = bottomContent;
-
-        Log.d(TAG, "HandleBottomBarTouchUtil: ");
-
+    @Override
+    public void setContentView(final BottomBar view) {
+        this.bottomBar =view.bottomBar;
+        this.bottomContent =view.bottomContent;
+        initGravityImageView();
+        view.setVisibilityListener(new BottomBar.VisibilityListener() {
+            @Override
+            public void statusChange(boolean isUp) {
+                if (isUp){
+                    Log.d(TAG, "statusChange: 注册");
+                    sensorObserver.register(view.getContext());
+                }else {
+                    sensorObserver.unregister();
+                    Log.d(TAG, "statusChange: 取消注册");
+                }
+            }
+        });
         findView();
-        handleTouch();
         handleClick();
         flashBottomBar();
         EventBus.getDefault().register(this);
     }
 
+    private void initGravityImageView(){
+        bottomBar_image = (MyGravityImageView) bottomContent.findViewById(R.id.play_image);
+
+        sensorObserver=new MySensorObserver();
+        sensorObserver.setMaxRotateRadian(Math.PI/10);
+        bottomBar_image.setGyroscopeObserver(sensorObserver);
+    }
     private void findView() {
+        frostedGlassImage=(ImageView)bottomContent.findViewById(R.id.frosted_glass_image);
         bottomBar_songName = (TextView) bottomBar.findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) bottomBar.findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) bottomBar.findViewById(R.id.bottomBar_play_button);
-        bottomBar_image = (ImageView) bottomContent.findViewById(R.id.play_image);
-        bottomBar_playingLayout_button = (Button) bottomContent.findViewById(R.id.play_button);
-        bottomBar_palying_songs_name = (TextView) bottomContent.findViewById(R.id.palying_songs_name);
-        bottomBar_playing_song_length = (TextView) bottomContent.findViewById(R.id.palying_song_length);
-        bottomBar_playing_nextSong = (Button) bottomContent.findViewById(R.id.nextsong_button);
-        bottomBar_playing_lastSong = (Button) bottomContent.findViewById(R.id.lastsong_button);
-        bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.paly_progress);
+        bottomBar_playingLayout_button = (Button) bottomContent.findViewById(R.id.play_or_pause_button);
+        bottomBar_palying_songs_name = (TextView) bottomContent.findViewById(R.id.playing_song_name);
+        bottomBar_playing_song_length = (TextView) bottomContent.findViewById(R.id.playing_song_length);
+        bottomBar_playing_nextSong = (Button) bottomContent.findViewById(R.id.next_song_button);
+        bottomBar_playing_lastSong = (Button) bottomContent.findViewById(R.id.last_song_button);
+        bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.play_progress);
         play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
-        seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
-        play_control_layout = bottomContent.findViewById(R.id.play_handle_bar_layout);
-        bottomBar_head_layout = bottomBar.findViewById(R.id.bottomBar_head_layout);
-    }
+        seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);}
 
-    /**
-     *  设置点击反馈。这里就简单的放大就好
-     * @author BA on 2018/2/14 0014
-     * @param
-     * @return
-     * @exception
-     */
-    private void handleTouch(){
-        setTouchScale(bottomBar_playingLayout_button);
-        setTouchScale(bottomBar_playing_nextSong);
-        setTouchScale(bottomBar_playing_lastSong);
-        setTouchScale(play_mode);
-    }
 
-    public void handleClick() {
+
+    private void handleClick() {
         bottomBar_playingLayout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,21 +188,21 @@ public class HandleBottomBarTouchUtil {
                     case LISTPLAY:
                         eventFromBar.setStatu(EventFromBar.LISTMODE);
                         EventBus.getDefault().post(eventFromBar);
-                        play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                        play_mode.setBackgroundResource(R.drawable.ic_list_play_button);
                         Toast toast = Toast.makeText(bottomBar.getContext(), "列表循环", Toast.LENGTH_LONG);
                         showMyToast(toast, 500);
                         break;
                     case ALWAYSPLAY:
                         eventFromBar.setStatu(EventFromBar.SIMPLEMODE);
                         EventBus.getDefault().post(eventFromBar);
-                        play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                        play_mode.setBackgroundResource(R.drawable.ic_single_play_button);
                         Toast toast1 = Toast.makeText(bottomBar.getContext(), "单曲循环", Toast.LENGTH_LONG);
                         showMyToast(toast1, 500);
                         break;
                     case RANDOMPLAY:
                         eventFromBar.setStatu(EventFromBar.RANDOMMODE);
                         EventBus.getDefault().post(eventFromBar);
-                        play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                        play_mode.setBackgroundResource(R.drawable.ic_random_play_button);
                         Toast toast2 = Toast.makeText(bottomBar.getContext(), "随机播放", Toast.LENGTH_LONG);
                         showMyToast(toast2, 500);
                         break;
@@ -219,19 +226,19 @@ public class HandleBottomBarTouchUtil {
             bottomBar_palying_songs_name.setText(songsBean.getName());
             bottomBar_playing_song_length.setText(songsBean.getFormatLenght());
 
-            setPlayingUI(songsBean);
+            setCover(songsBean);
 
             seekBar.setMax(songsBean.getLength());
 
             switch (PlayService.playMode) {
                 case EventFromBar.LISTMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                    play_mode.setBackgroundResource(R.drawable.ic_list_play_button);
                     break;
                 case EventFromBar.SIMPLEMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                    play_mode.setBackgroundResource(R.drawable.ic_single_play_button);
                     break;
                 case EventFromBar.RANDOMMODE:
-                    play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                    play_mode.setBackgroundResource(R.drawable.ic_random_play_button);
                     break;
                 default:
                     break;
@@ -259,13 +266,13 @@ public class HandleBottomBarTouchUtil {
                 if (event.getPlayMode() != -1) {
                     switch (event.getPlayMode()) {
                         case LISTPLAY:
-                            play_mode.setBackgroundResource(R.drawable.ic_liebiao);
+                            play_mode.setBackgroundResource(R.drawable.ic_list_play_button);
                             break;
                         case ALWAYSPLAY:
-                            play_mode.setBackgroundResource(R.drawable.ic_danqu);
+                            play_mode.setBackgroundResource(R.drawable.ic_single_play_button);
                             break;
                         case RANDOMPLAY:
-                            play_mode.setBackgroundResource(R.drawable.ic_suiji);
+                            play_mode.setBackgroundResource(R.drawable.ic_random_play_button);
                             break;
                         default:
                             break;
@@ -280,7 +287,7 @@ public class HandleBottomBarTouchUtil {
                 bottomBar_songName.setText(song.getName());
                 bottomBar_singer.setText(song.getAuthor());
                 bottomBar_playing_song_length.setText(song.getFormatLenght());
-                setPlayingUI(song);
+                setCover(song);
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
                 Log.e("MainActivity", "执行一次");
@@ -353,43 +360,35 @@ public class HandleBottomBarTouchUtil {
      * @return
      * @exception
      */
-    private void setPlayingUI(SongsBean song) {
+    private void setCover(SongsBean song) {
         new GetCoverUtil().setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
             @Override
             public void completed(Bitmap bitmap) {
                 Log.d(TAG, "completed: " + bitmap);
-                PaletteUtil paletteUtil = new PaletteUtil();
-                paletteUtil.from(bitmap).to(play_control_layout);
-                paletteUtil.from(bitmap).to(bottomBar_head_layout);
+//                PaletteUtil paletteUtil = new PaletteUtil();
+//                paletteUtil.from(bitmap).to(play_control_layout);
+//                paletteUtil.from(bitmap).to(bottomBar_head_layout);
+                //半径越大，处理后的图片越模糊
+                Bitmap bm = NativeStackBlur.process(bitmap, 3);
+                frostedGlassImage.setImageBitmap(bm);
+
+            }
+        }).getCoverAsBitmap(bottomBar.getContext(), song, 20,20);
+
+        new GetCoverUtil().setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
+            @Override
+            public void completed(Bitmap bitmap) {
+                Log.d(TAG, "completed: " + bitmap);
+//                PaletteUtil paletteUtil = new PaletteUtil();
+//                paletteUtil.from(bitmap).to(play_control_layout);
+//                paletteUtil.from(bitmap).to(bottomBar_head_layout);
+                //半径越大，处理后的图片越模糊
+
                 bottomBar_image.setImageBitmap(bitmap);
 
             }
-        }).getCoverAsBitmap(bottomBar.getContext(), song, 600);
+        }).getCoverAsBitmap(bottomBar.getContext(), song, 400,400);
     }
 
-    /**
-     * 点击变大，实现反馈
-     * @author BA on 2018/2/14 0014
-     * @param view 要设置的控件
-     * @return
-     * @exception
-     */
-    private void setTouchScale(final View view){
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        view.setScaleY(1.5f);
-                        view.setScaleX(1.5f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        view.setScaleY(1);
-                        view.setScaleX(1);
-                        break;
-                }
-                return false;
-            }
-        });
-    }
+
 }
