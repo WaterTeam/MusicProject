@@ -1,9 +1,12 @@
 package com.waterteam.musicproject.util;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +19,8 @@ import android.widget.Toast;
 
 import com.commit451.nativestackblur.NativeStackBlur;
 import com.waterteam.musicproject.R;
+import com.waterteam.musicproject.adapter.AlbumSongsAdapter;
+import com.waterteam.musicproject.adapter.SecondBottomAdapter;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.customview.BottomBar;
 import com.waterteam.musicproject.customview.BottomBarTouchListener;
@@ -32,6 +37,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static java.security.AccessController.getContext;
+
 /**
  * Created by BA on 2018/2/6 0006.
  *
@@ -39,7 +46,7 @@ import java.util.TimerTask;
  * 不用传歌曲位置
  */
 
-public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
+public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     private static final String TAG = "HandleBottomBarTouchUti";
 
     private TextView bottomBar_songName;
@@ -53,6 +60,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
     private Button bottomBar_playing_nextSong;
     private Button bottomBar_playing_lastSong;
     private Button play_mode;
+    private Button up_arrow;
     private SeekBar seekBar;
     private ImageView frostedGlassImage;
     private MySensorObserver sensorObserver;
@@ -60,24 +68,30 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
     private View bottomBar;
     private View bottomContent;
 
+    private BottomBar bottomBarSecond;
+    private BottomBar bottomBarFirst;
+    private RecyclerView recyclerView;
+
     private static boolean isPlaying = false;
     private static final int LISTPLAY = 0;
     private static final int ALWAYSPLAY = 1;
     private static final int RANDOMPLAY = 2;
     private static int playMode = LISTPLAY;
 
+
     @Override
     public void setContentView(final BottomBar view) {
-        this.bottomBar =view.bottomBar;
-        this.bottomContent =view.bottomContent;
+        bottomBarFirst = view;
+        this.bottomBar = view.bottomBar;
+        this.bottomContent = view.bottomContent;
         initGravityImageView();
         view.setVisibilityListener(new BottomBar.VisibilityListener() {
             @Override
             public void statusChange(boolean isUp) {
-                if (isUp){
+                if (isUp) {
                     Log.d(TAG, "statusChange: 注册");
                     sensorObserver.register(view.getContext());
-                }else {
+                } else {
                     sensorObserver.unregister();
                     Log.d(TAG, "statusChange: 取消注册");
                 }
@@ -89,15 +103,16 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
         EventBus.getDefault().register(this);
     }
 
-    private void initGravityImageView(){
+    private void initGravityImageView() {
         bottomBar_image = (MyGravityImageView) bottomContent.findViewById(R.id.play_image);
 
-        sensorObserver=new MySensorObserver();
-        sensorObserver.setMaxRotateRadian(Math.PI/10);
+        sensorObserver = new MySensorObserver();
+        sensorObserver.setMaxRotateRadian(Math.PI / 10);
         bottomBar_image.setGyroscopeObserver(sensorObserver);
     }
+
     private void findView() {
-        frostedGlassImage=(ImageView)bottomContent.findViewById(R.id.frosted_glass_image);
+        frostedGlassImage = (ImageView) bottomContent.findViewById(R.id.frosted_glass_image);
         bottomBar_songName = (TextView) bottomBar.findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) bottomBar.findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) bottomBar.findViewById(R.id.bottomBar_play_button);
@@ -108,8 +123,12 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
         bottomBar_playing_lastSong = (Button) bottomContent.findViewById(R.id.last_song_button);
         bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.play_progress);
         play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
-        seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);}
-
+        seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
+        up_arrow = (Button)bottomContent.findViewById(R.id.up_arrow);
+        bottomBarSecond = (BottomBar) bottomContent.findViewById(R.id.second_bottomBar);
+        bottomBarSecond.isSecond = true;
+        recyclerView = (RecyclerView) bottomBarSecond.findViewById(R.id.second_bottomBar_recycleView);
+    }
 
 
     private void handleClick() {
@@ -211,6 +230,19 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
                 }
             }
         });
+        up_arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!bottomBarSecond.getIsPullUp()){
+                    bottomBarSecond.pullUp();
+                }
+                else{
+                    bottomBarSecond.pullDown();//第二个bottomBar下拉后不应该去影响状态栏，状态栏由第一个bottomBar决定
+                    StatusBarUtil.setStatusBarDarkMode((Activity)bottomBarSecond.getContext());
+                    bottomBarFirst.setVisilityChange(false);
+                }
+            }
+        });
     }
 
     private void flashBottomBar() {
@@ -243,7 +275,12 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
                 default:
                     break;
             }
+            SecondBottomAdapter secondBottomAdapter = new SecondBottomAdapter(PlayService.playList.getSongs());
+            recyclerView.setAdapter(secondBottomAdapter);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarFirst.getContext());
+            recyclerView.setLayoutManager(layoutManager);
         }
+
     }
 
     @Subscribe
@@ -355,10 +392,11 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
 
     /**
      * 变色
-     * @author BA on 2018/2/14 0014
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/2/14 0014
      */
     private void setCover(SongsBean song) {
         new GetCoverUtil().setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
@@ -373,7 +411,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
                 frostedGlassImage.setImageBitmap(bm);
 
             }
-        }).getCoverAsBitmap(bottomBar.getContext(), song, 20,20);
+        }).getCoverAsBitmap(bottomBar.getContext(), song, 20, 20);
 
         new GetCoverUtil().setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
             @Override
@@ -387,7 +425,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
                 bottomBar_image.setImageBitmap(bitmap);
 
             }
-        }).getCoverAsBitmap(bottomBar.getContext(), song, 400,400);
+        }).getCoverAsBitmap(bottomBar.getContext(), song, 400, 400);
     }
 
 

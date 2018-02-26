@@ -35,13 +35,15 @@ public class PlayService extends Service {
     private int nextSongCount = 0;//记录用户连续点击了指定某首歌为下一首的次数
 
     public static int playMode = EventFromBar.LISTMODE;//默认列表循环
-    public static WaitingPlaySongs playList= AllMediaBean.getInstance().getWaitingPlaySongs(); //播放列表
+    public static WaitingPlaySongs playList = AllMediaBean.getInstance().getWaitingPlaySongs(); //播放列表
 
     int randomListPosition = -1;//记录随机播放的上一首的位置
     private boolean iff = false;//用于randomLastPlay()方法
     private static final String TAG = "PlayService";
+    private static boolean ISFIRST = true;
     public static SongsBean NowPlaySong;
     public static boolean isPlay = false;
+
 
     public PlayService() {
         mediaPlayer = new MediaPlayer();
@@ -68,7 +70,7 @@ public class PlayService extends Service {
         startForeground(1, notification);
 
         EventBus.getDefault().register(this);
-       // getPlayList();
+        // getPlayList();
     }
 
     @Override
@@ -119,18 +121,37 @@ public class PlayService extends Service {
                 break;
             case EventFromBar.PLAYNEXT:
                 playNext();
+                if (!ISFIRST) {
+                    mediaPlayer.start();
+                } else {
+                    playSong();
+                    StartProgress();
+                    ISFIRST = false;
+                }
                 break;
             case EventFromBar.PLAYLAST:
                 playLast();
+                if (!ISFIRST) {
+                    mediaPlayer.start();
+                } else {
+                    playSong();
+                    StartProgress();
+                    ISFIRST = false;
+                }
                 break;
             case EventFromBar.PAUSETOPLAY:
                 Log.d(TAG, "eventFromBar: paust 2 play");
                 isPlay = true;
-                mediaPlayer.start();
-                //playSong();
+                if (!ISFIRST) {
+                    mediaPlayer.start();
+                } else {
+                    playSong();
+                    StartProgress();
+                    ISFIRST = false;
+                }
+
                 eventto.setStatu(EventToBarFromService.PAUSETOPLAY);
                 EventBus.getDefault().post(eventto);
-                StartProgress();
                 break;
             case EventFromBar.STOP:
                 Log.d(TAG, "eventFromBar: stop");
@@ -180,8 +201,10 @@ public class PlayService extends Service {
                 eventto.setSongsBeanList(event.getSongs());
                 eventto.setPosition(position);
                 EventBus.getDefault().post(eventto);
-
-                StartProgress();
+                if (ISFIRST) {
+                    StartProgress();
+                    ISFIRST = false;
+                }
                 break;
             case EventFromTouch.ADD_ALL_TO_LIST:
                 playList.addList(event.getSongs());
@@ -212,8 +235,10 @@ public class PlayService extends Service {
                 eventto.setPlayMode(playMode);
                 EventBus.getDefault().post(eventto);
 
-                StartProgress();
-
+                if (ISFIRST) {
+                    StartProgress();
+                    ISFIRST = false;
+                }
                 break;
         }
     }
