@@ -126,7 +126,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
         bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.play_progress);
         play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
         seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
-        up_arrow = (Button)bottomContent.findViewById(R.id.up_arrow);
+        up_arrow = (Button) bottomContent.findViewById(R.id.up_arrow);
         bottomBarSecond = (BottomBar) bottomContent.findViewById(R.id.second_bottomBar);
         bottomBarSecond.isSecond = true;
         recyclerView = (RecyclerView) bottomBarSecond.findViewById(R.id.second_bottomBar_recycleView);
@@ -236,12 +236,11 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
         up_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!bottomBarSecond.getIsPullUp()){
+                if (!bottomBarSecond.getIsPullUp()) {
                     bottomBarSecond.pullUp();
-                }
-                else{
+                } else {
                     bottomBarSecond.pullDown();//第二个bottomBar下拉后不应该去影响状态栏，状态栏由第一个bottomBar决定
-                    StatusBarUtil.setStatusBarDarkMode((Activity)bottomBarSecond.getContext());
+                    StatusBarUtil.setStatusBarDarkMode((Activity) bottomBarSecond.getContext());
                     bottomBarFirst.setVisilityChange(false);
                 }
             }
@@ -284,7 +283,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
             layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
             //layoutManager.setStackFrom(true);
             recyclerView.setLayoutManager(layoutManager);
-            playlistCount.setText("  播放列表（"+PlayService.playList.getSongs().size()+"）");
+            playlistCount.setText("  播放列表（" + PlayService.playList.getSongs().size() + "）");
         }
 
     }
@@ -333,12 +332,13 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
                 setCover(song);
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
-
-                LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarFirst.getContext());
-                layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
-                layoutManager.setStackFromEnd(true);
-                recyclerView.setLayoutManager(layoutManager);
-                playlistCount.setText("  播放列表（"+PlayService.playList.getSongs().size()+"）");
+                if (PlayService.position >= 2 && PlayService.playList.getSongs().size()>5) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarFirst.getContext());
+                    layoutManager.scrollToPositionWithOffset(PlayService.position-1, 0);//让此时播放的歌曲位于RecycleView显示的第二个位置
+                    layoutManager.setStackFromEnd(true);
+                    recyclerView.setLayoutManager(layoutManager);
+                }
+                playlistCount.setText("  播放列表（" + PlayService.playList.getSongs().size() + "）");
                 Log.e("MainActivity", "执行一次");
             }
 
