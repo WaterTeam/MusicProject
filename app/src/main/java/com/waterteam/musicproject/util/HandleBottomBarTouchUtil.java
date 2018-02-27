@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +72,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     private BottomBar bottomBarSecond;
     private BottomBar bottomBarFirst;
     private RecyclerView recyclerView;
+    private TextView playlistCount;
 
     private static boolean isPlaying = false;
     private static final int LISTPLAY = 0;
@@ -128,6 +130,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
         bottomBarSecond = (BottomBar) bottomContent.findViewById(R.id.second_bottomBar);
         bottomBarSecond.isSecond = true;
         recyclerView = (RecyclerView) bottomBarSecond.findViewById(R.id.second_bottomBar_recycleView);
+        playlistCount = (TextView) bottomBarSecond.findViewById(R.id.play_list_count);
     }
 
 
@@ -278,7 +281,10 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
             SecondBottomAdapter secondBottomAdapter = new SecondBottomAdapter(PlayService.playList.getSongs());
             recyclerView.setAdapter(secondBottomAdapter);
             LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarFirst.getContext());
+            layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
+            //layoutManager.setStackFrom(true);
             recyclerView.setLayoutManager(layoutManager);
+            playlistCount.setText("  播放列表（"+PlayService.playList.getSongs().size()+"）");
         }
 
     }
@@ -327,6 +333,12 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
                 setCover(song);
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
+
+                LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarFirst.getContext());
+                layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
+                layoutManager.setStackFromEnd(true);
+                recyclerView.setLayoutManager(layoutManager);
+                playlistCount.setText("  播放列表（"+PlayService.playList.getSongs().size()+"）");
                 Log.e("MainActivity", "执行一次");
             }
 

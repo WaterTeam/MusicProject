@@ -25,7 +25,7 @@ public class SecondBottomAdapter extends RecyclerView.Adapter<SecondBottomAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         SongsBean songsRV_data = songsRV_dataList.get(position);
         holder.song_RV_item_songName.setText(songsRV_data.getName());
-        holder.song_RV_item_singer.setText(songsRV_data.getAuthor());
+        holder.song_RV_item_singer.setText("- "+songsRV_data.getAuthor());
         holder.song_RV_item_number.setText(position+1+"");
     }
 

@@ -30,7 +30,7 @@ import java.util.Random;
 
 public class PlayService extends Service {
     private MediaPlayer mediaPlayer; //播放音乐用的
-    public int position = 0; //当前播放音乐在播放列表中的位置
+    public static int position = 0; //当前播放音乐在播放列表中的位置
     private int nextPosition = 0;//用户指定的下一首的位置，记住这个位置是为了用户指定了一个下一首之后，再指定了下一个下一首
     private int nextSongCount = 0;//记录用户连续点击了指定某首歌为下一首的次数
 

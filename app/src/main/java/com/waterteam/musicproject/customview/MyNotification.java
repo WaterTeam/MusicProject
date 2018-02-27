@@ -16,6 +16,7 @@ import android.widget.RemoteViews;
 import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
+import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -69,10 +70,10 @@ public class MyNotification {
     }
 
     @Subscribe
-    public void changeNotification(EventFromBar event) {
+    public void changeNotification(EventToBarFromService event) {
         Log.d(TAG, "eventFromBar: ");
         switch (event.getStatu()) {
-            case EventFromBar.PAUSE:
+            case EventToBarFromService.PAUSE:
                 if (PlayService.isPlay) {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
                     contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
@@ -82,7 +83,7 @@ public class MyNotification {
                 }
                 notificationManager.notify(1, notification);
                 break;
-            case EventFromBar.PAUSETOPLAY:
+            case EventToBarFromService.PAUSETOPLAY:
                 if (PlayService.isPlay) {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
                     contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
@@ -92,24 +93,7 @@ public class MyNotification {
                 }
                 notificationManager.notify(1, notification);
                 break;
-            case EventFromBar.PLAYNEXT:
-                if (PlayService.isPlay) {
-                    contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
-                } else {
-                    contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_play_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_play_button);
-                }
-                contentView.setTextViewText(R.id.big_notification_song, PlayService.NowPlaySong.getName());
-                contentView.setTextViewText(R.id.big_notification_singer, PlayService.NowPlaySong.getAuthor());
-                Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), PlayService.NowPlaySong.getAlbumId());
-                contentView.setImageViewUri(R.id.big_notification_image, uri);
-                contentView_small.setTextViewText(R.id.notification_song, PlayService.NowPlaySong.getName());
-                contentView_small.setTextViewText(R.id.notification_singer, PlayService.NowPlaySong.getAuthor());
-                contentView_small.setImageViewUri(R.id.notification_image, uri);
-                notificationManager.notify(1, notification);
-                break;
-            case EventFromBar.PLAYLAST:
+            case EventToBarFromService.PLAYANEW: {
                 if (PlayService.isPlay) {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
                     contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
@@ -125,7 +109,8 @@ public class MyNotification {
                 contentView_small.setTextViewText(R.id.notification_singer, PlayService.NowPlaySong.getAuthor());
                 contentView_small.setImageViewUri(R.id.notification_image, uri1);
                 notificationManager.notify(1, notification);
-                break;
+            }
+            break;
             default:
                 break;
         }
