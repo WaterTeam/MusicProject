@@ -4,30 +4,26 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.os.Build;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
 
 import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
-import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
-import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
-import com.waterteam.musicproject.util.GetCoverUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 /**
- * Created by Administrator on 2018/2/23.
+ * Created by CNT on 2018/2/23.
  */
 
 public class MyNotification {
@@ -38,7 +34,7 @@ public class MyNotification {
      */
     public final static String ACTION_BUTTON = "com.notification.intent.action.ButtonClick";
     /**
-     * 标识按钮状态：是否在播放
+     * 标识按钮状态：是否在播放(未被使用到)
      */
     public boolean isPlay = false;
     /**
@@ -74,61 +70,47 @@ public class MyNotification {
     }
 
     @Subscribe
-    public void changeNotification(EventFromBar event) {
+    public void changeNotification(EventToBarFromService event) {
         Log.d(TAG, "eventFromBar: ");
         switch (event.getStatu()) {
-            case EventFromBar.PAUSE:
+            case EventToBarFromService.PAUSE:
                 if (PlayService.isPlay) {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_pause_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
                 } else {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_play_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_play_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_play_button);
                 }
                 notificationManager.notify(1, notification);
                 break;
-            case EventFromBar.PAUSETOPLAY:
+            case EventToBarFromService.PAUSETOPLAY:
                 if (PlayService.isPlay) {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_pause_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
                 } else {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_play_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_play_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_play_button);
                 }
                 notificationManager.notify(1, notification);
                 break;
-            case EventFromBar.PLAYNEXT:
+            case EventToBarFromService.PLAYANEW: {
                 if (PlayService.isPlay) {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_pause_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
                 } else {
                     contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_play_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_play_button);
-                }
-                contentView.setTextViewText(R.id.big_notification_song, PlayService.NowPlaySong.getName());
-                contentView.setTextViewText(R.id.big_notification_singer, PlayService.NowPlaySong.getAuthor());
-                contentView.setImageViewResource(R.id.big_notification_image, (int) PlayService.NowPlaySong.getAlbumId());
-                contentView_small.setTextViewText(R.id.notification_song, PlayService.NowPlaySong.getName());
-                contentView_small.setTextViewText(R.id.notification_singer, PlayService.NowPlaySong.getAuthor());
-                contentView_small.setImageViewResource(R.id.notification_image, (int) PlayService.NowPlaySong.getAlbumId());
-                notificationManager.notify(1, notification);
-                break;
-            case EventFromBar.PLAYLAST:
-                if (PlayService.isPlay) {
-                    contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_pause_button);
-                } else {
-                    contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_play_button);
-                    contentView_small.setImageViewResource(R.id.notification_playButton,R.drawable.ic_play_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_play_button);
                 }
                 contentView.setTextViewText(R.id.big_notification_song, PlayService.NowPlaySong.getName());
                 contentView.setTextViewText(R.id.big_notification_singer, PlayService.NowPlaySong.getAuthor());
-                contentView.setImageViewResource(R.id.big_notification_image, (int) PlayService.NowPlaySong.getAlbumId());
+                Uri uri1 = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), PlayService.NowPlaySong.getAlbumId());
+                contentView.setImageViewUri(R.id.big_notification_image, uri1);
                 contentView_small.setTextViewText(R.id.notification_song, PlayService.NowPlaySong.getName());
                 contentView_small.setTextViewText(R.id.notification_singer, PlayService.NowPlaySong.getAuthor());
-                contentView_small.setImageViewResource(R.id.notification_image, (int) PlayService.NowPlaySong.getAlbumId());
+                contentView_small.setImageViewUri(R.id.notification_image, uri1);
                 notificationManager.notify(1, notification);
-                break;
+            }
+            break;
             default:
                 break;
         }
@@ -142,32 +124,33 @@ public class MyNotification {
 
         // 当用户下来通知栏时候看到的就是RemoteViews中自定义的Notification布局
         contentView = new RemoteViews(context.getPackageName(), R.layout.big_notification);
-        contentView_small = new RemoteViews(context.getPackageName(),R.layout.notification);
+        contentView_small = new RemoteViews(context.getPackageName(), R.layout.notification);
         //设置通知栏信息
         contentView.setTextViewText(R.id.big_notification_song, PlayService.NowPlaySong.getName());
         contentView.setTextViewText(R.id.big_notification_singer, PlayService.NowPlaySong.getAuthor());
-        contentView.setImageViewResource(R.id.big_notification_image, (int) PlayService.NowPlaySong.getAlbumId());
+        Uri uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), PlayService.NowPlaySong.getAlbumId());
+        contentView.setImageViewUri(R.id.big_notification_image, uri);
 
-        contentView_small.setTextViewText(R.id.notification_song,PlayService.NowPlaySong.getName());
-        contentView_small.setTextViewText(R.id.notification_singer,PlayService.NowPlaySong.getAuthor());
-        contentView_small.setImageViewResource(R.id.notification_image,(int)PlayService.NowPlaySong.getAlbumId());
+        contentView_small.setTextViewText(R.id.notification_song, PlayService.NowPlaySong.getName());
+        contentView_small.setTextViewText(R.id.notification_singer, PlayService.NowPlaySong.getAuthor());
+        contentView_small.setImageViewUri(R.id.notification_image, uri);
 
         //设置点击的事件
         Intent buttonIntent = new Intent(ACTION_BUTTON);
         buttonIntent.putExtra(INTENT_BUTTONID_TAG, BUTTON_PALY_ID);
         PendingIntent intent_paly = PendingIntent.getBroadcast(context, BUTTON_PALY_ID, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         contentView.setOnClickPendingIntent(R.id.big_notification_play, intent_paly);
-        contentView_small.setOnClickPendingIntent(R.id.notification_playButton,intent_paly);
+        contentView_small.setOnClickPendingIntent(R.id.notification_playButton, intent_paly);
 
         buttonIntent.putExtra(INTENT_BUTTONID_TAG, BUTTON_NEXT_ID);
         PendingIntent intent_next = PendingIntent.getBroadcast(context, BUTTON_NEXT_ID, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         contentView.setOnClickPendingIntent(R.id.big_notification_next, intent_next);
-        contentView_small.setOnClickPendingIntent(R.id.notification_nextButton,intent_next);
+        contentView_small.setOnClickPendingIntent(R.id.notification_nextButton, intent_next);
 
         buttonIntent.putExtra(INTENT_BUTTONID_TAG, BUTTON_LAST_ID);
         PendingIntent intent_last = PendingIntent.getBroadcast(context, BUTTON_LAST_ID, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         contentView.setOnClickPendingIntent(R.id.big_notification_last, intent_last);
-        contentView_small.setOnClickPendingIntent(R.id.notification_lastButton,intent_last);
+        contentView_small.setOnClickPendingIntent(R.id.notification_lastButton, intent_last);
 
         mBuilder.setCustomBigContentView(contentView);
         mBuilder.setContent(contentView_small);

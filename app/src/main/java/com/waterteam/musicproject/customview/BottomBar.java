@@ -26,7 +26,7 @@ import org.greenrobot.eventbus.EventBus;
  * Created by CNT on 2018/1/29.
  * <p>
  * 自定义ViewGroup:BottomBar,实现底部控件上拉后，处于底部控件下的（未显示的）控件得以显现；
- * 下拉则恢复；点击底部控件则底部控件下的（未显示的）控件填充整个屏幕
+ * 下拉则恢复；点击底部控件则底部控件下的（未显示的）控件填充未显示控件的高度
  */
 
 public class BottomBar extends FrameLayout {
@@ -48,6 +48,8 @@ public class BottomBar extends FrameLayout {
 
     //上下拉状态改变监听
     private VisibilityListener visibilityListener;
+
+    public boolean isSecond = false;//由于要用到2个bottomBar嵌套，可是需要第二个bottomBar不去影响到第一个bottomBar设定的状态栏的颜色，所以才用这个参数控制
 
     public BottomBar(Context context) {
         this(context, null);
@@ -137,11 +139,11 @@ public class BottomBar extends FrameLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 if (!isPullUp && startX == downX && startY == downY) {//如果为点击而不是滑动，则弹出播放界面
-                    mScroller.startScroll(0, 0, 0, getMeasuredHeight(), 500);
+                    mScroller.startScroll(0, 0, 0, bottomContent.getMeasuredHeight(), 500);
                     isPullUp = true;
                     invalidate();
                     StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
-                   setVisilityChange(true);
+                    setVisilityChange(true);
                     Log.d(TAG, "onTouchEvent: 4");
                 } else {
                     scrollOffset = getScrollY();
@@ -179,14 +181,17 @@ public class BottomBar extends FrameLayout {
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
         StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
-       setVisilityChange(true);
+        setVisilityChange(true);
     }
 
     private void closeNavigation() {
-        StatusBarUtil.setStatusBarLightMode((Activity) getContext());
+
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
+        if(!isSecond){
+            StatusBarUtil.setStatusBarLightMode((Activity) getContext());
+        }
         setVisilityChange(false);
     }
 
@@ -217,6 +222,14 @@ public class BottomBar extends FrameLayout {
             isPullUp = false;
             StatusBarUtil.setStatusBarLightMode((Activity) getContext());
             setVisilityChange(false);
+        }
+    }
+
+    public void pullUp() {
+        if (!isPullUp) {
+            mScroller.startScroll(0, 0, 0, bottomContent.getMeasuredHeight(), 500);
+            invalidate();
+            isPullUp = true;
         }
     }
 
