@@ -3,6 +3,7 @@ package com.waterteam.musicproject.customview.gravity_imageview;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.View;
 
 
 /**
@@ -13,29 +14,13 @@ import android.util.AttributeSet;
 
 public class MyGravityImageView extends android.support.v7.widget.AppCompatImageView {
 
-    // Image's scroll orientation
-    public final static byte ORIENTATION_NONE = -1;
-    public final static byte ORIENTATION_HORIZONTAL = 0;
-    public final static byte ORIENTATION_VERTICAL = 1;
-    private byte mOrientation = ORIENTATION_NONE;
-
-
-    // Image's width and height
-    private int mDrawableWidth;
-    private int mDrawableHeight;
-
-    // View's width and height
-    private int mWidth;
-    private int mHeight;
-
-    // Image's offset from initial state(center in the view).
+    // 图像可以移动的最大距离
     private float mMaxOffsetX, mMaxOffsetY;
 
-    // The scroll progress.
+    // 由传感器传入的移动数值
     private float mPX, mPY;
 
-
-    // Observe scroll state
+    // 传感器的移动数值监听
     private OnPanoramaScrollListener mOnPanoramaScrollListener;
 
     public MyGravityImageView(Context context) {
@@ -71,12 +56,12 @@ public class MyGravityImageView extends android.support.v7.widget.AppCompatImage
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        mWidth = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
-        mHeight = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
+        int mWidth = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
+        int mHeight = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
 
         if (getDrawable() != null) {
-            mDrawableWidth = getDrawable().getIntrinsicWidth();
-            mDrawableHeight = getDrawable().getIntrinsicHeight();
+            int mDrawableWidth = getDrawable().getIntrinsicWidth();
+            int mDrawableHeight = getDrawable().getIntrinsicHeight();
 
             float imgScaleY = (float) mWidth / (float) mDrawableWidth;
             float imgScaleX = (float) mHeight / (float) mDrawableHeight;
@@ -94,15 +79,6 @@ public class MyGravityImageView extends android.support.v7.widget.AppCompatImage
         canvas.translate(currentOffsetX, currentOffsetY);
         super.onDraw(canvas);
         canvas.restore();
-    }
-
-
-    @Override
-    public void setScaleType(ScaleType scaleType) {
-        /**
-         * Do nothing because PanoramaImageView only
-         * supports {@link scaleType.CENTER_CROP}
-         */
     }
 
     /**

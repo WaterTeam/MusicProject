@@ -213,6 +213,13 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
         });
     }
 
+    /**
+     * 同步BottomBar
+     * @author BA on 2018/2/26 0026
+     * @param
+     * @return
+     * @exception
+     */
     private void flashBottomBar() {
         Log.d(TAG, "flashBottomBar: ");
         SongsBean songsBean = PlayService.NowPlaySong;
@@ -371,7 +378,6 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
                 //半径越大，处理后的图片越模糊
                 Bitmap bm = NativeStackBlur.process(bitmap, 3);
                 frostedGlassImage.setImageBitmap(bm);
-
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 20,20);
 
@@ -385,10 +391,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener{
                 //半径越大，处理后的图片越模糊
 
                 bottomBar_image.setImageBitmap(bitmap);
-
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 400,400);
     }
-
-
 }
