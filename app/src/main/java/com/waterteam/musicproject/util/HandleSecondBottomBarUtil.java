@@ -18,6 +18,7 @@ import com.waterteam.musicproject.adapter.SecondBottomAdapter;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.customview.BottomBar;
 import com.waterteam.musicproject.customview.BottomBarTouchListener;
+import com.waterteam.musicproject.customview.ButtonOnSecondBottom;
 import com.waterteam.musicproject.customview.gravity_imageview.MyGravityImageView;
 import com.waterteam.musicproject.customview.gravity_imageview.MySensorObserver;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
@@ -45,7 +46,7 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
     private Button bottomBar_playing_nextSong;
     private Button bottomBar_playing_lastSong;
     private Button play_mode;
-    private Button up_arrow;
+    private ButtonOnSecondBottom up_arrow;
     private SeekBar seekBar;
     private MySensorObserver sensorObserver;
 
@@ -104,9 +105,10 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
         bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.play_progress);
         play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
         seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
-        up_arrow = (Button) bottomContent.findViewById(R.id.up_arrow);
+        up_arrow = (ButtonOnSecondBottom) bottomContent.findViewById(R.id.up_arrow);
         bottomBarSecond = (BottomBar) bottomContent.findViewById(R.id.second_bottomBar);
         bottomBarSecond.isSecond = true;
+        up_arrow.setSecondBottom(bottomBarSecond);
         recyclerView = (RecyclerView) bottomBarSecond.findViewById(R.id.second_bottomBar_recycleView);
         playlistCount = (TextView) bottomBarSecond.findViewById(R.id.play_list_count);
     }
@@ -196,17 +198,17 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
                 }
             }
         });
-        up_arrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!bottomBarSecond.getIsPullUp()) {
-                    bottomBarSecond.pullUp();
-                } else {
-                    bottomBarSecond.pullDown();//第二个bottomBar下拉后不应该去影响状态栏，状态栏由第一个bottomBar决定
-                    StatusBarUtil.setStatusBarDarkMode((Activity) bottomBarSecond.getContext());
-                }
-            }
-        });
+//        up_arrow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!bottomBarSecond.getIsPullUp()) {
+//                    bottomBarSecond.pullUp();
+//                } else {
+//                    bottomBarSecond.pullDown();//第二个bottomBar下拉后不应该去影响状态栏，状态栏由第一个bottomBar决定
+//                    StatusBarUtil.setStatusBarDarkMode((Activity) bottomBarSecond.getContext());
+//                }
+//            }
+//        });
     }
 
     private void flashBottomBar() {
