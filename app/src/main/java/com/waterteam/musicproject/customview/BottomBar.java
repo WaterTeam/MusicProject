@@ -281,4 +281,8 @@ public class BottomBar extends FrameLayout {
         if (visibilityListener != null)
             visibilityListener.statusChange(isUp);
     }
+    public void setXY(int x,int y){
+        startX = x;
+        startY = y;
+    }
 }

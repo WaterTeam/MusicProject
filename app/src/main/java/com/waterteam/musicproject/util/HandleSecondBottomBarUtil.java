@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -210,6 +211,7 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
 //            }
 //        });
     }
+
 
     private void flashBottomBar() {
         Log.d(TAG, "flashBottomBar: ");
