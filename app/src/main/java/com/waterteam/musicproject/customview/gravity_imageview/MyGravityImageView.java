@@ -66,8 +66,8 @@ public class MyGravityImageView extends android.support.v7.widget.AppCompatImage
             float imgScaleY = (float) mWidth / (float) mDrawableWidth;
             float imgScaleX = (float) mHeight / (float) mDrawableHeight;
 
-            mMaxOffsetX = Math.abs((mDrawableWidth * imgScaleX - mWidth) * 0.5f);
-            mMaxOffsetY = Math.abs((mDrawableHeight * imgScaleY - mHeight) * 0.5f);
+            mMaxOffsetX = Math.abs((mDrawableWidth * imgScaleX - mWidth));
+            mMaxOffsetY = Math.abs((mDrawableHeight * imgScaleY - mHeight));
         }
     }
 
