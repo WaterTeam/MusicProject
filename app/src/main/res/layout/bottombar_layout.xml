@@ -54,7 +54,7 @@
                 android:background="@drawable/ic_bottombar_play_button" />
         </FrameLayout>
 
-        <include layout="@layout/test" />
+        <include layout="@layout/buttombar_palying_layout" />
     </com.waterteam.musicproject.customview.BottomBar>
 </merge>
 

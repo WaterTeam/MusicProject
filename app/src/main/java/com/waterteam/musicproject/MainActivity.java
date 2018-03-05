@@ -32,6 +32,7 @@ import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
+import com.waterteam.musicproject.util.HandleSecondBottomBarUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     MyPageAdapter fragmentPagerAdapter;
     MyNotification myNotification;
     private BottomBar bottomBar;
+    private BottomBar second_bottomBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +118,11 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         viewPager = (ViewPager) this.findViewById(R.id.viewPager_MainActivity);
         bottomBar = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
+        second_bottomBar = (BottomBar) this.findViewById(R.id.second_bottomBar);
         //设置点击处理事件
         bottomBar.setTouchListener(new HandleBottomBarTouchUtil());
+
+        bottomBar.setTouchListener(new HandleSecondBottomBarUtil());
 
         //往viewPager的数据列表中添加2个碎片；
         fragmentList.add(new ArtistPageFragment());
@@ -127,90 +132,12 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(fragmentPagerAdapter);
     }
 
-    private void initNotification() {
-        //        Intent intent = new Intent(this, MainActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-//
-        RemoteViews remoteView = new RemoteViews(getPackageName(), R.layout.big_notification);
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification);
-        remoteViews.setImageViewResource(R.id.notification_image, (int) PlayService.NowPlaySong.getAlbumId());
-        remoteViews.setTextViewText(R.id.notification_song, PlayService.NowPlaySong.getName());
-        remoteViews.setTextViewText(R.id.notification_singer, PlayService.NowPlaySong.getAuthor());
-        remoteView.setImageViewResource(R.id.big_notification_image, (int) PlayService.NowPlaySong.getAlbumId());
-        remoteView.setTextViewText(R.id.big_notification_song, PlayService.NowPlaySong.getName());
-        remoteView.setTextViewText(R.id.big_notification_singer, PlayService.NowPlaySong.getAuthor());
-//        Notification notification = new NotificationCompat.Builder(this)
-//                .setContentIntent(pendingIntent)
-//                .setPriority(NotificationCompat.PRIORITY_MAX)
-//                .setCustomBigContentView(contentViews)
-//                .setSmallIcon(R.mipmap.ic_launcher_round)
-//                .build();//先创建通知对象
-//        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        manager.notify(1, notification);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        Intent intent = new Intent(this, MainActivity.class);
-        // 点击跳转到主界面
-//        PendingIntent intent_go = PendingIntent.getActivity(this, 5, intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-//        remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
-
-        // 4个参数context, requestCode, intent, flags
-//        PendingIntent intent_close = PendingIntent.getActivity(this, 0, intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-//        remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
-
-        // 设置上一曲
-        Intent prv = new Intent();
-        prv.setAction("LastSong");
-        PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.notification_lastButton, intent_prev);
-
-        // 设置播放
-        if (PlayService.isPlay) {
-            Intent playorpause = new Intent();
-            playorpause.setAction("SongPause");
-            PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
-                    playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.notification_playButton, intent_play);
-        }
-        if (!PlayService.isPlay) {
-            Intent playorpause = new Intent();
-            playorpause.setAction("SongPlay");
-            PendingIntent intent_play = PendingIntent.getBroadcast(this, 6, playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.notification_playButton, intent_play);
-        }
-
-        // 下一曲
-        Intent next = new Intent();
-        next.setAction("NextSong");
-        PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.notification_nextButton, intent_next);
-
-        // 设置收藏
-//        PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-//        remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
-
-        builder.setSmallIcon(R.mipmap.ic_launcher_round);
-        builder.setCustomContentView(remoteViews);
-        builder.setCustomBigContentView(remoteView);
-        builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        Notification notify = builder.build();
-
-//        notify.contentView = remoteViews; // 设置下拉图标
-//        notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
-        notify.flags = Notification.FLAG_ONGOING_EVENT;
-//        notify.icon = R.drawable.notification_bar_icon;
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        manager.notify(1, notify);
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
         bottomBar.setVisilityChange(false);
+        second_bottomBar.setVisilityChange(false);
+
     }
 
     @Override
