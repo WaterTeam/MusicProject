@@ -17,13 +17,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_marginTop="20dp"
                 android:text="正在播放"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
@@ -41,10 +41,11 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_weight="6"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
                 app:cardBackgroundColor="@android:color/transparent"
                 app:cardElevation="8dp">
 
@@ -68,7 +69,7 @@
 
         </LinearLayout>
 
-        <com.waterteam.musicproject.customview.BottomBar
+        <com.waterteam.musicproject.customview.SecondBottomBar
             android:id="@+id/second_bottomBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -76,10 +77,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="60dp"
                 android:orientation="vertical">
 
-                <com.waterteam.musicproject.customview.ButtonOnSecondBottom
+                <Button
                     android:id="@+id/up_arrow"
                     android:layout_width="29dp"
                     android:layout_height="12dp"
@@ -93,7 +94,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="20dp"
-                    android:background="#77c3c3c3"
+                    android:background="#99c3c3c3"
                     android:elevation="10dp"
                     android:orientation="vertical">
 
@@ -218,21 +219,17 @@
                         android:layout_marginTop="4dp"
                         android:background="#9e9e9e" />
 
-                    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:tr_pureScrollMode_on="true">
-                        <android.support.v7.widget.RecyclerView
+
+                        <com.waterteam.musicproject.customview.MyRecycleView
                             android:id="@+id/second_bottomBar_recycleView"
                             android:layout_width="match_parent"
                             android:layout_height="225dp"
-                            android:background="#FFFFFF">
-                        </android.support.v7.widget.RecyclerView>
-                    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+                            android:background="#00000000">
+                        </com.waterteam.musicproject.customview.MyRecycleView>
 
                 </LinearLayout>
             </FrameLayout>
-        </com.waterteam.musicproject.customview.BottomBar>
+        </com.waterteam.musicproject.customview.SecondBottomBar>
     </FrameLayout>
 
 </merge>

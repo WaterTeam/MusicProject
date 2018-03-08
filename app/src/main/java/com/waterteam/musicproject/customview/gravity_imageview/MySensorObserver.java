@@ -69,10 +69,7 @@ public class MySensorObserver implements SensorEventListener {
             return;
         }
 
-        float rotateX = Math.abs(event.values[0]);
-        float rotateY = Math.abs(event.values[1]);
-        float rotateZ = Math.abs(event.values[2]);
-
+        //平滑传感器的数值
         final float dT = (event.timestamp - mLastTimestamp) * NS2S;
         mRotateRadianY += event.values[1] * dT;
         mRotateRadianX += event.values[0] * dT;
