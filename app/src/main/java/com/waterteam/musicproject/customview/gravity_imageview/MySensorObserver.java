@@ -33,10 +33,10 @@ public class MySensorObserver implements SensorEventListener {
 
     // The maximum radian that the device can rotate along x-axis and y-axis.
     // The value must between (0, π/2].
-    private double mMaxRotateRadian = Math.PI/9;
+    private double mMaxRotateRadian = Math.PI / 9;
 
     // The PanoramaImageViews to be notified when the device rotate.
-    private LinkedList<MyGravityImageView> mViews = new LinkedList<>();
+    private LinkedList<RotationCarView> mViews = new LinkedList<>();
 
     public void register(Context context) {
         if (mSensorManager == null) {
@@ -56,7 +56,7 @@ public class MySensorObserver implements SensorEventListener {
         }
     }
 
-    void addPanoramaImageView(MyGravityImageView view) {
+    void addPanoramaImageView(RotationCarView view) {
         if (view != null && !mViews.contains(view)) {
             mViews.addFirst(view);
         }
@@ -71,21 +71,29 @@ public class MySensorObserver implements SensorEventListener {
 
         //平滑传感器的数值
         final float dT = (event.timestamp - mLastTimestamp) * NS2S;
-        mRotateRadianY += event.values[1] * dT;
-        mRotateRadianX += event.values[0] * dT;
+        mRotateRadianY= event.values[1] * dT*10;
+        mRotateRadianX= event.values[0] * dT*10;
+
         if (mRotateRadianY > mMaxRotateRadian) {
             mRotateRadianY = mMaxRotateRadian;
         } else if (mRotateRadianY < -mMaxRotateRadian) {
             mRotateRadianY = -mMaxRotateRadian;
-        } if (mRotateRadianX > mMaxRotateRadian) {
+        }
+
+        if (mRotateRadianX > mMaxRotateRadian) {
             mRotateRadianX = mMaxRotateRadian;
         } else if (mRotateRadianX < -mMaxRotateRadian) {
             mRotateRadianX = -mMaxRotateRadian;
-        } else {
-            for (MyGravityImageView view: mViews) {
-                if (view != null ) {
-                    view.updateProgress((float) (mRotateRadianY / mMaxRotateRadian),(float) (mRotateRadianX / mMaxRotateRadian));
-                }
+        }
+
+//        if (Math.abs(mRotateRadianX) > Math.abs(mRotateRadianY))
+//            mRotateRadianY = 0;
+//        else if (Math.abs(mRotateRadianX) < Math.abs(mRotateRadianY))
+//            mRotateRadianX = 0;
+
+        for (RotationCarView view : mViews) {
+            if (view != null) {
+                view.updateProgress((float) (mRotateRadianY / mMaxRotateRadian), (float) (mRotateRadianX / mMaxRotateRadian));
             }
         }
         mLastTimestamp = event.timestamp;
@@ -97,7 +105,7 @@ public class MySensorObserver implements SensorEventListener {
     }
 
     public void setMaxRotateRadian(double maxRotateRadian) {
-        if (maxRotateRadian <= 0 || maxRotateRadian > Math.PI/2) {
+        if (maxRotateRadian <= 0 || maxRotateRadian > Math.PI / 2) {
             throw new IllegalArgumentException("The maxRotateRadian must be between (0, π/2].");
         }
         this.mMaxRotateRadian = maxRotateRadian;

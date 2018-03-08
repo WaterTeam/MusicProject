@@ -5,15 +5,18 @@ import android.content.Context;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import android.widget.Scroller;
+import android.widget.SeekBar;
 
 
 import com.waterteam.musicproject.R;
@@ -22,18 +25,19 @@ import com.waterteam.musicproject.util.StatusBarUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
-/**
+import java.util.ArrayList;
+
+/**继承于一个个bottomBar，只服务于镶嵌在bottomBar中的第二个bottomBar，实现了如果是点击则传给子控件，如果是按住移动则自身拦截，用于上下移动bottomBar
  * Created by CNT on 2018/1/29.
- * <p>
- * 自定义ViewGroup:BottomBar,实现底部控件上拉后，处于底部控件下的（未显示的）控件得以显现；
- * 下拉则恢复；点击底部控件则底部控件下的（未显示的）控件填充未显示控件的高度
+ *
  */
 
-public class BottomBar extends FrameLayout {
+public class SecondBottomBar extends BottomBar {
     private static final String TAG = "BottomBar";
     public View bottomBar;
 
     public View bottomContent;
+    private View view;
 
     private Scroller mScroller;
 
@@ -43,19 +47,20 @@ public class BottomBar extends FrameLayout {
     //判断是否为播放界面
     private boolean isPullUp = false;
 
+    public boolean isMyRecycleView = false;
+
     //触摸监听
     private BottomBarTouchListener touchListener;
 
     //上下拉状态改变监听
     private VisibilityListener visibilityListener;
 
-    public boolean isSecond = false;//由于要用到2个bottomBar嵌套，可是需要第二个bottomBar不去影响到第一个bottomBar设定的状态栏的颜色，所以才用这个参数控制
 
-    public BottomBar(Context context) {
+    public SecondBottomBar(Context context) {
         this(context, null);
     }
 
-    public BottomBar(Context context, AttributeSet attrs) {
+    public SecondBottomBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         /*
       控制栏的可视范围
@@ -176,12 +181,57 @@ public class BottomBar extends FrameLayout {
         return true;
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent e) {
+        boolean isIntercept = false;
+        downX = (int) e.getX();
+        downY = (int) e.getY();
+        switch (e.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                startX = (int) e.getX();
+                startY = (int) e.getY();
+                downX = (int) e.getX();
+                downY = (int) e.getY();
+                isIntercept = false;//点击事件分发给子控件
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int Y = getMeasuredHeight() - bottomContent.getMeasuredHeight() + 45;
+                int deltaY = downY - startY;
+                int delaX = downX - startX;
+                if(isMyRecycleView){
+                    if (Math.abs(deltaY) > 1 && Math.abs(deltaY) > Math.abs(delaX)) {
+                        isIntercept = true;
+                    }
+                }else{
+                    if(!isPullUp){
+                        if (Math.abs(deltaY) > 1 && Math.abs(deltaY) > Math.abs(delaX)) {
+                            isIntercept = true;
+                        }
+                    }else if(startY < Y){
+                        downX = (int) e.getX();
+                        downY = (int) e.getY();
+                        if (Math.abs(deltaY) > 1 && Math.abs(deltaY) > Math.abs(delaX)) {
+                            isIntercept = true;
+                        }
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                isMyRecycleView =false;
+                isIntercept =false;//点击事件分发给子控件
+                break;
+        }
+            return isIntercept;
+
+    }
+
     private void showNavigation() {
         int dy = bottomContent.getMeasuredHeight() - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
         StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
         setVisilityChange(true);
+        isMyRecycleView = false;
     }
 
     private void closeNavigation() {
@@ -189,10 +239,9 @@ public class BottomBar extends FrameLayout {
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
-        if(!isSecond){
             StatusBarUtil.setStatusBarLightMode((Activity) getContext());
-        }
         setVisilityChange(false);
+        isMyRecycleView = false;
     }
 
     /**
@@ -222,6 +271,7 @@ public class BottomBar extends FrameLayout {
             isPullUp = false;
             StatusBarUtil.setStatusBarLightMode((Activity) getContext());
             setVisilityChange(false);
+            isMyRecycleView = false;
         }
     }
 
@@ -230,6 +280,7 @@ public class BottomBar extends FrameLayout {
             mScroller.startScroll(0, 0, 0, bottomContent.getMeasuredHeight(), 500);
             invalidate();
             isPullUp = true;
+            isMyRecycleView = false;
         }
     }
 
@@ -281,31 +332,61 @@ public class BottomBar extends FrameLayout {
         if (visibilityListener != null)
             visibilityListener.statusChange(isUp);
     }
-    /*@Override
-    public boolean onInterceptTouchEvent(MotionEvent e) {
-        boolean isIntercept = false;
-        int action = e.getAction();
-        int currentX = (int) e.getX();
-        int currentY = (int) e.getY();
-        switch (action){
-            case MotionEvent.ACTION_DOWN:
-                isIntercept = false;//点击事件分发给子控件
-                break;
-            case MotionEvent.ACTION_MOVE:
-                /*if(isParentIntercept(currentX,currentY,lastX,lastY)){//父容器拦截
-                    isIntercept = true;
-                }else {//点击事件分发给子控件
-                    isIntercept = false;
+
+    /**
+     * 根据坐标获取相对应的子控件<br>
+     * 在重写ViewGroup使用
+     *
+     * @param
+     * @param
+     * @return 目标View
+     */
+    public View getViewAtViewGroup(int x, int y) {
+        return findViewByXY(this, x, y);
+    }
+
+    private View findViewByXY(View view, int x, int y) {
+        View targetView = null;
+        if (view instanceof BottomBar) {
+            // 父容器,遍历子控件
+            ViewGroup v = (ViewGroup) view;
+            for (int i = 0; i < v.getChildCount(); i++) {
+                targetView = findViewByXY(v.getChildAt(i), x, y);
+                if (targetView != null) {
+                    break;
                 }
-                break;
-                return true;
-            case MotionEvent.ACTION_UP:
-                isIntercept = true;//点击事件分发给子控件
-                break;
+            }
+        } else {
+            targetView = getTouchTarget(view, x, y);
         }
-        //记录上次滑动的位置
-        downX = currentX;
-        downY = currentY;
-        return isIntercept;
-    }*/
+        return targetView;
+
+    }
+
+    private View getTouchTarget(View view, int x, int y) {
+        View targetView = null;
+        // 判断view是否可以聚焦
+        ArrayList<View> TouchableViews = view.getTouchables();
+        for (View child : TouchableViews) {
+            if (isTouchPointInView(child, x, y)) {
+                targetView = child;
+                break;
+            }
+        }
+        return targetView;
+    }
+
+    private boolean isTouchPointInView(View view, int x, int y) {
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        int left = location[0];
+        int top = location[1];
+        int right = left + view.getMeasuredWidth();
+        int bottom = top + view.getMeasuredHeight();
+        if (view.isClickable() && y >= top && y <= bottom && x >= left
+                && x <= right) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -1,48 +1,27 @@
 package com.waterteam.musicproject.util;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.commit451.nativestackblur.NativeStackBlur;
 
 import com.waterteam.musicproject.R;
-import com.waterteam.musicproject.adapter.AlbumSongsAdapter;
-import com.waterteam.musicproject.adapter.SecondBottomAdapter;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.customview.BottomBar;
 import com.waterteam.musicproject.customview.BottomBarTouchListener;
-import com.waterteam.musicproject.customview.gravity_imageview.MyGravityImageView;
 import com.waterteam.musicproject.customview.gravity_imageview.MySensorObserver;
+import com.waterteam.musicproject.customview.gravity_imageview.RotationCarView;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by BA on 2018/2/6 0006.
@@ -54,10 +33,12 @@ import static java.security.AccessController.getContext;
 public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     private static final String TAG = "HandleBottomBarTouchUti";
 
+    private RotationCarView view;
+
     private TextView bottomBar_songName;
     private TextView bottomBar_singer;
     private Button bottomBar_playButton;
-    private MyGravityImageView bottomBar_image;
+    private ImageView bottomBar_image;
     private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
 
     private TextView bottomBar_playing_song_length;
@@ -106,18 +87,18 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     }
 
     private void initGravityImageView() {
-        bottomBar_image = (MyGravityImageView) bottomContent.findViewById(R.id.play_image);
+        bottomBar_image = (ImageView) bottomContent.findViewById(R.id.play_image);
 
-        sensorObserver = new MySensorObserver();
-        sensorObserver.setMaxRotateRadian(Math.PI / 10);
-        bottomBar_image.setGyroscopeObserver(sensorObserver);
+//        view=(RotationCarView)bottomContent.findViewById(R.id.rcv);
+//
+//        sensorObserver = new MySensorObserver();
+//        sensorObserver.setMaxRotateRadian(Math.PI / 10);
+//
+//        view.setGyroscopeObserver(sensorObserver);
+//        bottomBar_image.setGyroscopeObserver(sensorObserver);
     }
 
     private void findView() {
-
-//        frostedGlassImageTop = (ImageView) bottomContent.findViewById(R.id.frosted_glass_image_top);
-//        frostedGlassImageBottom = (ImageView) bottomContent.findViewById(R.id.frosted_glass_image_bottom);
-
         bottomBar_songName = (TextView) bottomBar.findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) bottomBar.findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) bottomBar.findViewById(R.id.bottomBar_play_button);
@@ -217,7 +198,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 //                paletteUtil.from(bitmap).to(bottomBar_head_layout);
                 //半径越大，处理后的图片越模糊
                 Bitmap bm = NativeStackBlur.process(bitmap, 3);
-//               startCircularReveal(frostedGlassImageTop,frostedGlassImageBottom,bm);
+                frostedGlassImage.setImageBitmap(bm);
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 20, 20);
 
@@ -233,34 +214,5 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
                 bottomBar_image.setImageBitmap(bitmap);
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 400, 400);
-    }
-
-    /**
-     * 设置揭露动画
-     * @author BA on 2018/2/28 0028
-     * @param top 顶部用来实现揭露动画的View
-     * @param bottom 底部用来默认显示的View
-     * @param bm 要刷新的图片
-     * @return
-     * @exception
-     */
-    public void startCircularReveal(final ImageView top, final ImageView bottom, final Bitmap bm) {
-        top.setWillNotDraw(false);
-        top.setImageBitmap(bm);
-        int finalRadius = Math.max(top.getWidth(), top.getHeight());
-        Animator anim =
-                ViewAnimationUtils.createCircularReveal(top, top.getWidth(), top.getHeight() / 2, 0, finalRadius + 300);
-
-        anim.setDuration(800);
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                bottom.setImageBitmap(bm);
-                top.setVisibility(View.INVISIBLE);
-                top.setWillNotDraw(true);
-            }
-        });
-        top.setVisibility(View.VISIBLE);
-        anim.start();
     }
 }

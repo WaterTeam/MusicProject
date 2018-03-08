@@ -7,13 +7,13 @@
     <ImageView
         android:id="@+id/big_notification_image"
         android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_height="120dp"
         android:scaleType="fitXY"
         android:src="@drawable/play_img_default" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="120dp"
         android:orientation="vertical">
 
         <TextView
@@ -22,8 +22,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="歌名"
+            android:maxLines="1"
             android:textSize="18sp" />
 
         <TextView
@@ -32,15 +33,21 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:text="歌名"
+            android:maxLines="1"
             android:textSize="15sp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#9e9e9e"
+            android:layout_marginTop="7dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="7dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
