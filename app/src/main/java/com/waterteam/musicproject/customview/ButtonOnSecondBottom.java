@@ -33,26 +33,12 @@ import com.waterteam.musicproject.util.StatusBarUtil;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "onInterceptTouchEvent: ");
         switch (ev.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "onTouchEvent: down");
-                if (secondBottom != null) {
-                    if (!secondBottom.getIsPullUp()) {
-                        Log.d(TAG, "onTouchEvent: down isPull");
-                        return true;
-                    } else {
-                        Log.d(TAG, "onTouchEvent: down else");
-                        startX = (int) ev.getX();
-                        startY = (int) ev.getY();
-                        downX = (int) ev.getX();
-                        downY = (int) ev.getY();
-                    }
-                }
-                break;
             case MotionEvent.ACTION_MOVE:
                 return true;
         }
-        return super.onInterceptTouchEvent(ev);
+        return false;
     }
 
     @Override
@@ -60,10 +46,22 @@ import com.waterteam.musicproject.util.StatusBarUtil;
         Log.d(TAG, "onTouchEvent: ");
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-               break;
+                if (secondBottom != null) {
+                    if (!secondBottom.getIsPullUp()) {
+                        Log.d(TAG, "onTouchEvent: down isPull");
+                        return true;
+                    } else {
+                        Log.d(TAG, "onTouchEvent: down else");
+                        startX = (int) event.getX();
+                        startY = (int) event.getY();
+                        downX = (int) event.getX();
+                        downY = (int) event.getY();
+                    }
+                }
+            break;
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, "onTouchEvent: move");
-                return super.onTouchEvent(event);
+               break;
             case MotionEvent.ACTION_UP:
                 Log.d(TAG, "onTouchEvent: up");
                 downX = (int) event.getX();
