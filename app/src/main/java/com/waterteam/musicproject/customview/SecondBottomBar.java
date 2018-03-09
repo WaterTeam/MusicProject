@@ -239,8 +239,6 @@ public class SecondBottomBar extends BottomBar {
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
-            StatusBarUtil.setStatusBarLightMode((Activity) getContext());
-        setVisilityChange(false);
         isMyRecycleView = false;
     }
 
@@ -269,8 +267,8 @@ public class SecondBottomBar extends BottomBar {
             mScroller.startScroll(0, bottomContent.getMeasuredHeight(), 0, -bottomContent.getMeasuredHeight(), 500);
             invalidate();
             isPullUp = false;
-            StatusBarUtil.setStatusBarLightMode((Activity) getContext());
-            setVisilityChange(false);
+            //StatusBarUtil.setStatusBarLightMode((Activity) getContext());
+            //setVisilityChange(false);
             isMyRecycleView = false;
         }
     }
@@ -390,3 +388,4 @@ public class SecondBottomBar extends BottomBar {
         return false;
     }
 }
+

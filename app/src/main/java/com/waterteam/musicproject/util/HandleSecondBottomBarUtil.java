@@ -36,9 +36,7 @@ import java.util.TimerTask;
 
 public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
     private static final String TAG = "HandleBottomBarTouchUti";
-    private RotationCarView view;
 
-    private ImageView bottomBar_image;
     private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
     private TextView bottomBar_playing_song_length;
     private TextView bottomBar_now_play_time;
@@ -47,7 +45,6 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
     private Button play_mode;
     private Button up_arrow;
     private SeekBar seekBar;
-    private MySensorObserver sensorObserver;
 
     private View bottomBar;
     private View bottomContent;
@@ -69,39 +66,13 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
 
         this.bottomBar = view.bottomBar;
         this.bottomContent = view.bottomContent;
-        initGravityImageView();
-        view.setVisibilityListener(new BottomBar.VisibilityListener() {
-            @Override
-            public void statusChange(boolean isUp) {
-                if (isUp) {
-                    Log.d(TAG, "statusChange: 注册");
-                   sensorObserver.register(view.getContext());
-                } else {
-                    sensorObserver.unregister();
-                    Log.d(TAG, "statusChange: 取消注册");
-                }
-            }
-        });
         findView();
         handleClick();
         flashBottomBar();
         EventBus.getDefault().register(this);
     }
 
-    private void initGravityImageView() {
-        bottomBar_image = (ImageView) bottomContent.findViewById(R.id.play_image);
 
-        view=(RotationCarView)bottomContent.findViewById(R.id.rcv);
-
-        sensorObserver = new MySensorObserver();
-        sensorObserver.setMaxRotateRadian(Math.PI / 10);
-
-        view.setGyroscopeObserver(sensorObserver);
-
-//        sensorObserver = new MySensorObserver();
-//        sensorObserver.setMaxRotateRadian(Math.PI / 10);
-//        bottomBar_image.setGyroscopeObserver(sensorObserver);
-    }
 
     private void findView() {
         bottomBar_playingLayout_button = (Button) bottomContent.findViewById(R.id.play_or_pause_button);
@@ -214,7 +185,7 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
             bottomBarSecond.pullUp();
         } else {
             bottomBarSecond.pullDown();//第二个bottomBar下拉后不应该去影响状态栏，状态栏由第一个bottomBar决定
-            StatusBarUtil.setStatusBarDarkMode((Activity) bottomBarSecond.getContext());
+            //StatusBarUtil.setStatusBarDarkMode((Activity) bottomBarSecond.getContext());
         }
     }
     });

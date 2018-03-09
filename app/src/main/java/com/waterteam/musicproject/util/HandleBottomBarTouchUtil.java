@@ -40,17 +40,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     private Button bottomBar_playButton;
     private ImageView bottomBar_image;
     private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
-
-    private TextView bottomBar_playing_song_length;
-    private TextView bottomBar_now_play_time;
-    private Button bottomBar_playing_nextSong;
-    private Button bottomBar_playing_lastSong;
-    private Button play_mode;
-    private Button up_arrow;
-    private SeekBar seekBar;
-
-//    //高斯模糊有两层，用来做动画
-//    private ImageView frostedGlassImageBottom,frostedGlassImageTop;
+    
 
     private ImageView frostedGlassImage;
 
@@ -89,13 +79,13 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     private void initGravityImageView() {
         bottomBar_image = (ImageView) bottomContent.findViewById(R.id.play_image);
 
-//        view=(RotationCarView)bottomContent.findViewById(R.id.rcv);
-//
-//        sensorObserver = new MySensorObserver();
-//        sensorObserver.setMaxRotateRadian(Math.PI / 10);
-//
-//        view.setGyroscopeObserver(sensorObserver);
-//        bottomBar_image.setGyroscopeObserver(sensorObserver);
+        view=(RotationCarView)bottomContent.findViewById(R.id.rcv);
+
+        sensorObserver = new MySensorObserver();
+        sensorObserver.setMaxRotateRadian(Math.PI / 10);
+
+        view.setGyroscopeObserver(sensorObserver);
+
     }
 
     private void findView() {

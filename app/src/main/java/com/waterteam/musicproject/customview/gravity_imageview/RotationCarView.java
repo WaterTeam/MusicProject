@@ -20,7 +20,7 @@ public class RotationCarView extends CardView {
     private Camera camera;
     private Matrix matrix;
 
-    private float maxRotation=6;
+    private float maxRotation=5;
 
     private float x,y;
 
@@ -42,7 +42,7 @@ public class RotationCarView extends CardView {
     protected void onDraw(Canvas canvas) {
         camera.save();
         //绕X轴翻转
-        camera.rotateX(y);
+        camera.rotateX(0);
         //绕Y轴翻转
         camera.rotateY(x);
         //设置camera作用矩阵
