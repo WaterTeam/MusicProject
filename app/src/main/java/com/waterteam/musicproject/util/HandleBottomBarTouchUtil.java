@@ -1,7 +1,14 @@
 package com.waterteam.musicproject.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,17 +18,23 @@ import android.widget.TextView;
 import com.commit451.nativestackblur.NativeStackBlur;
 
 import com.waterteam.musicproject.R;
+import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.customview.BottomBar;
 import com.waterteam.musicproject.customview.BottomBarTouchListener;
 import com.waterteam.musicproject.customview.gravity_imageview.MySensorObserver;
 import com.waterteam.musicproject.customview.gravity_imageview.RotationCarView;
+import com.waterteam.musicproject.customview.playing_viewpage.DepthPageTransformer;
+import com.waterteam.musicproject.customview.playing_viewpage.PlayingVPAdapter;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by BA on 2018/2/6 0006.
@@ -33,18 +46,21 @@ import org.greenrobot.eventbus.Subscribe;
 public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     private static final String TAG = "HandleBottomBarTouchUti";
 
-    private RotationCarView view;
-
     private TextView bottomBar_songName;
     private TextView bottomBar_singer;
     private Button bottomBar_playButton;
     private ImageView bottomBar_image;
     private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
-    
+
+    private Context context;
+
 
     private ImageView frostedGlassImage;
 
     private MySensorObserver sensorObserver;
+
+    private ViewPager viewPager;
+    private PlayingVPAdapter playingVPAdapter;
 
     private View bottomBar;
     private View bottomContent;
@@ -57,6 +73,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     public void setContentView(final BottomBar view) {
         this.bottomBar = view.bottomBar;
         this.bottomContent = view.bottomContent;
+        this.context = view.getContext();
         initGravityImageView();
         view.setVisibilityListener(new BottomBar.VisibilityListener() {
             @Override
@@ -79,16 +96,16 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     private void initGravityImageView() {
         bottomBar_image = (ImageView) bottomContent.findViewById(R.id.play_image);
 
-        view=(RotationCarView)bottomContent.findViewById(R.id.rcv);
 
         sensorObserver = new MySensorObserver();
         sensorObserver.setMaxRotateRadian(Math.PI / 10);
 
-        view.setGyroscopeObserver(sensorObserver);
+//        view.setGyroscopeObserver(sensorObserver);
 
     }
 
     private void findView() {
+        viewPager = (ViewPager) bottomContent.findViewById(R.id.view_page);
         bottomBar_songName = (TextView) bottomBar.findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) bottomBar.findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) bottomBar.findViewById(R.id.bottomBar_play_button);
@@ -116,11 +133,70 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
     }
 
     /**
-     * 同步BottomBar
-     * @author BA on 2018/2/26 0026
+     * 初始化VIewPage
+     *
      * @param
      * @return
-     * @exception
+     * @throws
+     * @author BA on 2018/3/9 0009
+     */
+    public void setViewPager() {
+        if (PlayService.waitingPlaySongsLayouts.getSongsCount() <= 0) {
+            PlayService.waitingPlaySongsLayouts.addList(AllMediaBean.getInstance().getWaitingPlaySongs().getSongs());
+        }
+        playingVPAdapter = new PlayingVPAdapter(PlayService.waitingPlaySongsLayouts.getPlayingLayout());
+        viewPager.setAdapter(playingVPAdapter);
+        viewPager.setPageTransformer(true, new DepthPageTransformer());
+        Log.d("viewviewview", "setViewPager: " + PlayService.waitingPlaySongsLayouts.getPlayingLayout().size());
+    }
+
+    /**
+     * 滑动时切歌的监听
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/3/9 0009
+     */
+
+    public void setViewPagerListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //这里你发送一个Event来切歌，直接用这个Position
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+    /**
+     * 切歌的时候用来切换ViewPage的位置
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/3/9 0009
+     */
+    public void setViewPagePosition(int position) {
+        viewPager.setCurrentItem(position, true);
+    }
+
+    /**
+     * 同步BottomBar
+     *
+     * @param
+     * @return
+     * @throws
+     * @author BA on 2018/2/26 0026
      */
     private void flashBottomBar() {
         Log.d(TAG, "flashBottomBar: ");
@@ -128,7 +204,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
         if (songsBean != null) {
             if (PlayService.isPlay) {
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-            }else{
+            } else {
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_play_button);
             }
             bottomBar_songName.setText(songsBean.getName());
@@ -136,6 +212,8 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
             bottomBar_palying_songs_name.setText(songsBean.getName());
             setCover(songsBean);
         }
+
+        setViewPager();
 
     }
 
@@ -186,8 +264,9 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 //                PaletteUtil paletteUtil = new PaletteUtil();
 //                paletteUtil.from(bitmap).to(play_control_layout);
 //                paletteUtil.from(bitmap).to(bottomBar_head_layout);
+                Bitmap bm = ImageEffect(bitmap,0,0,0.7f);
                 //半径越大，处理后的图片越模糊
-                Bitmap bm = NativeStackBlur.process(bitmap, 3);
+             bm = NativeStackBlur.process(bm, 3);
                 frostedGlassImage.setImageBitmap(bm);
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 20, 20);
@@ -201,8 +280,47 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 //                paletteUtil.from(bitmap).to(bottomBar_head_layout);
                 //半径越大，处理后的图片越模糊
 
-                bottomBar_image.setImageBitmap(bitmap);
+                //  bottomBar_image.setImageBitmap(bitmap);
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 400, 400);
+    }
+
+    /**
+     * @param bm
+     * @param hue 色相
+     * @param saturation 饱和度
+     * @param lum 亮度
+     * @return
+     */
+    public  Bitmap ImageEffect(Bitmap bm,float hue,float saturation,float lum){
+
+        Bitmap bitmap = Bitmap.createBitmap(bm.getWidth(),bm.getHeight(),Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+//        //色相调节
+//        ColorMatrix hueMatrix = new ColorMatrix();
+//        hueMatrix.setRotate(0, hue);
+//        hueMatrix.setRotate(1, hue);
+//        hueMatrix.setRotate(2, hue);
+//
+//        //饱和度调节
+//        ColorMatrix saturationColorMatrix = new ColorMatrix();
+//        saturationColorMatrix.setSaturation(saturation);
+
+        //亮度调节
+        ColorMatrix lumMatrix = new ColorMatrix();
+        lumMatrix.setScale(lum, lum, lum, 1);
+
+        ColorMatrix ImageMatrix = new ColorMatrix();
+//        ImageMatrix.postConcat(hueMatrix);
+//        ImageMatrix.postConcat(saturationColorMatrix);
+        ImageMatrix.postConcat(lumMatrix);
+
+        paint.setColorFilter(new ColorMatrixColorFilter(ImageMatrix));
+        canvas.drawBitmap(bm, 0, 0, paint);
+
+        return bitmap;
     }
 }

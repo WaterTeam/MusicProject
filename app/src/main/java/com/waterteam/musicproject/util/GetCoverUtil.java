@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import android.util.Log;
@@ -32,7 +33,8 @@ import java.util.concurrent.ExecutionException;
 public class GetCoverUtil {
     private static final String TAG = "GetCoverUtil";
     private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
-    private  CompletedLoadListener loadListener;
+    private CompletedLoadListener loadListener;
+    private Bitmap defaultBitmap;
 
     /**
      * 设置封面
@@ -58,7 +60,7 @@ public class GetCoverUtil {
      * @throws
      * @author BA on 2018/2/12 0012
      */
-    public  GetCoverUtil setOnCompletedListener(CompletedLoadListener listener) {
+    public GetCoverUtil setOnCompletedListener(CompletedLoadListener listener) {
         loadListener = listener;
         return this;
     }
@@ -90,38 +92,32 @@ public class GetCoverUtil {
     private static void loadByGlide(Context context, GetCoverUri obj, final ImageView imageView, int size) {
         long id = obj.getAlbumId();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
-        int select = (int) System.currentTimeMillis() % 3;
         DrawableRequestBuilder builder = null;
-        switch (select) {
-            case 0:
-                builder = Glide.with(context)
-                        .load(uri)
-                        .error(R.drawable.play_img_default);
-                break;
-            case 1:
-                builder = Glide.with(context)
-                        .load(uri)
-                        .error(R.drawable.play_img_default2);
-                break;
-            default:
-                builder = Glide.with(context)
-                        .load(uri)
-                        .error(R.drawable.play_img_default3);
-                break;
-        }
+        builder = Glide.with(context)
+                .load(uri)
+                .error(R.drawable.play_img_default3);
 
         builder.override(size, size).into(imageView);
     }
 
 
-    public  void getCoverAsBitmap(Context context, GetCoverUri obj, int w,int h) {
+    public void getCoverAsBitmap(Context context, GetCoverUri obj, int w, int h) {
+        if (defaultBitmap == null) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.outHeight = 400;
+            options.outWidth = 400;
+            defaultBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_img_default, options);
+        }
         long id = obj.getAlbumId();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
-        Glide.with(context).load(uri).asBitmap().override(w,h).into(new SimpleTarget<Bitmap>() {
+        Glide.with(context).load(uri).asBitmap().override(w, h).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 if (loadListener != null) {
-                    loadListener.completed(resource);
+                    if (resource != null)
+                        loadListener.completed(resource);
+                    else
+                        loadListener.completed(defaultBitmap);
                     loadListener = null;
                 }
             }
