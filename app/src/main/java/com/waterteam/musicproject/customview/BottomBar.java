@@ -35,6 +35,10 @@ public class BottomBar extends FrameLayout {
 
     public View bottomContent;
 
+    private SecondBottomBar secondBottomBar;
+    private View secondBottomBarHead;
+    private View secondBottomBarComtent;
+
     private Scroller mScroller;
 
     private int downX, downY, startX, startY;
@@ -80,6 +84,9 @@ public class BottomBar extends FrameLayout {
     private void initView() {
         bottomBar = getChildAt(0);
         bottomContent = getChildAt(1);
+        secondBottomBar = (SecondBottomBar) bottomContent.findViewById(R.id.second_bottomBar);
+        secondBottomBarHead = bottomContent.findViewById(R.id.second_bottomBarHead);
+        secondBottomBarComtent = bottomContent.findViewById(R.id.second_bottomBarContent);
 
     }
 
@@ -150,7 +157,7 @@ public class BottomBar extends FrameLayout {
 
                     if (!isPullUp) {
                         Log.d(TAG, "onTouchEvent: 5");
-                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8) {
+                        if (scrollOffset > bottomContent.getMeasuredHeight() / 16) {
                             Log.d(TAG, "onTouchEvent: 6");
                             showNavigation();
                             isPullUp = true;
@@ -160,7 +167,7 @@ public class BottomBar extends FrameLayout {
                             isPullUp = false;
                         }
                     } else {
-                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8 * 7) {
+                        if (scrollOffset > bottomContent.getMeasuredHeight() / 16 * 15) {
                             Log.d(TAG, "onTouchEvent: 8");
                             showNavigation();
                             isPullUp = true;
@@ -189,7 +196,7 @@ public class BottomBar extends FrameLayout {
         int dy = 0 - scrollOffset;
         mScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
         invalidate();
-        if(!isSecond){
+        if (!isSecond) {
             StatusBarUtil.setStatusBarLightMode((Activity) getContext());
         }
         setVisilityChange(false);
@@ -281,31 +288,49 @@ public class BottomBar extends FrameLayout {
         if (visibilityListener != null)
             visibilityListener.statusChange(isUp);
     }
-    /*@Override
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
         boolean isIntercept = false;
-        int action = e.getAction();
-        int currentX = (int) e.getX();
-        int currentY = (int) e.getY();
-        switch (action){
+        downX = (int) e.getX();
+        downY = (int) e.getY();
+        switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                startX = (int) e.getX();
+                startY = (int) e.getY();
+                downX = (int) e.getX();
+                downY = (int) e.getY();
                 isIntercept = false;//点击事件分发给子控件
                 break;
             case MotionEvent.ACTION_MOVE:
-                /*if(isParentIntercept(currentX,currentY,lastX,lastY)){//父容器拦截
-                    isIntercept = true;
-                }else {//点击事件分发给子控件
-                    isIntercept = false;
+                int Y = bottomContent.getMeasuredHeight() - secondBottomBarHead.getMeasuredHeight();
+                int deltaY = downY - startY;
+                int delaX = downX - startX;
+                if (isPullUp) {
+                    if (secondBottomBar.getIsPullUp()) {
+                        isIntercept = false;
+                    } else {
+                        if (startY < Y) {
+                            if (Math.abs(deltaY) > 1 && Math.abs(deltaY) > Math.abs(delaX)) {
+                                isIntercept = true;
+                            }
+                        } else {
+                            isIntercept = false;
+                        }
+                    }
+                } else {
+                    if (Math.abs(deltaY) > 1 && Math.abs(deltaY) > Math.abs(delaX)) {
+                        isIntercept = true;
+                    } else {
+                        isIntercept = false;
+                    }
                 }
                 break;
-                return true;
             case MotionEvent.ACTION_UP:
-                isIntercept = true;//点击事件分发给子控件
+                isIntercept = false;//点击事件分发给子控件
                 break;
         }
-        //记录上次滑动的位置
-        downX = currentX;
-        downY = currentY;
         return isIntercept;
-    }*/
+
+    }
 }

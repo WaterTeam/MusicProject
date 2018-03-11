@@ -8,6 +8,7 @@ package com.waterteam.musicproject.eventsforeventbus;
 
 public class EventFromBar {
     private int statu;
+    private int position;
 
     public final static int PLAY = 8;
     public final static int PAUSE = 9;
@@ -19,9 +20,17 @@ public class EventFromBar {
     public final static int LISTMODE = 0;//列表循环
     public final static int SIMPLEMODE = 1;//单曲循环
     public final static int RANDOMMODE = 2;//随机模式
+    public final static int VIEWPAGERMOVE = 10;
 
     public int getProgress() {
         return progress;
+    }
+
+    public void setPosition(int position){
+        this.position = position;
+    }
+    public int getPosition(){
+        return position;
     }
 
     public int progress; //歌曲进度

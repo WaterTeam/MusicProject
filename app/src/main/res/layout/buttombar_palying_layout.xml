@@ -72,6 +72,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/second_bottomBarHead"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
@@ -186,6 +187,7 @@
             </LinearLayout>
 
             <FrameLayout
+                android:id="@+id/second_bottomBarContent"
                 android:layout_width="match_parent"
                 android:layout_height="275dp"
                 android:background="@android:color/transparent">

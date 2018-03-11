@@ -61,7 +61,7 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        waitingPlaySongsLayouts=new WaitingPlaySongsLayouts(getApplicationContext());
+        waitingPlaySongsLayouts = new WaitingPlaySongsLayouts(getApplicationContext());
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Notification notification = new NotificationCompat.Builder(this)
@@ -73,7 +73,7 @@ public class PlayService extends Service {
         startForeground(1, notification);
 
         EventBus.getDefault().register(this);
-        waitingPlaySongsLayouts=new WaitingPlaySongsLayouts(getApplicationContext());
+        waitingPlaySongsLayouts = new WaitingPlaySongsLayouts(getApplicationContext());
         waitingPlaySongsLayouts.addList(playList.getSongs());
         // getPlayList();
     }
@@ -165,6 +165,13 @@ public class PlayService extends Service {
                 }
                 break;
             case EventFromBar.SEEKBARMOVE:
+                if (!ISFIRST) {
+                } else {
+                    playSong();
+                    StartProgress();
+                    mediaPlayer.pause();
+                    ISFIRST = false;
+                }
                 mediaPlayer.seekTo(event.getProgress());
                 break;
             case EventFromBar.LISTMODE:
@@ -175,6 +182,21 @@ public class PlayService extends Service {
                 break;
             case EventFromBar.RANDOMMODE:
                 playMode = event.getStatu();
+                break;
+            case EventFromBar.VIEWPAGERMOVE:
+                mediaPlayer.reset();
+                isPlay = true;
+                nextPosition = position;
+                playSong();
+                if (!ISFIRST) {
+                } else {
+                    StartProgress();
+                    ISFIRST = false;
+                }
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                eventto.setSongsBeanList(playList.getSongs());
+                eventto.setPosition(position);
+                EventBus.getDefault().post(eventto);
                 break;
             default:
                 break;
@@ -195,7 +217,9 @@ public class PlayService extends Service {
         final EventToBarFromService eventto = new EventToBarFromService();
         switch (event.getStatu()) {
             case EventFromTouch.NOW_PLAY:
-                playList.addList(event.getSongs());
+                if (event.getSongs() != null) {
+                    playList.addList(event.getSongs());
+                }
                 position = event.getPosition();
                 nextPosition = position;
                 nextSongCount = 0;
@@ -203,7 +227,7 @@ public class PlayService extends Service {
                 playSong();
 
                 eventto.setStatu(EventToBarFromService.PLAYANEW);
-                eventto.setSongsBeanList(event.getSongs());
+                eventto.setSongsBeanList(playList.getSongs());
                 eventto.setPosition(position);
                 EventBus.getDefault().post(eventto);
                 if (ISFIRST) {
@@ -224,7 +248,7 @@ public class PlayService extends Service {
                 break;
             case EventFromTouch.ADD_TO_NEXT:
                 playList.addSongToPosition(++nextPosition, event.getSong());
-                waitingPlaySongsLayouts.addSongToPosition(nextPosition,event.getSong());
+                waitingPlaySongsLayouts.addSongToPosition(nextPosition, event.getSong());
                 nextSongCount++;
                 break;
             case EventFromTouch.DELETE_FROM_LIST:
@@ -233,7 +257,7 @@ public class PlayService extends Service {
                 break;
             case EventFromTouch.ALWAYS_PLAY:
                 playList.addSongToPosition(++position, event.getSong());
-                waitingPlaySongsLayouts.addSongToPosition(position,event.getSong());
+                waitingPlaySongsLayouts.addSongToPosition(position, event.getSong());
                 nextPosition = position;
                 mediaPlayer.reset();
                 playSong();

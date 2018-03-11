@@ -6,6 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.commit451.nativestackblur.NativeStackBlur;
 
@@ -27,6 +31,7 @@ import com.waterteam.musicproject.customview.gravity_imageview.RotationCarView;
 import com.waterteam.musicproject.customview.playing_viewpage.DepthPageTransformer;
 import com.waterteam.musicproject.customview.playing_viewpage.PlayingVPAdapter;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
+import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 
@@ -39,7 +44,7 @@ import java.util.List;
 /**
  * Created by BA on 2018/2/6 0006.
  *
- * @Function : 处理BottomBar的点击事件，注意，只发送对应的事件statu，进度条就需要传进度
+ * @Function : 处理第一个BottomBar的点击事件，注意，只发送对应的事件statu，进度条就需要传进度,由于需要用到第二个bottomBar的一个方法，所以在外面初始化时就要传一个第二个bottomBar的事件处理类handleSecondBottomBarUtility
  * 不用传歌曲位置
  */
 
@@ -54,6 +59,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 
     private Context context;
 
+    HandleSecondBottomBarUtil util;
 
     private ImageView frostedGlassImage;
 
@@ -67,6 +73,8 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 
     private static boolean isPlaying = false;
     private static final int LISTPLAY = 0;
+
+    private boolean isUserMoveViewPager = true;
 
 
     @Override
@@ -147,6 +155,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
         playingVPAdapter = new PlayingVPAdapter(PlayService.waitingPlaySongsLayouts.getPlayingLayout());
         viewPager.setAdapter(playingVPAdapter);
         viewPager.setPageTransformer(true, new DepthPageTransformer());
+        //setViewPagerListener();
         Log.d("viewviewview", "setViewPager: " + PlayService.waitingPlaySongsLayouts.getPlayingLayout().size());
     }
 
@@ -168,7 +177,15 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 
             @Override
             public void onPageSelected(int position) {
-                //这里你发送一个Event来切歌，直接用这个Position
+                if (isUserMoveViewPager) {
+                   PlayService.position = position;
+                    EventFromBar eventFromBar = new EventFromBar();
+                    eventFromBar.setStatu(EventFromBar.VIEWPAGERMOVE);
+                    EventBus.getDefault().post(eventFromBar);
+                    new DownloadTask().execute();
+                } else {
+
+                }
             }
 
             @Override
@@ -177,6 +194,30 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
             }
         });
     }
+    class DownloadTask extends AsyncTask<Void,Integer,Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            publishProgress(PlayService.position);
+            return true;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            isPlaying = true;
+            SongsBean song = PlayService.playList.getSongs().get(values[0]);
+            bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+            bottomBar_palying_songs_name.setText(song.getName());
+            bottomBar_songName.setText(song.getName());
+            bottomBar_singer.setText(song.getAuthor());
+            setCover(song);
+            if(util != null){
+                util.changeViewForViewPager();
+            }
+            super.onProgressUpdate(values);
+
+        }
+    }
+
 
     /**
      * 切歌的时候用来切换ViewPage的位置
@@ -187,7 +228,9 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
      * @author BA on 2018/3/9 0009
      */
     public void setViewPagePosition(int position) {
+        isUserMoveViewPager = false;
         viewPager.setCurrentItem(position, true);
+        isUserMoveViewPager = true;
     }
 
     /**
@@ -214,6 +257,8 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
         }
 
         setViewPager();
+        setViewPagePosition(PlayService.position);
+        setViewPagerListener();
 
     }
 
@@ -238,11 +283,20 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
                 bottomBar_palying_songs_name.setText(song.getName());
                 bottomBar_songName.setText(song.getName());
                 bottomBar_singer.setText(song.getAuthor());
+                setViewPagePosition(event.getPosition());
                 setCover(song);
                 Log.e("MainActivity", "执行一次");
             }
-
             break;
+            /*case EventToBarFromService.MOVEVIEWPAGER:
+                isPlaying = true;
+                SongsBean song = PlayService.playList.getSongs().get(event.getPosition());
+                bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+                bottomBar_palying_songs_name.setText(song.getName());
+                bottomBar_songName.setText(song.getName());
+                bottomBar_singer.setText(song.getAuthor());
+                setCover(song);
+                break;*/
             default:
                 break;
         }
@@ -264,9 +318,9 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 //                PaletteUtil paletteUtil = new PaletteUtil();
 //                paletteUtil.from(bitmap).to(play_control_layout);
 //                paletteUtil.from(bitmap).to(bottomBar_head_layout);
-                Bitmap bm = ImageEffect(bitmap,0,0,0.7f);
+                Bitmap bm = ImageEffect(bitmap, 0, 0, 0.7f);
                 //半径越大，处理后的图片越模糊
-             bm = NativeStackBlur.process(bm, 3);
+                bm = NativeStackBlur.process(bm, 3);
                 frostedGlassImage.setImageBitmap(bm);
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 20, 20);
@@ -287,14 +341,14 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
 
     /**
      * @param bm
-     * @param hue 色相
+     * @param hue        色相
      * @param saturation 饱和度
-     * @param lum 亮度
+     * @param lum        亮度
      * @return
      */
-    public  Bitmap ImageEffect(Bitmap bm,float hue,float saturation,float lum){
+    public Bitmap ImageEffect(Bitmap bm, float hue, float saturation, float lum) {
 
-        Bitmap bitmap = Bitmap.createBitmap(bm.getWidth(),bm.getHeight(),Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(bm.getWidth(), bm.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -322,5 +376,8 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
         canvas.drawBitmap(bm, 0, 0, paint);
 
         return bitmap;
+    }
+    public void setHandleSecondBarUtil(HandleSecondBottomBarUtil util){
+        this.util = util;
     }
 }

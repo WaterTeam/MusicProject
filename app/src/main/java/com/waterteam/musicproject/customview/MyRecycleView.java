@@ -44,10 +44,6 @@ public class MyRecycleView extends RecyclerView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 RecyclerView.LayoutManager layoutManager = this.getLayoutManager();
-                if(PlayService.playList.getSongs().size()<5){
-                    secondBottomBar.isMyRecycleView = true;
-                    return false;
-                }
                 //判断是当前layoutManager是否为LinearLayoutManager
                 //只有LinearLayoutManager才有查找第一个和最后一个可见view位置的方法
                 if (layoutManager instanceof LinearLayoutManager) {

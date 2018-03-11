@@ -155,7 +155,7 @@ public class SecondBottomBar extends BottomBar {
 
                     if (!isPullUp) {
                         Log.d(TAG, "onTouchEvent: 5");
-                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8) {
+                        if (scrollOffset > bottomContent.getMeasuredHeight() / 16) {
                             Log.d(TAG, "onTouchEvent: 6");
                             showNavigation();
                             isPullUp = true;
@@ -165,7 +165,7 @@ public class SecondBottomBar extends BottomBar {
                             isPullUp = false;
                         }
                     } else {
-                        if (scrollOffset > bottomContent.getMeasuredHeight() / 8 * 7) {
+                        if (scrollOffset > bottomContent.getMeasuredHeight() / 16 * 15) {
                             Log.d(TAG, "onTouchEvent: 8");
                             showNavigation();
                             isPullUp = true;

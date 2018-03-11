@@ -120,9 +120,12 @@ public class MainActivity extends AppCompatActivity {
         bottomBar = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
         second_bottomBar = (BottomBar) this.findViewById(R.id.second_bottomBar);
         //设置点击处理事件
-        bottomBar.setTouchListener(new HandleBottomBarTouchUtil());
+        HandleBottomBarTouchUtil handleBottomBarTouchUtil = new HandleBottomBarTouchUtil();
+        HandleSecondBottomBarUtil handleSecondBottomBarUtil = new HandleSecondBottomBarUtil();
+        handleBottomBarTouchUtil.setHandleSecondBarUtil(handleSecondBottomBarUtil);
+        bottomBar.setTouchListener(handleBottomBarTouchUtil);
 
-        bottomBar.setTouchListener(new HandleSecondBottomBarUtil());
+        bottomBar.setTouchListener(handleSecondBottomBarUtil);
 
         //往viewPager的数据列表中添加2个碎片；
         fragmentList.add(new ArtistPageFragment());

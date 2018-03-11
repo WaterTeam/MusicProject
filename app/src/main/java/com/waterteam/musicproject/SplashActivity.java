@@ -138,8 +138,10 @@ public class SplashActivity extends AppCompatActivity {
                 Collections.sort(songs);
                 AllMediaBean.getInstance().setSongs(songs);
                 AllMediaBean.getInstance().getWaitingPlaySongs().addList(songs);
-                if (songs.size() > 0)
+                if (songs.size() > 0) {
                     PlayService.NowPlaySong = songs.get(0);
+                    PlayService.position = 0;
+                }
                 songsOK = true;
                 startActivity();
             }

@@ -266,10 +266,11 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
                 seekBar.setMax(song.getLength());
                 if (PlayService.position >= 2 && PlayService.playList.getSongs().size() > 5) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
-                    layoutManager.scrollToPositionWithOffset(PlayService.position - 1, 0);//让此时播放的歌曲位于RecycleView显示的第二个位置
+                    layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
                     layoutManager.setStackFromEnd(true);
                     recyclerView.setLayoutManager(layoutManager);
                 }
+
                 playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
                 Log.e("MainActivity", "执行一次");
             }
@@ -286,9 +287,42 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
                 seekBar.setProgress(event.getProgress());
             }
             break;
+            /*case EventToBarFromService.MOVEVIEWPAGER:
+                isPlaying = true;
+                SongsBean song = PlayService.playList.getSongs().get(event.getPosition());
+                bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+                bottomBar_playing_song_length.setText(song.getFormatLenght());
+                seekBar.setProgress(0);
+                seekBar.setMax(song.getLength());
+                if (PlayService.position >= 2 && PlayService.playList.getSongs().size() > 5) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
+                    layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
+                    layoutManager.setStackFromEnd(true);
+                    recyclerView.setLayoutManager(layoutManager);
+                }
+
+                playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
+                Log.e("MainActivity", "执行一次");
+                break;*/
             default:
                 break;
         }
+    }
+    public void changeViewForViewPager(){
+        isPlaying = true;
+        SongsBean song = PlayService.playList.getSongs().get(PlayService.position);
+        bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
+        bottomBar_playing_song_length.setText(song.getFormatLenght());
+        seekBar.setProgress(0);
+        seekBar.setMax(song.getLength());
+        if (PlayService.position >= 2 && PlayService.playList.getSongs().size() > 5) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
+            layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
+            layoutManager.setStackFromEnd(true);
+            recyclerView.setLayoutManager(layoutManager);
+        }
+
+        playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
     }
 
     private String formatTime(int Leng) {
