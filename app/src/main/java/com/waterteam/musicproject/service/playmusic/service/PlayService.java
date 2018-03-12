@@ -193,7 +193,7 @@ public class PlayService extends Service {
                     StartProgress();
                     ISFIRST = false;
                 }
-                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                eventto.setStatu(EventToBarFromService.MOVEVIewPAGER);
                 eventto.setSongsBeanList(playList.getSongs());
                 eventto.setPosition(position);
                 EventBus.getDefault().post(eventto);

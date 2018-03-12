@@ -110,7 +110,24 @@ public class MyNotification {
                 contentView_small.setImageViewUri(R.id.notification_image, uri1);
                 notificationManager.notify(1, notification);
             }
-            break;
+            case EventToBarFromService.MOVEVIewPAGER:
+                if (PlayService.isPlay) {
+                    contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_pause_button);
+                } else {
+                    contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_play_button);
+                    contentView_small.setImageViewResource(R.id.notification_playButton, R.drawable.ic_play_button);
+                }
+                contentView.setTextViewText(R.id.big_notification_song, PlayService.NowPlaySong.getName());
+                contentView.setTextViewText(R.id.big_notification_singer, PlayService.NowPlaySong.getAuthor());
+                Uri uri1 = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), PlayService.NowPlaySong.getAlbumId());
+                contentView.setImageViewUri(R.id.big_notification_image, uri1);
+                contentView_small.setTextViewText(R.id.notification_song, PlayService.NowPlaySong.getName());
+                contentView_small.setTextViewText(R.id.notification_singer, PlayService.NowPlaySong.getAuthor());
+                contentView_small.setImageViewUri(R.id.notification_image, uri1);
+                notificationManager.notify(1, notification);
+                break;
+
             default:
                 break;
         }

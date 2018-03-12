@@ -178,12 +178,7 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
             @Override
             public void onPageSelected(int position) {
                 if (isUserMoveViewPager) {
-                   PlayService.position = position;
-                    EventFromBar eventFromBar = new EventFromBar();
-                    eventFromBar.setStatu(EventFromBar.VIEWPAGERMOVE);
-                    EventBus.getDefault().post(eventFromBar);
-                    new DownloadTask().execute();
-                } else {
+
 
                 }
             }
@@ -194,30 +189,24 @@ public class HandleBottomBarTouchUtil implements BottomBarTouchListener {
             }
         });
     }
-    class DownloadTask extends AsyncTask<Void,Integer,Boolean> {
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            publishProgress(PlayService.position);
-            return true;
-        }
 
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            isPlaying = true;
-            SongsBean song = PlayService.playList.getSongs().get(values[0]);
-            bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-            bottomBar_palying_songs_name.setText(song.getName());
-            bottomBar_songName.setText(song.getName());
-            bottomBar_singer.setText(song.getAuthor());
-            setCover(song);
-            if(util != null){
-                util.changeViewForViewPager();
-            }
-            super.onProgressUpdate(values);
+    private void changViewAndMusic(int position){
+        PlayService.position = position;
+        EventFromBar eventFromBar = new EventFromBar();
+        eventFromBar.setStatu(EventFromBar.VIEWPAGERMOVE);
+        EventBus.getDefault().post(eventFromBar);
 
+        isPlaying = true;
+        SongsBean song = PlayService.playList.getSongs().get(PlayService.position);
+        bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
+        bottomBar_palying_songs_name.setText(song.getName());
+        bottomBar_songName.setText(song.getName());
+        bottomBar_singer.setText(song.getAuthor());
+        setCover(song);
+        if(util != null){
+            util.changeViewForViewPager();
         }
     }
-
 
     /**
      * 切歌的时候用来切换ViewPage的位置
