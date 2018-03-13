@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.waterteam.musicproject.customview.BottomBar
+    <com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying
         android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/MainActivity_bottomBar"
@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:background="#7f9eb2"
+            android:background="#10a8c0"
             android:orientation="vertical">
 
             <TextView
@@ -55,6 +55,6 @@
         </FrameLayout>
 
         <include layout="@layout/buttombar_palying_layout" />
-    </com.waterteam.musicproject.customview.BottomBar>
+    </com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying>
 </merge>
 

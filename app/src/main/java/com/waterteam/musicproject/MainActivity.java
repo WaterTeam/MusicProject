@@ -1,21 +1,10 @@
 package com.waterteam.musicproject;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.provider.SyncStateContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RemoteViews;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.bastatusbar.BAStatusBar;
 import com.waterteam.musicproject.bean.AllMediaBean;
@@ -23,15 +12,11 @@ import com.waterteam.musicproject.bean.AllMediaBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.customview.BottomBar;
+import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
+import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying;
 import com.waterteam.musicproject.customview.MyNotification;
-import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
-import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
-import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
-import com.waterteam.musicproject.service.playmusic.service.PlayService;
-import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
+
 import com.waterteam.musicproject.util.HandleSecondBottomBarUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
@@ -39,8 +24,6 @@ import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
 import com.waterteam.musicproject.viewpagers.songs.page.SongsPageFragment;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -50,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     List<Fragment> fragmentList = new ArrayList<Fragment>();
     MyPageAdapter fragmentPagerAdapter;
     MyNotification myNotification;
-    private BottomBar bottomBar;
+    private BottomBar bottomBarPlaying;
     private BottomBar second_bottomBar;
 
     @Override
@@ -59,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
-        StatusBarUtil.setStatusBarLightMode(this);
+        StatusBarUtil.setStatusBarDarkMode(this);
         new BAStatusBar().setfitsSystemWindowsBar(this);
 
         AllMediaBean mySongsData;
@@ -90,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (bottomBar.getIsPullUp()) {
-            bottomBar.pullDown();
+        if (bottomBarPlaying.getIsPullUp()) {
+            bottomBarPlaying.pullDown();
         } else {
             super.onBackPressed();
         }
@@ -117,15 +100,15 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initView() {
         viewPager = (ViewPager) this.findViewById(R.id.viewPager_MainActivity);
-        bottomBar = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
-        second_bottomBar = (BottomBar) this.findViewById(R.id.second_bottomBar);
+        bottomBarPlaying = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
+        //second_bottomBar = (BottomBar) this.findViewById(R.id.second_bottomBar);
         //设置点击处理事件
         HandleBottomBarTouchUtil handleBottomBarTouchUtil = new HandleBottomBarTouchUtil();
-        HandleSecondBottomBarUtil handleSecondBottomBarUtil = new HandleSecondBottomBarUtil();
-        handleBottomBarTouchUtil.setHandleSecondBarUtil(handleSecondBottomBarUtil);
-        bottomBar.setTouchListener(handleBottomBarTouchUtil);
+        //HandleSecondBottomBarUtil handleSecondBottomBarUtil = new HandleSecondBottomBarUtil();
+//        handleBottomBarTouchUtil.setHandleSecondBarUtil(handleSecondBottomBarUtil);
+        bottomBarPlaying.setTouchHandle(handleBottomBarTouchUtil);
 
-        bottomBar.setTouchListener(handleSecondBottomBarUtil);
+       // bottomBarPlaying.setTouchHandle(handleSecondBottomBarUtil);
 
         //往viewPager的数据列表中添加2个碎片；
         fragmentList.add(new ArtistPageFragment());
@@ -138,16 +121,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        bottomBar.setVisilityChange(false);
-        second_bottomBar.setVisilityChange(false);
+        bottomBarPlaying.setVisibilityChange(false);
+        //second_bottomBar.setVisilityChange(false);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (bottomBar!=null&&bottomBar.getIsPullUp())
-            bottomBar.setVisilityChange(true);
+        if (bottomBarPlaying !=null&& bottomBarPlaying.getIsPullUp())
+            bottomBarPlaying.setVisibilityChange(true);
     }
 }
 

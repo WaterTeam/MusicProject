@@ -13,10 +13,13 @@ import android.widget.Toast;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.adapter.SecondBottomAdapter;
 import com.waterteam.musicproject.bean.SongsBean;
-import com.waterteam.musicproject.customview.BottomBar;
-import com.waterteam.musicproject.customview.BottomBarTouchListener;
+
 import com.waterteam.musicproject.customview.MyRecycleView;
-import com.waterteam.musicproject.customview.SecondBottomBar;
+
+import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
+import com.waterteam.musicproject.customview.bottom.bar.BottomBarHandle;
+import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying;
+import com.waterteam.musicproject.customview.bottom.bar.SecondBottomBarPlaying;
 import com.waterteam.musicproject.customview.gravity_imageview.MySensorObserver;
 import com.waterteam.musicproject.customview.gravity_imageview.RotationCarView;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
@@ -34,7 +37,7 @@ import java.util.TimerTask;
  * Created by CNTon 2018/2/28.
  */
 
-public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
+public class HandleSecondBottomBarUtil implements BottomBarHandle {
     private static final String TAG = "HandleBottomBarTouchUti";
 
     private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
@@ -49,7 +52,7 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
     private View bottomBar;
     private View bottomContent;
 
-    private SecondBottomBar bottomBarSecond;
+    private BottomBar bottomBarSecond;
 
     private MyRecycleView recyclerView;
     private TextView playlistCount;
@@ -63,9 +66,9 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
 
     @Override
     public void setContentView(final BottomBar view) {
-
-        this.bottomBar = view.bottomBar;
-        this.bottomContent = view.bottomContent;
+        bottomBarSecond = view;
+        this.bottomBar = view.bottomBarHead;
+        this.bottomContent = view.bottomBarContent;
         findView();
         handleClick();
         flashBottomBar();
@@ -75,20 +78,19 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
 
 
     private void findView() {
-        bottomBar_playingLayout_button = (Button) bottomContent.findViewById(R.id.play_or_pause_button);
-        bottomBar_playing_song_length = (TextView) bottomContent.findViewById(R.id.playing_song_length);
-        bottomBar_playing_nextSong = (Button) bottomContent.findViewById(R.id.next_song_button);
-        bottomBar_playing_lastSong = (Button) bottomContent.findViewById(R.id.last_song_button);
-        bottomBar_now_play_time = (TextView) bottomContent.findViewById(R.id.play_progress);
-        play_mode = (Button) bottomContent.findViewById(R.id.play_mode);
-        seekBar = (SeekBar) bottomContent.findViewById(R.id.seekbar);
-        up_arrow = (Button) bottomContent.findViewById(R.id.up_arrow);
-        bottomBarSecond = (SecondBottomBar) bottomContent.findViewById(R.id.second_bottomBar);
-        bottomBarSecond.isSecond =  true;
+        bottomBar_playingLayout_button = (Button) bottomBar.findViewById(R.id.play_or_pause_button);
+        bottomBar_playing_song_length = (TextView) bottomBar.findViewById(R.id.playing_song_length);
+        bottomBar_playing_nextSong = (Button) bottomBar.findViewById(R.id.next_song_button);
+        bottomBar_playing_lastSong = (Button) bottomBar.findViewById(R.id.last_song_button);
+        bottomBar_now_play_time = (TextView) bottomBar.findViewById(R.id.play_progress);
+        play_mode = (Button) bottomBar.findViewById(R.id.play_mode);
+        seekBar = (SeekBar) bottomBar.findViewById(R.id.seekbar);
+        up_arrow = (Button) bottomBar.findViewById(R.id.up_arrow);
+        //bottomBarSecond.isSecond =  true;
         //up_arrow.setSecondBottom(bottomBarSecond);
-        recyclerView = (MyRecycleView) bottomBarSecond.findViewById(R.id.second_bottomBar_recycleView);
+        recyclerView = (MyRecycleView) bottomContent.findViewById(R.id.second_bottomBar_recycleView);
         recyclerView.setBottomBar(bottomBarSecond);
-        playlistCount = (TextView) bottomBarSecond.findViewById(R.id.play_list_count);
+        playlistCount = (TextView) bottomContent.findViewById(R.id.play_list_count);
     }
 
 
@@ -179,17 +181,17 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
         });
 
         up_arrow.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick (View v){
-        if (!bottomBarSecond.getIsPullUp()) {
-            bottomBarSecond.pullUp();
-        } else {
-            bottomBarSecond.pullDown();//第二个bottomBar下拉后不应该去影响状态栏，状态栏由第一个bottomBar决定
-            //StatusBarUtil.setStatusBarDarkMode((Activity) bottomBarSecond.getContext());
-        }
+            @Override
+            public void onClick (View v){
+                if (!bottomBarSecond.getIsPullUp()) {
+                    bottomBarSecond.pullUp();
+                } else {
+                    bottomBarSecond.pullDown();//第二个bottomBar下拉后不应该去影响状态栏，状态栏由第一个bottomBar决定
+                    //StatusBarUtil.setStatusBarDarkMode((Activity) bottomBarSecond.getContext());
+                }
+            }
+        });
     }
-    });
-}
 
 
     private void flashBottomBar() {
@@ -218,7 +220,7 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
             }
             SecondBottomAdapter secondBottomAdapter = new SecondBottomAdapter(PlayService.playList.getSongs());
             recyclerView.setAdapter(secondBottomAdapter);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
+            LinearLayoutManager layoutManager = new LinearLayoutManager(bottomContent.getContext());
             layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
             //layoutManager.setStackFrom(true);
             recyclerView.setLayoutManager(layoutManager);
@@ -264,8 +266,8 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
                 bottomBar_playing_song_length.setText(song.getFormatLenght());
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
-                if (PlayService.position >= 2 && PlayService.playList.getSongs().size() > 5) {
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
+                if (PlayService.playList.getSongs().size() > 5) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(bottomContent.getContext());
                     layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
                     layoutManager.setStackFromEnd(true);
                     recyclerView.setLayoutManager(layoutManager);
@@ -287,23 +289,22 @@ public class HandleSecondBottomBarUtil implements BottomBarTouchListener {
                 seekBar.setProgress(event.getProgress());
             }
             break;
-            /*case EventToBarFromService.MOVEVIEWPAGER:
+            case EventToBarFromService.MOVEVIewPAGER:
                 isPlaying = true;
                 SongsBean song = PlayService.playList.getSongs().get(event.getPosition());
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
                 bottomBar_playing_song_length.setText(song.getFormatLenght());
                 seekBar.setProgress(0);
                 seekBar.setMax(song.getLength());
-                if (PlayService.position >= 2 && PlayService.playList.getSongs().size() > 5) {
+                if (PlayService.playList.getSongs().size() > 5) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
                     layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
                     layoutManager.setStackFromEnd(true);
                     recyclerView.setLayoutManager(layoutManager);
                 }
-
                 playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
                 Log.e("MainActivity", "执行一次");
-                break;*/
+                break;
             default:
                 break;
         }

@@ -66,7 +66,7 @@
 
         </LinearLayout>
 
-        <com.waterteam.musicproject.customview.SecondBottomBar
+        <com.waterteam.musicproject.customview.bottom.bar.SecondBottomBarPlaying
             android:id="@+id/second_bottomBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -230,7 +230,7 @@
 
                 </LinearLayout>
             </FrameLayout>
-        </com.waterteam.musicproject.customview.SecondBottomBar>
+        </com.waterteam.musicproject.customview.bottom.bar.SecondBottomBarPlaying>
     </FrameLayout>
 
 </merge>
