@@ -50,11 +50,12 @@ public class RotationCarView extends CardView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         imageView = (ImageView) getChildAt(0);
-        GetCoverUtil.setCover(getContext(),bean,imageView,400);
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        GetCoverUtil.setCover(getContext(),bean,imageView,400);
         if (isAnimator) {
             camera.save();
             //绕X轴翻转

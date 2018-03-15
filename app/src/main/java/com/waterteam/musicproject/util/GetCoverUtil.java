@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
 import android.util.Log;
@@ -34,7 +35,7 @@ public class GetCoverUtil {
     private static final String TAG = "GetCoverUtil";
     private static final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
     private CompletedLoadListener loadListener;
-    private Bitmap defaultBitmap;
+    private static Bitmap defaultBitmap;
 
     /**
      * 设置封面
@@ -96,30 +97,40 @@ public class GetCoverUtil {
         builder = Glide.with(context)
                 .load(uri)
                 .error(R.drawable.play_img_default3);
-
         builder.override(size, size).into(imageView);
     }
 
 
     public void getCoverAsBitmap(Context context, GetCoverUri obj, int w, int h) {
         if (defaultBitmap == null) {
+            Log.e(TAG, "getCoverAsBitmap: "+defaultBitmap);
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.outHeight = 400;
-            options.outWidth = 400;
+            options.outHeight = h;
+            options.outWidth = w;
             defaultBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_img_default, options);
+
         }
         long id = obj.getAlbumId();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
         Glide.with(context).load(uri).asBitmap().override(w, h).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                if (loadListener != null) {
-                    if (resource != null)
-                        loadListener.completed(resource);
-                    else
-                        loadListener.completed(defaultBitmap);
+                if (loadListener != null && resource != null) {
+                    loadListener.completed(resource);
+                    Log.e(TAG, "onResourceReady: o");
                     loadListener = null;
                 }
+            }
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                Log.e(TAG, "onLoadFailed: "+loadListener);
+                if (loadListener!=null){
+                    loadListener.completed(defaultBitmap);
+                    loadListener = null;
+                }
+
+
             }
         }); //方法中设置asBitmap可以设置回调类型
     }

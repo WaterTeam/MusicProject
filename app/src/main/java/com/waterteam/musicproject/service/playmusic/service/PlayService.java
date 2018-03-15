@@ -19,6 +19,7 @@ import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.bean.WaitingPlaySongs;
 import com.waterteam.musicproject.bean.WaitingPlaySongsLayouts;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
+import com.waterteam.musicproject.eventsforeventbus.EventFromNotification;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 
@@ -108,6 +109,7 @@ public class PlayService extends Service {
     @Subscribe
     public void eventFromBar(EventFromBar event) {
         EventToBarFromService eventto = new EventToBarFromService();
+        eventto.setEventFrom(EventToBarFromService.EventFromBar);
         Log.d(TAG, "eventFromBar: ");
         switch (event.getStatu()) {
             case EventFromBar.PLAY://??????
@@ -126,6 +128,9 @@ public class PlayService extends Service {
                 break;
             case EventFromBar.PLAYNEXT:
                 playNext();
+                eventto.setPosition(position);
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                EventBus.getDefault().post(eventto);
                 if (!ISFIRST) {
                     mediaPlayer.start();
                 } else {
@@ -136,6 +141,9 @@ public class PlayService extends Service {
                 break;
             case EventFromBar.PLAYLAST:
                 playLast();
+                eventto.setPosition(position);
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                EventBus.getDefault().post(eventto);
                 if (!ISFIRST) {
                     mediaPlayer.start();
                 } else {
@@ -215,6 +223,7 @@ public class PlayService extends Service {
     @Subscribe
     public void EventFromTouch(final EventFromTouch event) {
         final EventToBarFromService eventto = new EventToBarFromService();
+        eventto.setEventFrom(EventToBarFromService.EventFromTouch);
         switch (event.getStatu()) {
             case EventFromTouch.NOW_PLAY:
                 if (event.getSongs() != null) {
@@ -276,6 +285,74 @@ public class PlayService extends Service {
                 break;
         }
     }
+
+    /**
+     * 处理点击歌曲，长按歌曲事件的方法,注意，这里我只是处理了添加到播放列表的方法
+     * 播放的逻辑你来写
+     *
+     * @param event {@link EventFromNotification}
+     * @return
+     * @throws
+     * @author BA on 2018/2/7 0007
+     */
+    @Subscribe
+    public void EventFromNotification(final EventFromNotification event) {
+        EventToBarFromService eventto = new EventToBarFromService();
+        eventto.setEventFrom(EventToBarFromService.EventFromNotification);
+        Log.d(TAG, "eventFromBar: ");
+        switch (event.getStatu()) {
+            case EventFromBar.PAUSE:
+                Log.d(TAG, "eventFromBar: pause");
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                    isPlay = false;
+                }
+                eventto.setStatu(EventToBarFromService.PAUSE);
+                EventBus.getDefault().post(eventto);
+                break;
+            case EventFromBar.PLAYNEXT:
+                playNext();
+                eventto.setPosition(position);
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                EventBus.getDefault().post(eventto);
+                if (!ISFIRST) {
+                    mediaPlayer.start();
+                } else {
+                    playSong();
+                    StartProgress();
+                    ISFIRST = false;
+                }
+                break;
+            case EventFromBar.PLAYLAST:
+                playLast();
+                eventto.setPosition(position);
+                eventto.setStatu(EventToBarFromService.PLAYANEW);
+                EventBus.getDefault().post(eventto);
+                if (!ISFIRST) {
+                    mediaPlayer.start();
+                } else {
+                    playSong();
+                    StartProgress();
+                    ISFIRST = false;
+                }
+                break;
+            case EventFromBar.PAUSETOPLAY:
+                Log.d(TAG, "eventFromBar: paust 2 play");
+                isPlay = true;
+                if (!ISFIRST) {
+                    mediaPlayer.start();
+                } else {
+                    playSong();
+                    StartProgress();
+                    ISFIRST = false;
+                }
+
+                eventto.setStatu(EventToBarFromService.PAUSETOPLAY);
+                EventBus.getDefault().post(eventto);
+                break;
+        }
+    }
+
 
     /**
      * 播放音乐，这是你上次写的，我把他独立出来，然后有没有问题我不知道，没有测试
@@ -351,20 +428,22 @@ public class PlayService extends Service {
     }
 
     private void listNextPlay() {
-        mediaPlayer.reset();
-        position = (position + 1) % playList.getSongs().size();//默认列表循环
-        playSong();
 
+        mediaPlayer.reset();
+        position++;
+        playSong();
         EventToBarFromService eventto = new EventToBarFromService();
         eventto.setStatu(EventToBarFromService.PLAYANEW);
         eventto.setSongsBeanList(playList.getSongs());
         eventto.setPosition(position);
         EventBus.getDefault().post(eventto);
+
     }
 
     private void listLastPlay() {
+
+        position--;
         mediaPlayer.reset();
-        position = (position - 1 + playList.getSongs().size()) % playList.getSongs().size();
         playSong();
 
         EventToBarFromService eventto = new EventToBarFromService();
@@ -372,6 +451,8 @@ public class PlayService extends Service {
         eventto.setSongsBeanList(playList.getSongs());
         eventto.setPosition(position);
         EventBus.getDefault().post(eventto);
+
+
     }
 
     private void simplePlay() {

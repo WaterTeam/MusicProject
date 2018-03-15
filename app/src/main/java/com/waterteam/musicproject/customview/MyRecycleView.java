@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
-import com.waterteam.musicproject.customview.bottom.bar.SecondBottomBarPlaying;
+import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlayingControl;
 
 /**
  * 这个RecycleView只服务于第二个bottomBar，使用时要传第二个bottomBar参数进去；
@@ -20,7 +20,7 @@ public class MyRecycleView extends RecyclerView {
 
     private int startX, startY, endX, endY;
 
-    private SecondBottomBarPlaying secondBottomBar;
+    private BottomBarPlayingControl secondBottomBar;
 
     public MyRecycleView(Context context) {
         super(context);
@@ -68,7 +68,7 @@ public class MyRecycleView extends RecyclerView {
     }
 
     public void setBottomBar(BottomBar secondBottomBar) {
-        this.secondBottomBar = (SecondBottomBarPlaying) secondBottomBar;
+        this.secondBottomBar = (BottomBarPlayingControl) secondBottomBar;
     }
 
     @Override

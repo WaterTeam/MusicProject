@@ -49,6 +49,7 @@ public class EventToBarFromService {
     private int position;
     private int statu;
     private int progress;
+    private int eventFrom;
 
     public int getPlayMode() {
         return playMode;
@@ -66,4 +67,14 @@ public class EventToBarFromService {
     public final static int MOVESEEKBAR = 5;
     public final static int SEEKBARMOVEITSELF = 6;
     public final static int MOVEVIewPAGER = 7;
+    public final static int EventFromBar = 11;
+    public final static int EventFromTouch = 22;
+    public final static int EventFromNotification = 33;
+
+    public void setEventFrom(int eventFrom){
+        this.eventFrom = eventFrom;
+    }
+    public int getEventFrom(){
+        return eventFrom;
+    }
 }

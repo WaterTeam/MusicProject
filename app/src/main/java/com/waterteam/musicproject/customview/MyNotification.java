@@ -16,6 +16,7 @@ import android.widget.RemoteViews;
 import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
+import com.waterteam.musicproject.eventsforeventbus.EventFromNotification;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 
@@ -213,7 +214,7 @@ public class MyNotification {
     }
 
     private void onPlayClick() {
-        EventFromBar eventFromBar = new EventFromBar();
+        EventFromNotification eventFromBar = new EventFromNotification();
         if (PlayService.isPlay) {
             //当前是进行中，则暂停
             contentView.setImageViewResource(R.id.big_notification_play, R.drawable.ic_pause_button);
@@ -231,13 +232,13 @@ public class MyNotification {
     }
 
     private void onNextClick() {
-        EventFromBar eventFromBar = new EventFromBar();
+        EventFromNotification eventFromBar = new EventFromNotification();
         eventFromBar.setStatu(EventFromBar.PLAYNEXT);
         EventBus.getDefault().post(eventFromBar);
     }
 
     private void onLastClick() {
-        EventFromBar eventFromBar = new EventFromBar();
+        EventFromNotification eventFromBar = new EventFromNotification();
         eventFromBar.setStatu(EventFromBar.PLAYLAST);
         EventBus.getDefault().post(eventFromBar);
     }

@@ -9,14 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-import android.widget.Scroller;
-
-
 import com.waterteam.musicproject.R;
-import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
-
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by CNT on 2018/1/29.
@@ -28,7 +22,7 @@ import org.greenrobot.eventbus.EventBus;
 public class BottomBarPlaying extends BottomBar {
     private static final String TAG = "BottomBar";
 
-    private SecondBottomBarPlaying secondBottomBar;
+    private BottomBarPlayingControl secondBottomBar;
     private View secondBottomBarHead;
     private View secondBottomBarContent;
 
@@ -45,13 +39,14 @@ public class BottomBarPlaying extends BottomBar {
         /*
       控制栏的可视范围
      */
+
     }
 
 
     @Override
     public void initView() {
         super.initView();
-        secondBottomBar = (SecondBottomBarPlaying) bottomBarContent.findViewById(R.id.second_bottomBar);
+        secondBottomBar = (BottomBarPlayingControl) bottomBarContent.findViewById(R.id.second_bottomBar);
         secondBottomBarHead = bottomBarContent.findViewById(R.id.second_bottomBarHead);
         secondBottomBarContent = bottomBarContent.findViewById(R.id.second_bottomBarContent);
     }
@@ -96,7 +91,6 @@ public class BottomBarPlaying extends BottomBar {
         super.pullUp();
         StatusBarUtil.setStatusBarDarkMode((Activity) getContext());
     }
-
 
 
     @Override

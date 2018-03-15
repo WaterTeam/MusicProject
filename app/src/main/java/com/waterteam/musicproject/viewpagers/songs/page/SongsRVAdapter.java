@@ -13,6 +13,7 @@ import com.waterteam.musicproject.MainActivity;
 import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
+import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 
 import org.greenrobot.eventbus.EventBus;
 

@@ -47,7 +47,7 @@ public abstract class BottomBar extends FrameLayout {
     private BottomBarHandle touchHandle;
 
     //动画监听
-    private OnScrollerListener scrollerListener;
+    public OnScrollerListener scrollerListener;
 
     //上下拉状态改变监听
     private BottomBar.OnUpOrDownListener onUpOrDownListener;
@@ -243,7 +243,6 @@ public abstract class BottomBar extends FrameLayout {
 
     @Override
     public void computeScroll() {
-        super.computeScroll();
         if (defaultScroller.computeScrollOffset()) {
             scrollTo(defaultScroller.getCurrX(), defaultScroller.getCurrY());
             invalidate();
@@ -321,6 +320,9 @@ public abstract class BottomBar extends FrameLayout {
      */
     public void setScrollerListener(OnScrollerListener scrollerListener) {
         this.scrollerListener = scrollerListener;
+    }
+    public BottomBarHandle getTouchHandle(){
+        return touchHandle;
     }
 }
 

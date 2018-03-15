@@ -1,11 +1,10 @@
-package com.waterteam.musicproject.util;
+package com.waterteam.musicproject.util.bottombarutil;
 
-import android.app.Activity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,9 +18,6 @@ import com.waterteam.musicproject.customview.MyRecycleView;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBarHandle;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying;
-import com.waterteam.musicproject.customview.bottom.bar.SecondBottomBarPlaying;
-import com.waterteam.musicproject.customview.gravity_imageview.MySensorObserver;
-import com.waterteam.musicproject.customview.gravity_imageview.RotationCarView;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
@@ -37,7 +33,7 @@ import java.util.TimerTask;
  * Created by CNTon 2018/2/28.
  */
 
-public class HandleSecondBottomBarUtil implements BottomBarHandle {
+public class ControlTouchUtil implements BottomBarHandle {
     private static final String TAG = "HandleBottomBarTouchUti";
 
     private Button bottomBar_playingLayout_button;//播放界面中的播放按钮
@@ -62,10 +58,14 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
     private static final int ALWAYSPLAY = 1;
     private static final int RANDOMPLAY = 2;
     private static int playMode = LISTPLAY;
+    private PlayTouchUtil handle;
 
 
     @Override
     public void setContentView(final BottomBar view) {
+        //这里为了拿到BottomBarPlaying；
+        BottomBarPlaying bottomBarPlaying = (BottomBarPlaying) view.getParent().getParent();
+        handle = (PlayTouchUtil) bottomBarPlaying.getTouchHandle();
         bottomBarSecond = view;
         this.bottomBar = view.bottomBarHead;
         this.bottomContent = view.bottomBarContent;
@@ -74,7 +74,6 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
         flashBottomBar();
         EventBus.getDefault().register(this);
     }
-
 
 
     private void findView() {
@@ -113,19 +112,25 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
         bottomBar_playing_nextSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventFromBar eventFromBar = new EventFromBar();
-                eventFromBar.setStatu(EventFromBar.PLAYNEXT);
-                EventBus.getDefault().post(eventFromBar);
-                isPlaying = true;
+                    if (PlayService.position < PlayService.playList.getSongsCount()) {
+                        //handle.setViewPagePosition(PlayService.position + 1);
+                        EventFromBar eventFromBar = new EventFromBar();
+                        eventFromBar.setStatu(EventFromBar.PLAYNEXT);
+                        EventBus.getDefault().post(eventFromBar);
+                        isPlaying = true;
+                    }
             }
         });
         bottomBar_playing_lastSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventFromBar eventFromBar = new EventFromBar();
-                eventFromBar.setStatu(EventFromBar.PLAYLAST);
-                EventBus.getDefault().post(eventFromBar);
-                isPlaying = true;
+                    if (PlayService.position > 0) {
+                        EventFromBar eventFromBar = new EventFromBar();
+                        eventFromBar.setStatu(EventFromBar.PLAYLAST);
+                        EventBus.getDefault().post(eventFromBar);
+                        isPlaying = true;
+
+                }
             }
         });
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -182,7 +187,7 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
 
         up_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View v){
+            public void onClick(View v) {
                 if (!bottomBarSecond.getIsPullUp()) {
                     bottomBarSecond.pullUp();
                 } else {
@@ -244,6 +249,7 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
             }
             break;
             case EventToBarFromService.PLAYANEW: {
+
                 if (event.getPlayMode() != -1) {
                     switch (event.getPlayMode()) {
                         case LISTPLAY:
@@ -268,7 +274,7 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
                 seekBar.setMax(song.getLength());
                 if (PlayService.playList.getSongs().size() > 5) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(bottomContent.getContext());
-                    layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
+                    layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
                     layoutManager.setStackFromEnd(true);
                     recyclerView.setLayoutManager(layoutManager);
                 }
@@ -290,6 +296,22 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
             }
             break;
             case EventToBarFromService.MOVEVIewPAGER:
+                if (event.getPlayMode() != -1) {
+                    switch (event.getPlayMode()) {
+                        case LISTPLAY:
+                            play_mode.setBackgroundResource(R.drawable.ic_list_play_button);
+                            break;
+                        case ALWAYSPLAY:
+                            play_mode.setBackgroundResource(R.drawable.ic_single_play_button);
+                            break;
+                        case RANDOMPLAY:
+                            play_mode.setBackgroundResource(R.drawable.ic_random_play_button);
+                            break;
+                        default:
+                            break;
+                    }
+                    playMode = event.getPlayMode();
+                }
                 isPlaying = true;
                 SongsBean song = PlayService.playList.getSongs().get(event.getPosition());
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
@@ -298,7 +320,7 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
                 seekBar.setMax(song.getLength());
                 if (PlayService.playList.getSongs().size() > 5) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
-                    layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
+                    layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
                     layoutManager.setStackFromEnd(true);
                     recyclerView.setLayoutManager(layoutManager);
                 }
@@ -309,7 +331,8 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
                 break;
         }
     }
-    public void changeViewForViewPager(){
+
+    public void changeViewForViewPager() {
         isPlaying = true;
         SongsBean song = PlayService.playList.getSongs().get(PlayService.position);
         bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
@@ -318,7 +341,7 @@ public class HandleSecondBottomBarUtil implements BottomBarHandle {
         seekBar.setMax(song.getLength());
         if (PlayService.position >= 2 && PlayService.playList.getSongs().size() > 5) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(bottomBarSecond.getContext());
-            layoutManager.scrollToPositionWithOffset(PlayService.position , 0);
+            layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
             layoutManager.setStackFromEnd(true);
             recyclerView.setLayoutManager(layoutManager);
         }

@@ -13,11 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
-import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying;
 import com.waterteam.musicproject.customview.MyNotification;
-import com.waterteam.musicproject.util.HandleBottomBarTouchUtil;
+import com.waterteam.musicproject.util.bottombarutil.PlayTouchUtil;
 
-import com.waterteam.musicproject.util.HandleSecondBottomBarUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.page.ArtistPageFragment;
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
-        StatusBarUtil.setStatusBarDarkMode(this);
+        StatusBarUtil.setStatusBarLightMode(this);
         new BAStatusBar().setfitsSystemWindowsBar(this);
 
         AllMediaBean mySongsData;
@@ -103,10 +101,10 @@ public class MainActivity extends AppCompatActivity {
         bottomBarPlaying = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
         //second_bottomBar = (BottomBar) this.findViewById(R.id.second_bottomBar);
         //设置点击处理事件
-        HandleBottomBarTouchUtil handleBottomBarTouchUtil = new HandleBottomBarTouchUtil();
-        //HandleSecondBottomBarUtil handleSecondBottomBarUtil = new HandleSecondBottomBarUtil();
-//        handleBottomBarTouchUtil.setHandleSecondBarUtil(handleSecondBottomBarUtil);
-        bottomBarPlaying.setTouchHandle(handleBottomBarTouchUtil);
+        PlayTouchUtil playTouchUtil = new PlayTouchUtil();
+        //ControlTouchUtil handleSecondBottomBarUtil = new ControlTouchUtil();
+//        playTouchUtil.setHandleSecondBarUtil(handleSecondBottomBarUtil);
+        bottomBarPlaying.setTouchHandle(playTouchUtil);
 
        // bottomBarPlaying.setTouchHandle(handleSecondBottomBarUtil);
 

@@ -38,10 +38,11 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="2dp"
                 android:text="Shape of you"
+                android:maxLines="1"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
 
-            <android.support.v4.view.ViewPager
+            <com.waterteam.musicproject.customview.playing_viewpage.MyViewPager
                 android:overScrollMode="never"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -51,7 +52,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:layout_height="0dp">
-            </android.support.v4.view.ViewPager>
+            </com.waterteam.musicproject.customview.playing_viewpage.MyViewPager>
 
 
 
@@ -66,7 +67,7 @@
 
         </LinearLayout>
 
-        <com.waterteam.musicproject.customview.bottom.bar.SecondBottomBarPlaying
+        <com.waterteam.musicproject.customview.bottom.bar.BottomBarPlayingControl
             android:id="@+id/second_bottomBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -230,7 +231,7 @@
 
                 </LinearLayout>
             </FrameLayout>
-        </com.waterteam.musicproject.customview.bottom.bar.SecondBottomBarPlaying>
+        </com.waterteam.musicproject.customview.bottom.bar.BottomBarPlayingControl>
     </FrameLayout>
 
 </merge>
