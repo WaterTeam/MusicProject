@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#000"
+    android:fitsSystemWindows="true">
+    <View
+        android:visibility="gone"
+        android:layout_width="1px"
+        android:layout_height="1px"
+        android:fitsSystemWindows="true"/>
+
+    <android.support.v7.widget.CardView
+        app:cardCornerRadius="7dp"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/activity_artist_datails_singer"
+            android:layout_width="200dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="16dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="Troye Sivan"
+            android:textColor="@color/titleColor"
+            android:textSize="32sp" />
+
+        <TextView
+
+            android:id="@+id/activity_artist_datails_count"
+            android:layout_width="150dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="16dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="共有7张专辑"
+            android:textColor="#676769"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/activity_artist_datails_songcount"
+            android:layout_width="150dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="16dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="共有10首歌曲"
+            android:textColor="#676769"
+            android:textSize="12sp" />
+
+        <android.support.v4.view.ViewPager
+
+            android:id="@+id/activity_artist_datails_view_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="48dp">
+
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
+    <include layout="@layout/bottombar_layout" />
+
+    </android.support.v7.widget.CardView>
+
+</android.support.design.widget.CoordinatorLayout>

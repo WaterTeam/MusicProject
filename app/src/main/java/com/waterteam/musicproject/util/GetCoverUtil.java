@@ -1,6 +1,7 @@
 package com.waterteam.musicproject.util;
 
 
+import android.animation.ObjectAnimator;
 import android.content.ContentUris;
 import android.content.Context;
 
@@ -10,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableRequestBuilder;
@@ -17,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.waterteam.musicproject.R;
@@ -100,16 +103,41 @@ public class GetCoverUtil {
         builder.override(size, size).into(imageView);
     }
 
+    /**
+     * 处理Bitmap的分辨率
+     * @author Administrator on 2018/3/15.
+     * @param
+     * @return
+     * @exception
+     */
+    private Bitmap decodeBitmapFromResource(Context context,int id,float w,float h){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(context.getResources(),id, options);
+        options.inSampleSize =4;//inSampleSize的取值应该总为2的整数倍，否则会向下取整，取一个最接近2的整数倍，比如inSampleSize=3时，系统会取inSampleSize=2
+        options.inJustDecodeBounds =false;
+        return  BitmapFactory.decodeResource(context.getResources(),id,options);
+    }
+
 
     public void getCoverAsBitmap(Context context, GetCoverUri obj, int w, int h) {
         if (defaultBitmap == null) {
             Log.e(TAG, "getCoverAsBitmap: "+defaultBitmap);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.outHeight = h;
-            options.outWidth = w;
-            defaultBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.play_img_default, options);
-
+            defaultBitmap=decodeBitmapFromResource(context,R.drawable.play_img_default2,w,h);
         }
+        /*ViewPropertyAnimation.Animator animationObject = new ViewPropertyAnimation.Animator() {
+            @Override
+            public void animate(View view) {
+                // if it's a custom view class, cast it here
+                // then find subviews and do the animations
+                // here, we just use the entire view for the fade animation
+                view.setAlpha( 0f );
+
+                ObjectAnimator fadeAnim = ObjectAnimator.ofFloat( view, "alpha", 0f, 1f );
+                fadeAnim.setDuration(2500);
+                fadeAnim.start();
+            }
+        };*/
         long id = obj.getAlbumId();
         Uri uri = ContentUris.withAppendedId(sArtworkUri, id);
         Glide.with(context).load(uri).asBitmap().override(w, h).into(new SimpleTarget<Bitmap>() {

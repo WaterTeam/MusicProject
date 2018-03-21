@@ -80,7 +80,6 @@ public abstract class BottomBar extends FrameLayout {
     }
 
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -98,7 +97,7 @@ public abstract class BottomBar extends FrameLayout {
     public void initView() {
         bottomBarHead = getChildAt(0);
         bottomBarContent = getChildAt(1);
-        Log.e(TAG, "initView: oioi" +bottomBarContent);
+        Log.e(TAG, "initView: oioi" + bottomBarContent);
     }
 
 
@@ -243,13 +242,16 @@ public abstract class BottomBar extends FrameLayout {
 
     @Override
     public void computeScroll() {
+        //Log.e(TAG, "computeScroll: "+getScaleY()+":"+bottomBarContent.getMeasuredHeight() );
         if (defaultScroller.computeScrollOffset()) {
             scrollTo(defaultScroller.getCurrX(), defaultScroller.getCurrY());
             invalidate();
         }
 
-        if (scrollerListener != null)
-            scrollerListener.upDate(getScrollY());
+        if (scrollerListener != null) {
+            //Log.e(TAG, "computeScroll: "+getScaleY()+":"+bottomBarContent.getMeasuredHeight() );
+            scrollerListener.upDate((float)getScrollY() / (float)bottomBarContent.getMeasuredHeight());
+        }
     }
 
     @Override
@@ -321,7 +323,8 @@ public abstract class BottomBar extends FrameLayout {
     public void setScrollerListener(OnScrollerListener scrollerListener) {
         this.scrollerListener = scrollerListener;
     }
-    public BottomBarHandle getTouchHandle(){
+
+    public BottomBarHandle getTouchHandle() {
         return touchHandle;
     }
 }

@@ -105,19 +105,20 @@ public class BottomBarPlayingControl extends BottomBar {
     }
 
 
-    @Override
-    public void computeScroll() {
-        if (defaultScroller.computeScrollOffset()) {
-            float y = defaultScroller.getCurrY();
-
-            if (y <= bottomBarContent.getMeasuredHeight()) {
-                scrollTo(defaultScroller.getCurrX(), defaultScroller.getCurrY());
-                invalidate();
-            }
-        }
-
-        if (scrollerListener != null)
-            scrollerListener.upDate(getScrollY());
-    }
+//    @Override
+//    public void computeScroll() {
+//        if (defaultScroller.computeScrollOffset()) {
+//            float y = defaultScroller.getCurrY();
+//
+//            if (y <= bottomBarContent.getMeasuredHeight()) {
+//                scrollTo(defaultScroller.getCurrX(), defaultScroller.getCurrY());
+//                invalidate();
+//            }
+//        }
+//
+//        if (scrollerListener != null) {
+//            scrollerListener.upDate((float)getScrollY() / (float)bottomBarContent.getMeasuredHeight());
+//        }
+//    }
 }
 

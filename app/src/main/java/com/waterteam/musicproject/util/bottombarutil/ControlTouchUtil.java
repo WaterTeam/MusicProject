@@ -18,6 +18,7 @@ import com.waterteam.musicproject.customview.MyRecycleView;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBarHandle;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying;
+import com.waterteam.musicproject.customview.bottom.bar.OnScrollerListener;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
@@ -72,7 +73,9 @@ public class ControlTouchUtil implements BottomBarHandle {
         findView();
         handleClick();
         flashBottomBar();
+        setArrowAnimator(view);
         EventBus.getDefault().register(this);
+
     }
 
 
@@ -112,7 +115,7 @@ public class ControlTouchUtil implements BottomBarHandle {
         bottomBar_playing_nextSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if (PlayService.position < PlayService.playList.getSongsCount()) {
+                    if (PlayService.position < PlayService.playList.getSongsCount()-1) {
                         //handle.setViewPagePosition(PlayService.position + 1);
                         EventFromBar eventFromBar = new EventFromBar();
                         eventFromBar.setStatu(EventFromBar.PLAYNEXT);
@@ -196,8 +199,20 @@ public class ControlTouchUtil implements BottomBarHandle {
                 }
             }
         });
+
+
     }
 
+    public void setArrowAnimator(BottomBar bar){
+        bar.setScrollerListener(new OnScrollerListener() {
+            @Override
+            public void upDate(float progress) {
+                Log.e(TAG, "upDate: "+progress );
+                up_arrow.setRotation(180*progress);
+            }
+        });
+
+    }
 
     private void flashBottomBar() {
         Log.d(TAG, "flashBottomBar: ");
@@ -267,7 +282,8 @@ public class ControlTouchUtil implements BottomBarHandle {
                     playMode = event.getPlayMode();
                 }
                 isPlaying = true;
-                SongsBean song = event.getSongsBeanList().get(event.getPosition());
+                //SongsBean song = event.getSongsBeanList().get(event.getPosition());
+                SongsBean song = PlayService.playList.getSongs().get(PlayService.position);
                 bottomBar_playingLayout_button.setBackgroundResource(R.drawable.ic_pause_button);
                 bottomBar_playing_song_length.setText(song.getFormatLenght());
                 seekBar.setProgress(0);

@@ -27,12 +27,15 @@ import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 
 import com.waterteam.musicproject.bean.SongsBean;
+import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
+import com.waterteam.musicproject.util.bottombarutil.PlayTouchUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
+import com.waterteam.musicproject.viewpagers.artist.detail.album.ArtistAlbumFragment;
 import com.waterteam.musicproject.viewpagers.artist.detail.album.ArtistDetailAlbumPageFragment;
 import com.waterteam.musicproject.viewpagers.artist.detial.songs.ArtistDetailSongsPageFragment;
 
@@ -52,16 +55,25 @@ public class ArtistDetailsActivity extends AppCompatActivity {
     ViewPager viewPager;
     ArtistBean artistBean;
     TabLayout tabLayout;
+
+    TextView singer;
+    TextView songsCount;
+    TextView albumsCount;
+
     int position; //记录艺术家的位置，用来取数据
+
+    private ViewPager myViewPager;
+    private BottomBar bottomBarPlaying;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artist_details);
+        setContentView(R.layout.text_activity_artist_datails);
 
         // 设置为沉浸式状态栏，设置了状态栏颜色及字体颜色
         //StatusBarUtil.setStatusBarLightMode(this);
-        StatusBarUtil.setStatusBarDarkMode(this);
+        StatusBarUtil.setStatusBarLightMode(this);
         new BAStatusBar().setfitsSystemWindowsBar(this);
 
 
@@ -77,7 +89,7 @@ public class ArtistDetailsActivity extends AppCompatActivity {
             Log.d(TAG, "艺术家=" + mySongsData.getArtists().size());
             Log.d(TAG, "歌曲=" + mySongsData.getSongs().size());
         }
-
+/*
         //初始化控件
         headImage = (ImageView) findViewById(R.id.album_image);
         textView = (TextView) findViewById(R.id.album_name);
@@ -90,6 +102,64 @@ public class ArtistDetailsActivity extends AppCompatActivity {
         //启动动画
         startAnimator();
 
+*/
+        viewPager = (ViewPager) findViewById(R.id.activity_artist_datails_view_page);
+        List<Fragment> fragmentList = new ArrayList<>();
+
+        ArtistAlbumFragment artistAlbumFragment = new ArtistAlbumFragment();
+
+        Intent intent = getIntent();
+        position = intent.getIntExtra("position", 0);
+        artistBean = AllMediaBean.getInstance().getArtists().get(position);
+        artistAlbumFragment.setData(artistBean.getAlubums(),position);
+
+        //往viewPager的数据列表中添加碎片；
+        fragmentList.add(artistAlbumFragment);
+
+        viewPager.setAdapter(new MyPageAdapter(getSupportFragmentManager(), fragmentList));
+
+        singer = (TextView) findViewById(R.id.activity_artist_datails_singer);
+        songsCount = (TextView) findViewById(R.id.activity_artist_datails_count);
+        albumsCount = (TextView) findViewById(R.id.activity_artist_datails_songcount);
+        singer.setText(artistBean.getName());
+        songsCount.setText("共有"+artistBean.getAlbumCount()+"张专辑");
+        albumsCount.setText("共有"+artistBean.getSongsCount()+"首歌曲");
+
+        bottomBarPlaying = (BottomBar)this.findViewById(R.id.MainActivity_bottomBar);
+        PlayTouchUtil playTouchUtil = new PlayTouchUtil();
+
+        bottomBarPlaying.setTouchHandle(playTouchUtil);
+
+
+
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bottomBarPlaying.setVisibilityChange(false);
+        //second_bottomBar.setVisilityChange(false);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bottomBarPlaying !=null&& bottomBarPlaying.getIsPullUp())
+            bottomBarPlaying.setVisibilityChange(true);
+    }
+    @Override
+    public void onBackPressed() {
+        if (bottomBarPlaying.getIsPullUp()) {
+            bottomBarPlaying.pullDown();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e(TAG, "onDestroy: "+"pipipi111" );
+        super.onDestroy();
 
     }
 
@@ -171,11 +241,6 @@ public class ArtistDetailsActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("datas", AllMediaBean.getInstance());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     /**

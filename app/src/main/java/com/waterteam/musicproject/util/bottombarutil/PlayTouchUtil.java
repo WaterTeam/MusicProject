@@ -1,5 +1,6 @@
 package com.waterteam.musicproject.util.bottombarutil;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -102,6 +103,13 @@ public class PlayTouchUtil implements BottomBarHandle {
         findView();
         handleClick();
         flashBottomBar();
+        if (PlayService.isPlay) {
+
+
+        }else{
+            setVPAnimator(viewPager, 0.8f, 300, 0);
+            setVPAnimator(frostedGlassImage, 1.5f, 700, 0);
+        }
         EventBus.getDefault().register(this);
     }
 
@@ -157,7 +165,7 @@ public class PlayTouchUtil implements BottomBarHandle {
      * @throws
      * @author BA on 2018/3/9 0009
      */
-    public void setViewPager() {
+    private void setViewPager() {
         if (PlayService.waitingPlaySongsLayouts.getSongsCount() <= 0) {
             PlayService.waitingPlaySongsLayouts.addList(AllMediaBean.getInstance().getWaitingPlaySongs().getSongs());
         }
@@ -176,6 +184,7 @@ public class PlayTouchUtil implements BottomBarHandle {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         Log.d("viewviewview", "setViewPager: " + PlayService.waitingPlaySongsLayouts.getPlayingLayout().size());
     }
 
@@ -188,6 +197,7 @@ public class PlayTouchUtil implements BottomBarHandle {
      * @author Administrator on 2018/3/12.
      */
     private void setVPAnimator(View view, float scale, long duration, long delay) {
+
         if (view.getScaleX() != scale)
             view.animate().scaleX(scale).scaleY(scale).setDuration(duration).setStartDelay(delay).setInterpolator(new DecelerateInterpolator());
     }
@@ -211,21 +221,22 @@ public class PlayTouchUtil implements BottomBarHandle {
 
             @Override
             public void onPageSelected(int position) {
-                Log.e(TAG, "onPageSelected: pipipi");
+
                 if (nowPosition != position) {
                     nowPosition = position;
                     isNowPositionChange = true;
                 } else {
                     isNowPositionChange = false;
                 }
+
+                Log.e(TAG, "onPageSelected: pipipi" + isNowPositionChange);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Log.e(TAG, "onPageScrollStateChanged: pipipi" + state);
+                Log.e(TAG, "onPageScrollStateChanged: pipipi" + viewPager.getIsUserMove() + ":" + isNowPositionChange);
                 if (viewPager.getIsUserMove()) {
                     if (state == 0 && isNowPositionChange) {
-                        Log.e(TAG, "pipipi1");
                         //changViewAndMusic(nowPosition);
                         PlayService.position = nowPosition;
                         EventFromBar eventFromBar = new EventFromBar();
@@ -273,7 +284,7 @@ public class PlayTouchUtil implements BottomBarHandle {
      * @throws
      * @author BA on 2018/3/9 0009
      */
-    public void setViewPagePosition(int position,boolean animator) {
+    public void setViewPagePosition(int position, boolean animator) {
         viewPager.setCurrentItem(position, animator);
     }
 
@@ -301,7 +312,7 @@ public class PlayTouchUtil implements BottomBarHandle {
         }
 
         setViewPager();
-        setViewPagePosition(PlayService.position,true);
+        setViewPagePosition(PlayService.position, false);
         setViewPagerListener();
 
     }
@@ -325,26 +336,39 @@ public class PlayTouchUtil implements BottomBarHandle {
             }
             break;
             case EventToBarFromService.PLAYANEW: {
-                setVPAnimator(viewPager, 1f, 300, 0);
-                setVPAnimator(frostedGlassImage, 1f, 700, 0);
-                switch (event.getEventFrom()){
+
+
+                switch (event.getEventFrom()) {
                     case EventToBarFromService.EventFromBar:
-                        setViewPagePosition(event.getPosition(),true);
+                        setViewPagePosition(event.getPosition(), true);
                         break;
                     case EventToBarFromService.EventFromTouch:
-                        setViewPagePosition(event.getPosition(),false);
+                        setViewPager();
+                        setVPAnimator(viewPager, 1f, 300, 0);
+                        setVPAnimator(frostedGlassImage, 1f, 700, 0);
+
+                        setViewPagePosition(event.getPosition(), false);
+                        isNowPositionChange = false;
                         break;
                     case EventToBarFromService.EventFromNotification:
-                        setViewPagePosition(event.getPosition(),false);
+                        setViewPagePosition(event.getPosition(), false);
+                        isNowPositionChange = false;
                         break;
                 }
+                setVPAnimator(viewPager, 1f, 300, 0);
+                setVPAnimator(frostedGlassImage, 1.0f, 700, 0);
+
                 isPlaying = true;
-                SongsBean song = event.getSongsBeanList().get(event.getPosition());
+                //SongsBean song = event.getSongsBeanList().get(event.getPosition());
+                SongsBean song = PlayService.playList.getSongs().get(PlayService.position);
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
                 bottomBar_palying_songs_name.setText(song.getName());
                 bottomBar_songName.setText(song.getName());
                 bottomBar_singer.setText(song.getAuthor());
+
                 setCover(song);
+
+
                 Log.e(TAG, "pipipi2");
             }
             break;
@@ -382,8 +406,11 @@ public class PlayTouchUtil implements BottomBarHandle {
 //                paletteUtil.from(bitmap).to(bottomBar_head_layout);
                 Bitmap bm = ImageEffect(bitmap, 0, 0, 0.7f);
                 //半径越大，处理后的图片越模糊
-                bm = NativeStackBlur.process(bm, 3);
+                bm = NativeStackBlur.process(bm, 4);
                 frostedGlassImage.setImageBitmap(bm);
+                ObjectAnimator animator = ObjectAnimator.ofFloat(frostedGlassImage, "alpha", 0.5f, 1f);
+                animator.setDuration(1500);
+                animator.start();
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 70, 70);
 
