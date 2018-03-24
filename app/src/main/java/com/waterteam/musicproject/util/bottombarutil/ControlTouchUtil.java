@@ -43,6 +43,7 @@ public class ControlTouchUtil implements BottomBarHandle {
     private Button bottomBar_playing_nextSong;
     private Button bottomBar_playing_lastSong;
     private Button play_mode;
+    private Button playListButton;
     private Button up_arrow;
     private SeekBar seekBar;
 
@@ -93,6 +94,7 @@ public class ControlTouchUtil implements BottomBarHandle {
         recyclerView = (MyRecycleView) bottomContent.findViewById(R.id.second_bottomBar_recycleView);
         recyclerView.setBottomBar(bottomBarSecond);
         playlistCount = (TextView) bottomContent.findViewById(R.id.play_list_count);
+        playListButton = (Button) bottomBar.findViewById(R.id.play_list);
     }
 
 
@@ -199,7 +201,14 @@ public class ControlTouchUtil implements BottomBarHandle {
                 }
             }
         });
-
+    playListButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!bottomBarSecond.getIsPullUp()) {
+                bottomBarSecond.pullUp();
+            }
+        }
+    });
 
     }
 
@@ -244,7 +253,7 @@ public class ControlTouchUtil implements BottomBarHandle {
             layoutManager.scrollToPositionWithOffset(PlayService.position, 0);
             //layoutManager.setStackFrom(true);
             recyclerView.setLayoutManager(layoutManager);
-            playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
+            playlistCount.setText("   播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
         }
 
     }
@@ -295,7 +304,7 @@ public class ControlTouchUtil implements BottomBarHandle {
                     recyclerView.setLayoutManager(layoutManager);
                 }
 
-                playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
+                playlistCount.setText("   播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
                 Log.e("MainActivity", "执行一次");
             }
 
@@ -340,7 +349,7 @@ public class ControlTouchUtil implements BottomBarHandle {
                     layoutManager.setStackFromEnd(true);
                     recyclerView.setLayoutManager(layoutManager);
                 }
-                playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
+                playlistCount.setText("   播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
                 Log.e("MainActivity", "执行一次");
                 break;
             default:
@@ -362,7 +371,7 @@ public class ControlTouchUtil implements BottomBarHandle {
             recyclerView.setLayoutManager(layoutManager);
         }
 
-        playlistCount.setText("  播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
+        playlistCount.setText("   播放列表（" + (PlayService.position + 1) + ":" + PlayService.playList.getSongs().size() + "）");
     }
 
     private String formatTime(int Leng) {

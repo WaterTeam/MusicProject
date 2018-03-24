@@ -205,24 +205,24 @@
                         android:layout_height="45dp"
                         android:background="@android:color/transparent"
                         android:gravity="center_vertical"
-                        android:text="  播放列表"
+                        android:text="   播放列表"
                         android:textColor="#fff"
-                        android:textSize="16sp" />
+                        android:textSize="18sp" />
 
                     <View
-                        android:textColor="#fff"
                         android:layout_width="match_parent"
-                        android:layout_height="1px"
+                        android:layout_height="2px"
                         android:layout_marginTop="4dp"
-                        android:background="#fff" />
+                        android:background="#99ffffff" />
 
 
                         <com.waterteam.musicproject.customview.MyRecycleView
+                            android:layout_marginTop="6dp"
                             android:background="@android:color/transparent"
                             android:id="@+id/second_bottomBar_recycleView"
                             android:layout_width="match_parent"
                             android:layout_height="225dp"
-                            android:layout_marginTop="10dp">
+                            >
                         </com.waterteam.musicproject.customview.MyRecycleView>
 
                 </LinearLayout>

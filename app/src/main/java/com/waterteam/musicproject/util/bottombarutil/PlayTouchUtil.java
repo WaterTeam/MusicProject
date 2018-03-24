@@ -166,10 +166,7 @@ public class PlayTouchUtil implements BottomBarHandle {
      * @author BA on 2018/3/9 0009
      */
     private void setViewPager() {
-        if (PlayService.waitingPlaySongsLayouts.getSongsCount() <= 0) {
-            PlayService.waitingPlaySongsLayouts.addList(AllMediaBean.getInstance().getWaitingPlaySongs().getSongs());
-        }
-        playingVPAdapter = new PlayingVPAdapter(PlayService.waitingPlaySongsLayouts.getPlayingLayout());
+        playingVPAdapter = new PlayingVPAdapter(AllMediaBean.getInstance().getWaitingPlaySongs().getSongs());
         viewPager.setAdapter(playingVPAdapter);
         viewPager.setPageTransformer(true, new DepthPageTransformer());
 
@@ -185,7 +182,6 @@ public class PlayTouchUtil implements BottomBarHandle {
             e.printStackTrace();
         }
 
-        Log.d("viewviewview", "setViewPager: " + PlayService.waitingPlaySongsLayouts.getPlayingLayout().size());
     }
 
     /**
@@ -271,9 +267,6 @@ public class PlayTouchUtil implements BottomBarHandle {
         bottomBar_songName.setText(song.getName());
         bottomBar_singer.setText(song.getAuthor());
         setCover(song);
-//        if (util != null) {
-//            util.changeViewForViewPager();
-//        }
     }
 
     /**

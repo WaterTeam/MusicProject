@@ -25,8 +25,8 @@ public class SecondBottomAdapter extends RecyclerView.Adapter<SecondBottomAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         SongsBean songsRV_data = songsRV_dataList.get(position);
         holder.song_RV_item_songName.setText(songsRV_data.getName());
-        holder.song_RV_item_singer.setText("- "+songsRV_data.getAuthor());
-        holder.song_RV_item_number.setText(position+1+"");
+        holder.song_RV_item_singer.setText("— "+songsRV_data.getAuthor());
+        //holder.song_RV_item_number.setText(position+1+"");
     }
 
 
@@ -53,7 +53,7 @@ public class SecondBottomAdapter extends RecyclerView.Adapter<SecondBottomAdapte
             super(itemView);
             song_RV_item_singer = (TextView) itemView.findViewById(R.id.second_bottomBar_singer);
             song_RV_item_songName = (TextView) itemView.findViewById(R.id.second_bottomBar_songName);
-            song_RV_item_number = (TextView) itemView.findViewById(R.id.second_bottomBar_number);
+            //song_RV_item_number = (TextView) itemView.findViewById(R.id.second_bottomBar_number);
             this.itemView = itemView;
         }
     }

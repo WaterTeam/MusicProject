@@ -17,7 +17,6 @@ import com.waterteam.musicproject.R;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.bean.WaitingPlaySongs;
-import com.waterteam.musicproject.bean.WaitingPlaySongsLayouts;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventFromNotification;
 import com.waterteam.musicproject.eventsforeventbus.EventFromTouch;
@@ -26,8 +25,6 @@ import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class PlayService extends Service {
@@ -38,7 +35,6 @@ public class PlayService extends Service {
 
     public static int playMode = EventFromBar.LISTMODE;//默认列表循环
     public static WaitingPlaySongs playList = AllMediaBean.getInstance().getWaitingPlaySongs(); //播放列表
-    public static WaitingPlaySongsLayouts waitingPlaySongsLayouts;
 
     int randomListPosition = -1;//记录随机播放的上一首的位置
     private boolean iff = false;//用于randomLastPlay()方法
@@ -62,7 +58,6 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        waitingPlaySongsLayouts = new WaitingPlaySongsLayouts(getApplicationContext());
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Notification notification = new NotificationCompat.Builder(this)
@@ -74,8 +69,6 @@ public class PlayService extends Service {
         startForeground(1, notification);
 
         EventBus.getDefault().register(this);
-        waitingPlaySongsLayouts = new WaitingPlaySongsLayouts(getApplicationContext());
-        waitingPlaySongsLayouts.addList(playList.getSongs());
         // getPlayList();
     }
 
@@ -246,27 +239,27 @@ public class PlayService extends Service {
                 break;
             case EventFromTouch.ADD_ALL_TO_LIST:
                 playList.addList(event.getSongs());
-                waitingPlaySongsLayouts.addList(event.getSongs());
+
                 position = 0;
                 mediaPlayer.reset();
                 playSong();
                 break;
             case EventFromTouch.ADD_TO_LIST:
                 playList.addSongsToFoot(event.getSong());
-                waitingPlaySongsLayouts.addLayoutToFoot(event.getSong());
+
                 break;
             case EventFromTouch.ADD_TO_NEXT:
                 playList.addSongToPosition(++nextPosition, event.getSong());
-                waitingPlaySongsLayouts.addSongToPosition(nextPosition, event.getSong());
+
                 nextSongCount++;
                 break;
             case EventFromTouch.DELETE_FROM_LIST:
                 playList.removeSong(event.getSong());
-                waitingPlaySongsLayouts.removeSong(playList.getSongs().indexOf(event.getSong()));
+
                 break;
             case EventFromTouch.ALWAYS_PLAY:
                 playList.addSongToPosition(++position, event.getSong());
-                waitingPlaySongsLayouts.addSongToPosition(position, event.getSong());
+
                 nextPosition = position;
                 mediaPlayer.reset();
                 playSong();
