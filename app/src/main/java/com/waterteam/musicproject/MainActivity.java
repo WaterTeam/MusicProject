@@ -105,8 +105,7 @@ public class MainActivity extends AppCompatActivity {
         //ControlTouchUtil handleSecondBottomBarUtil = new ControlTouchUtil();
 //        playTouchUtil.setHandleSecondBarUtil(handleSecondBottomBarUtil);
         bottomBarPlaying.setTouchHandle(playTouchUtil);
-
-       // bottomBarPlaying.setTouchHandle(handleSecondBottomBarUtil);
+        
 
         //往viewPager的数据列表中添加2个碎片；
         fragmentList.add(new ArtistPageFragment());
