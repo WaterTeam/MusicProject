@@ -14,7 +14,7 @@ import java.util.List;
 
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
 import com.waterteam.musicproject.customview.MyNotification;
-import com.waterteam.musicproject.util.bottombarutil.PlayTouchUtil;
+import com.waterteam.musicproject.customview.bottom.bar.playing.PlayTouchUtil;
 
 import com.waterteam.musicproject.util.StatusBarUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
@@ -99,14 +99,11 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         viewPager = (ViewPager) this.findViewById(R.id.viewPager_MainActivity);
         bottomBarPlaying = (BottomBar) this.findViewById(R.id.MainActivity_bottomBar);
-        //second_bottomBar = (BottomBar) this.findViewById(R.id.second_bottomBar);
+
         //设置点击处理事件
         PlayTouchUtil playTouchUtil = new PlayTouchUtil();
-        //ControlTouchUtil handleSecondBottomBarUtil = new ControlTouchUtil();
-//        playTouchUtil.setHandleSecondBarUtil(handleSecondBottomBarUtil);
         bottomBarPlaying.setTouchHandle(playTouchUtil);
 
-       // bottomBarPlaying.setTouchHandle(handleSecondBottomBarUtil);
 
         //往viewPager的数据列表中添加2个碎片；
         fragmentList.add(new ArtistPageFragment());

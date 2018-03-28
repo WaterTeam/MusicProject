@@ -1,4 +1,4 @@
-package com.waterteam.musicproject.customview.bottom.bar;
+package com.waterteam.musicproject.customview.bottom.bar.playing_control;
 
 import android.content.Context;
 
@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Scroller;
+
+import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
 
 /**
  * 继承于一个个bottomBar，只服务于镶嵌在bottomBar中的第二个bottomBar，实现了如果是点击则传给子控件，如果是按住移动则自身拦截，用于上下移动bottomBar

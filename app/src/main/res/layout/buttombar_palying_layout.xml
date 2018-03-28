@@ -42,17 +42,15 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
 
-            <com.waterteam.musicproject.customview.playing_viewpage.MyViewPager
+            <android.support.v7.widget.RecyclerView
                 android:overScrollMode="never"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:id="@+id/view_page"
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:layout_height="0dp">
-            </com.waterteam.musicproject.customview.playing_viewpage.MyViewPager>
+            </android.support.v7.widget.RecyclerView>>
 
 
 
@@ -63,7 +61,7 @@
 
         </LinearLayout>
 
-        <com.waterteam.musicproject.customview.bottom.bar.BottomBarPlayingControl
+        <com.waterteam.musicproject.customview.bottom.bar.playing_control.BottomBarPlayingControl
             android:id="@+id/second_bottomBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -227,7 +225,7 @@
 
                 </LinearLayout>
             </FrameLayout>
-        </com.waterteam.musicproject.customview.bottom.bar.BottomBarPlayingControl>
+        </com.waterteam.musicproject.customview.bottom.bar.playing_control.BottomBarPlayingControl>
     </FrameLayout>
 
 </merge>

@@ -16,7 +16,6 @@ import android.view.View;
 
 import android.view.animation.DecelerateInterpolator;
 
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,21 +25,15 @@ import com.example.bastatusbar.BAStatusBar;
 import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.ArtistBean;
 
-import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
-import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
-import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
-import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.GetCoverUtil;
 import com.waterteam.musicproject.util.StatusBarUtil;
-import com.waterteam.musicproject.util.bottombarutil.PlayTouchUtil;
+import com.waterteam.musicproject.customview.bottom.bar.playing.PlayTouchUtil;
 import com.waterteam.musicproject.viewpagers.MyPageAdapter;
 import com.waterteam.musicproject.viewpagers.artist.detail.album.ArtistAlbumFragment;
 import com.waterteam.musicproject.viewpagers.artist.detail.album.ArtistDetailAlbumPageFragment;
 import com.waterteam.musicproject.viewpagers.artist.detial.songs.ArtistDetailSongsPageFragment;
 
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

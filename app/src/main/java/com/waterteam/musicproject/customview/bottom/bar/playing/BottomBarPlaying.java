@@ -1,4 +1,4 @@
-package com.waterteam.musicproject.customview.bottom.bar;
+package com.waterteam.musicproject.customview.bottom.bar.playing;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.view.View;
 
 
 import com.waterteam.musicproject.R;
+import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
+import com.waterteam.musicproject.customview.bottom.bar.playing_control.BottomBarPlayingControl;
 import com.waterteam.musicproject.util.StatusBarUtil;
 
 /**
@@ -61,7 +63,6 @@ public class BottomBarPlaying extends BottomBar {
      * @author CNT on 2018/1/31.
      */
     public void pullDown() {
-
         if (secondBottomBar.getIsPullUp()) {
             secondBottomBar.pullDown();
         } else {
@@ -123,11 +124,7 @@ public class BottomBarPlaying extends BottomBar {
                         }
                     }
                 } else {
-                    if (Math.abs(deltaY) > 1 && Math.abs(deltaY) > Math.abs(delaX)) {
-                        isIntercept = true;
-                    } else {
-                        isIntercept = false;
-                    }
+                    isIntercept = Math.abs(deltaY) > 1 && Math.abs(deltaY) > Math.abs(delaX);
                 }
                 break;
             case MotionEvent.ACTION_UP:

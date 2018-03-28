@@ -1,4 +1,4 @@
-package com.waterteam.musicproject.util.bottombarutil;
+package com.waterteam.musicproject.customview.bottom.bar.playing;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -7,10 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PagerSnapHelper;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,21 +23,17 @@ import com.waterteam.musicproject.bean.AllMediaBean;
 import com.waterteam.musicproject.bean.SongsBean;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBarHandle;
-import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlayingControl;
+import com.waterteam.musicproject.customview.bottom.bar.playing_control.BottomBarPlayingControl;
 import com.waterteam.musicproject.customview.gravity_imageview.MySensorObserver;
-import com.waterteam.musicproject.customview.playing_viewpage.DepthPageTransformer;
-import com.waterteam.musicproject.customview.playing_viewpage.MyVPScroller;
-import com.waterteam.musicproject.customview.playing_viewpage.MyViewPager;
-import com.waterteam.musicproject.customview.playing_viewpage.PlayingVPAdapter;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
+
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
 import com.waterteam.musicproject.util.GetCoverUtil;
+import com.waterteam.musicproject.customview.bottom.bar.playing_control.ControlTouchUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by BA on 2018/2/6 0006.
@@ -54,18 +51,18 @@ public class PlayTouchUtil implements BottomBarHandle {
 
     private TextView bottomBar_palying_songs_name;//播放界面中的歌曲名
     private int nowPosition;//viewpager当前显示页面的position
-    private boolean isNowPositionChange;
+    private boolean isButtonControl;
 
     private Context context;
 
-    //ControlTouchUtil util;
 
     private ImageView frostedGlassImage;
+    private RecyclerView recyclerView;
 
     private MySensorObserver sensorObserver;
 
-    private MyViewPager viewPager;
-    private PlayingVPAdapter playingVPAdapter;
+ //   private MyViewPager viewPager;
+   // private PlayingVPAdapter playingVPAdapter;
 
     private View bottomBar;
     private View bottomContent;
@@ -77,12 +74,11 @@ public class PlayTouchUtil implements BottomBarHandle {
 
     private boolean isClick;
 
-    private MyVPScroller myVPScroller;
+   // private MyVPScroller myVPScroller;
 
 
     @Override
     public void setContentView(final BottomBar view) {
-
         this.bottomBar = view.bottomBarHead;
         this.bottomContent = view.bottomBarContent;
         Log.e(TAG, "setContentView: oioi " + bottomContent);
@@ -100,16 +96,21 @@ public class PlayTouchUtil implements BottomBarHandle {
                 }
             }
         });
+        //找出所有的View
         findView();
+        //初始化RecyclerView
+        initRecyclerView();
+        //处理所有View的点击事件
         handleClick();
+        //去刷新BottomBar的界面
         flashBottomBar();
-        if (PlayService.isPlay) {
 
+        //处理VIew的缩放
+//        if (!PlayService.isPlay) {
+//            setVPAnimator(viewPager, 0.8f, 300, 0);
+//            setVPAnimator(frostedGlassImage, 1.5f, 700, 0);
+//        }
 
-        }else{
-            setVPAnimator(viewPager, 0.8f, 300, 0);
-            setVPAnimator(frostedGlassImage, 1.5f, 700, 0);
-        }
         EventBus.getDefault().register(this);
     }
 
@@ -126,8 +127,8 @@ public class PlayTouchUtil implements BottomBarHandle {
     }
 
     private void findView() {
+        recyclerView=(RecyclerView)bottomContent.findViewById(R.id.recycler_view);
         secondBottomBar = (BottomBarPlayingControl) bottomContent.findViewById(R.id.second_bottomBar);
-        viewPager = (MyViewPager) bottomContent.findViewById(R.id.view_page);
         bottomBar_songName = (TextView) bottomBar.findViewById(R.id.bottomBar_songName);
         bottomBar_singer = (TextView) bottomBar.findViewById(R.id.bottomBar_singer);
         bottomBar_playButton = (Button) bottomBar.findViewById(R.id.bottomBar_play_button);
@@ -137,7 +138,6 @@ public class PlayTouchUtil implements BottomBarHandle {
 
 
     private void handleClick() {
-
         secondBottomBar.setTouchHandle(new ControlTouchUtil());
 
         bottomBar_playButton.setOnClickListener(new View.OnClickListener() {
@@ -157,108 +157,43 @@ public class PlayTouchUtil implements BottomBarHandle {
         });
     }
 
-    /**
-     * 初始化VIewPage
-     *
-     * @param
-     * @return
-     * @throws
-     * @author BA on 2018/3/9 0009
-     */
-    private void setViewPager() {
-        playingVPAdapter = new PlayingVPAdapter(AllMediaBean.getInstance().getWaitingPlaySongs().getSongs());
-        viewPager.setAdapter(playingVPAdapter);
-        viewPager.setPageTransformer(true, new DepthPageTransformer());
-
-        try {
-            // 通过class文件获取mScroller属性
-            Field mField = ViewPager.class.getDeclaredField("mScroller");
-            mField.setAccessible(true);
-            myVPScroller = new MyVPScroller(viewPager.getContext(), new DecelerateInterpolator());
-            myVPScroller.setmDuration(300);
-            mField.set(viewPager, myVPScroller);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * 改变VieaPager的缩放大小
-     *
-     * @param
-     * @return
-     * @throws
-     * @author Administrator on 2018/3/12.
-     */
-    private void setVPAnimator(View view, float scale, long duration, long delay) {
-
-        if (view.getScaleX() != scale)
-            view.animate().scaleX(scale).scaleY(scale).setDuration(duration).setStartDelay(delay).setInterpolator(new DecelerateInterpolator());
-    }
-
-
-    /**
-     * 滑动时切歌的监听
-     *
-     * @param
-     * @return
-     * @throws
-     * @author BA on 2018/3/9 0009
-     */
-
-    public void setViewPagerListener() {
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    private void initRecyclerView(){
+        recyclerView.setAdapter(new PlayingAdapter(bottomBar.getContext()
+                        ,AllMediaBean.getInstance().getWaitingPlaySongs().getSongs()));
+        recyclerView.setLayoutManager(new LinearLayoutManager
+                (bottomBar.getContext(),LinearLayoutManager.HORIZONTAL,false));
+        new PagerSnapHelper(){
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.e(TAG, "onPageScrolled" + positionOffset);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                if (nowPosition != position) {
-                    nowPosition = position;
-                    isNowPositionChange = true;
-                } else {
-                    isNowPositionChange = false;
+            public int findTargetSnapPosition(RecyclerView.LayoutManager layoutManager, int velocityX, int velocityY) {
+                int position=super.findTargetSnapPosition(layoutManager, velocityX, velocityY);
+                Log.d(TAG, "findTargetSnapPosition: "+position);
+                if (nowPosition!=position
+                        &&position<AllMediaBean.getInstance().getWaitingPlaySongs().getSongsCount()){
+                    nowPosition=position;
+                    isButtonControl=false;
                 }
-
-                Log.e(TAG, "onPageSelected: pipipi" + isNowPositionChange);
+                return position;
             }
+        }.attachToRecyclerView(recyclerView);
 
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onPageScrollStateChanged(int state) {
-                Log.e(TAG, "onPageScrollStateChanged: pipipi" + viewPager.getIsUserMove() + ":" + isNowPositionChange);
-                if (viewPager.getIsUserMove()) {
-                    if (state == 0 && isNowPositionChange) {
-                        //changViewAndMusic(nowPosition);
-                        PlayService.position = nowPosition;
-                        EventFromBar eventFromBar = new EventFromBar();
-                        eventFromBar.setStatu(EventFromBar.VIEWPAGERMOVE);
-                        EventBus.getDefault().post(eventFromBar);
-                        viewPager.setIsUserMove(false);
-                        isNowPositionChange = false;
-                    }
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                Log.d(TAG, "onScrollStateChanged: ");
+                if (newState==0&&PlayService.position!=nowPosition&&!isButtonControl){
+                    changViewAndMusic(nowPosition);
                 }
+                super.onScrollStateChanged(recyclerView, newState);
             }
         });
     }
-
-    public boolean getIsNowPositionChange() {
-        return isNowPositionChange;
-    }
-
 
     private void changViewAndMusic(int position) {
         PlayService.position = position;
         EventFromBar eventFromBar = new EventFromBar();
         eventFromBar.setStatu(EventFromBar.VIEWPAGERMOVE);
         EventBus.getDefault().post(eventFromBar);
-
-        setVPAnimator(viewPager, 1f, 300, 0);
-        setVPAnimator(frostedGlassImage, 0.8f, 700, 0);
 
         isPlaying = true;
         SongsBean song = PlayService.playList.getSongs().get(PlayService.position);
@@ -269,17 +204,6 @@ public class PlayTouchUtil implements BottomBarHandle {
         setCover(song);
     }
 
-    /**
-     * 切歌的时候用来切换ViewPage的位置
-     *
-     * @param
-     * @return
-     * @throws
-     * @author BA on 2018/3/9 0009
-     */
-    public void setViewPagePosition(int position, boolean animator) {
-        viewPager.setCurrentItem(position, animator);
-    }
 
     /**
      * 同步BottomBar
@@ -302,12 +226,9 @@ public class PlayTouchUtil implements BottomBarHandle {
             bottomBar_singer.setText(songsBean.getAuthor());
             bottomBar_palying_songs_name.setText(songsBean.getName());
             setCover(songsBean);
+            nowPosition=PlayService.position;
+            recyclerView.smoothScrollToPosition(PlayService.position);
         }
-
-        setViewPager();
-        setViewPagePosition(PlayService.position, false);
-        setViewPagerListener();
-
     }
 
     @Subscribe
@@ -315,41 +236,38 @@ public class PlayTouchUtil implements BottomBarHandle {
         switch (event.getStatu()) {
             case EventToBarFromService.PAUSE: {
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_play_button);
-                setVPAnimator(viewPager, 0.8f, 300, 0);
-                setVPAnimator(frostedGlassImage, 1.5f, 700, 0);
+
                 //seekBar要设置停住
                 isPlaying = false;
             }
             break;
             case EventToBarFromService.PAUSETOPLAY: {
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
-                setVPAnimator(viewPager, 1f, 300, 0);
-                setVPAnimator(frostedGlassImage, 1f, 700, 0);
+
                 isPlaying = true;
             }
             break;
             case EventToBarFromService.PLAYANEW: {
-
-
                 switch (event.getEventFrom()) {
                     case EventToBarFromService.EventFromBar:
-                        setViewPagePosition(event.getPosition(), true);
+//                        setViewPagePosition(event.getPosition(), true);
+                        isButtonControl=true;
+                        nowPosition=PlayService.position;
+                        recyclerView.smoothScrollToPosition(event.getPosition());
                         break;
                     case EventToBarFromService.EventFromTouch:
-                        setViewPager();
-                        setVPAnimator(viewPager, 1f, 300, 0);
-                        setVPAnimator(frostedGlassImage, 1f, 700, 0);
-
-                        setViewPagePosition(event.getPosition(), false);
-                        isNowPositionChange = false;
+//                        isButtonControl=true;
+                        nowPosition=PlayService.position;
+                        recyclerView.smoothScrollToPosition(event.getPosition());
                         break;
                     case EventToBarFromService.EventFromNotification:
-                        setViewPagePosition(event.getPosition(), false);
-                        isNowPositionChange = false;
+//                        setViewPagePosition(event.getPosition(), false);
+
+                        //isNowPositionChange = false;
                         break;
                 }
-                setVPAnimator(viewPager, 1f, 300, 0);
-                setVPAnimator(frostedGlassImage, 1.0f, 700, 0);
+//                setVPAnimator(viewPager, 1f, 300, 0);
+//                setVPAnimator(frostedGlassImage, 1.0f, 700, 0);
 
                 isPlaying = true;
                 //SongsBean song = event.getSongsBeanList().get(event.getPosition());
@@ -362,12 +280,12 @@ public class PlayTouchUtil implements BottomBarHandle {
                 setCover(song);
 
 
-                Log.e(TAG, "pipipi2");
+                Log.e(TAG, "pipipi2"+event.getEventFrom());
             }
             break;
             case EventToBarFromService.MOVEVIewPAGER:
-                setVPAnimator(viewPager, 1f, 300, 0);
-                setVPAnimator(frostedGlassImage, 1f, 700, 0);
+//                setVPAnimator(viewPager, 1f, 300, 0);
+//                setVPAnimator(frostedGlassImage, 1f, 700, 0);
                 isPlaying = true;
                 SongsBean song = PlayService.playList.getSongs().get(event.getPosition());
                 bottomBar_playButton.setBackgroundResource(R.drawable.ic_bottombar_pause_button);
@@ -406,19 +324,6 @@ public class PlayTouchUtil implements BottomBarHandle {
                 animator.start();
             }
         }).getCoverAsBitmap(bottomBar.getContext(), song, 70, 70);
-
-//        new GetCoverUtil().setOnCompletedListener(new GetCoverUtil.CompletedLoadListener() {
-//            @Override
-//            public void completed(Bitmap bitmap) {
-//                Log.d(TAG, "completed: " + bitmap);
-////                PaletteUtil paletteUtil = new PaletteUtil();
-////                paletteUtil.from(bitmap).to(play_control_layout);
-////                paletteUtil.from(bitmap).to(bottomBar_head_layout);
-//                //半径越大，处理后的图片越模糊
-//
-//                //  bottomBar_image.setImageBitmap(bitmap);
-//            }
-//        }).getCoverAsBitmap(bottomBar.getContext(), song, 400, 400);
     }
 
     /**
@@ -460,8 +365,5 @@ public class PlayTouchUtil implements BottomBarHandle {
         return bitmap;
     }
 
-//    public void setHandleSecondBarUtil(ControlTouchUtil util) {
-//        this.util = util;
-//    }
 
 }

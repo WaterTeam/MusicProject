@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
-import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlayingControl;
+import com.waterteam.musicproject.customview.bottom.bar.playing_control.BottomBarPlayingControl;
 
 /**
  * 这个RecycleView只服务于第二个bottomBar，使用时要传第二个bottomBar参数进去；

@@ -1,7 +1,6 @@
-package com.waterteam.musicproject.util.bottombarutil;
+package com.waterteam.musicproject.customview.bottom.bar.playing_control;
 
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,8 +16,9 @@ import com.waterteam.musicproject.customview.MyRecycleView;
 
 import com.waterteam.musicproject.customview.bottom.bar.BottomBar;
 import com.waterteam.musicproject.customview.bottom.bar.BottomBarHandle;
-import com.waterteam.musicproject.customview.bottom.bar.BottomBarPlaying;
+import com.waterteam.musicproject.customview.bottom.bar.playing.BottomBarPlaying;
 import com.waterteam.musicproject.customview.bottom.bar.OnScrollerListener;
+import com.waterteam.musicproject.customview.bottom.bar.playing.PlayTouchUtil;
 import com.waterteam.musicproject.eventsforeventbus.EventFromBar;
 import com.waterteam.musicproject.eventsforeventbus.EventToBarFromService;
 import com.waterteam.musicproject.service.playmusic.service.PlayService;
